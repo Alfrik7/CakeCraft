@@ -32,6 +32,8 @@ function formatItemPrice(item: MenuItem, servings: number | null): string {
 export function MenuCard({ item, selected, onSelect, mode, servings = null }: MenuCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const visibleTags = item.tags.filter((tag) => SUPPORTED_TAGS.has(tag));
+  const actionLabel = mode === 'multi' ? (selected ? 'убрать из списка' : 'добавить в список') : 'выбрать';
+
   const handleClick = () => {
     triggerTelegramHaptic('selection');
     onSelect();
@@ -42,17 +44,16 @@ export function MenuCard({ item, selected, onSelect, mode, servings = null }: Me
       type="button"
       onClick={handleClick}
       aria-pressed={selected}
+      aria-label={`${actionLabel}: ${item.name}`}
       className={[
-        'group relative overflow-hidden rounded-xl border bg-white text-left transition-all duration-200',
+        'group relative overflow-hidden rounded-2xl bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2',
-        selected
-          ? 'border-rose-400 bg-rose-50 shadow-sm ring-1 ring-rose-200'
-          : 'border-rose-100 hover:-translate-y-0.5 hover:border-rose-200 hover:shadow-sm',
+        selected ? 'scale-[1.02] ring-2 ring-[#E8677C] shadow-card-hover' : 'hover:-translate-y-0.5 hover:shadow-card-hover',
       ].join(' ')}
     >
-      <div className="relative h-28 w-full overflow-hidden bg-rose-50">
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-rose-50">
         {!item.photo_url ? (
-          <div className="grid h-full w-full place-items-center text-sm text-rose-400">Фото недоступно</div>
+          <div className="grid h-full w-full place-items-center text-xs font-semibold text-text-secondary">Фото недоступно</div>
         ) : (
           <>
             {!imageLoaded ? <div className="absolute inset-0 animate-pulse bg-rose-100" aria-hidden="true" /> : null}
@@ -65,29 +66,32 @@ export function MenuCard({ item, selected, onSelect, mode, servings = null }: Me
               className={[
                 'h-full w-full object-cover transition duration-300',
                 imageLoaded ? 'opacity-100' : 'opacity-0',
-                selected ? 'scale-[1.02]' : 'scale-100 group-hover:scale-[1.03]',
+                selected ? 'scale-[1.03]' : 'scale-100 group-hover:scale-[1.03]',
               ].join(' ')}
             />
           </>
         )}
+
+        {visibleTags.length > 0 ? (
+          <div className="absolute left-2 top-2 flex flex-wrap gap-1.5">
+            {visibleTags.map((tag) => (
+              <span
+                key={`${item.id}-${tag}`}
+                className="rounded-full bg-[linear-gradient(135deg,#F8A4B8_0%,#E8677C_100%)] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
 
-      <div className="p-3">
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-sm font-medium text-gray-900">{item.name}</p>
-          <span
-            className={[
-              'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition',
-              selected ? 'bg-rose-200 text-rose-900' : 'bg-gray-100 text-gray-500',
-            ].join(' ')}
-          >
-            {mode === 'multi' ? (selected ? 'В списке' : 'Добавить') : selected ? 'Выбрано' : 'Выбрать'}
-          </span>
-        </div>
+      <div className="flex min-h-[92px] flex-col p-3">
+        <p className="text-sm font-bold text-text-primary">{item.name}</p>
 
         {item.description ? (
           <p
-            className="mt-1 text-sm text-gray-600"
+            className="mt-1 text-xs leading-4 text-text-secondary"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -99,17 +103,7 @@ export function MenuCard({ item, selected, onSelect, mode, servings = null }: Me
           </p>
         ) : null}
 
-        {visibleTags.length > 0 ? (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {visibleTags.map((tag) => (
-              <span key={`${item.id}-${tag}`} className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] text-rose-700">
-                {tag}
-              </span>
-            ))}
-          </div>
-        ) : null}
-
-        <p className="mt-2 text-sm font-medium text-gray-700">{formatItemPrice(item, servings)}</p>
+        <p className="mt-auto pt-3 text-right font-display text-xl text-[#E8677C]">{formatItemPrice(item, servings)}</p>
       </div>
     </button>
   );

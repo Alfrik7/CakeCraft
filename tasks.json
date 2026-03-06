@@ -81,7 +81,7 @@
       "title": "MenuCard компонент: полный редизайн",
       "category": "components",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         101
       ],
