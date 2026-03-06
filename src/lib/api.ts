@@ -1,5 +1,13 @@
 import { supabase } from './supabase';
-import type { Baker, BlockedDate, MenuCategory, MenuItem, Order, OrderFormData } from '../types';
+import type {
+  Baker,
+  BlockedDate,
+  MenuCategory,
+  MenuItem,
+  Order,
+  OrderFormData,
+  OrderStatus,
+} from '../types';
 
 type NumericLike = number | string;
 
@@ -228,6 +236,79 @@ export async function createOrder(data: OrderFormData): Promise<Order> {
   }
 
   return mapOrder(insertedOrder);
+}
+
+interface AdminOrdersFilter {
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export async function getAdminOrders(
+  bakerId: string,
+  filters: AdminOrdersFilter = {},
+): Promise<Order[]> {
+  let query = supabase
+    .from('orders')
+    .select('*')
+    .eq('baker_id', bakerId)
+    .order('created_at', { ascending: false });
+
+  if (filters.dateFrom) {
+    query = query.gte('order_date', filters.dateFrom);
+  }
+
+  if (filters.dateTo) {
+    query = query.lte('order_date', filters.dateTo);
+  }
+
+  const { data, error } = await query.returns<OrderRow[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []).map(mapOrder);
+}
+
+export async function setOrderStatus(
+  orderId: string,
+  bakerId: string,
+  status: OrderStatus,
+): Promise<Order> {
+  const { data, error } = await supabase
+    .from('orders')
+    .update({ status })
+    .eq('id', orderId)
+    .eq('baker_id', bakerId)
+    .select('*')
+    .single<OrderRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return mapOrder(data);
+}
+
+export async function getMenuItemsByIds(bakerId: string, itemIds: string[]): Promise<MenuItem[]> {
+  const uniqueIds = [...new Set(itemIds.filter(Boolean))];
+
+  if (uniqueIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('menu_items')
+    .select('*')
+    .eq('baker_id', bakerId)
+    .in('id', uniqueIds)
+    .returns<MenuItemRow[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []).map(mapMenuItem);
 }
 
 export async function getBlockedDates(bakerId: string): Promise<BlockedDate[]> {

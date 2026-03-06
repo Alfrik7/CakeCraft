@@ -374,7 +374,7 @@
       "title": "Админка — Список заказов",
       "category": "admin",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         18
       ],
