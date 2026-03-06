@@ -115,7 +115,7 @@
       "title": "Supabase Storage — бакет для фото",
       "category": "infrastructure",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         2
       ],
