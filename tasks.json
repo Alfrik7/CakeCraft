@@ -140,7 +140,7 @@
       "title": "Экраны 3-4 — Начинка и Покрытие: редизайн",
       "category": "screens",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         102,
         105

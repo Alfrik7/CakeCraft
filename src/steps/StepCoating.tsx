@@ -98,16 +98,20 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
   };
 
   return (
-    <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Шаг 4. Покрытие и цвет</h2>
-      <p className="mt-2 text-sm text-gray-600">Выберите покрытие и оттенок торта.</p>
+    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+      <h2 className="text-center font-display text-3xl text-text-primary">Выберите покрытие</h2>
+      <p className="mt-2 text-center text-sm text-text-secondary">И определитесь с цветом торта</p>
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}
-        {loadError ? <p className="text-sm text-amber-700">Не удалось загрузить покрытия из каталога.</p> : null}
+        {loadError ? (
+          <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+            Не удалось загрузить покрытия из каталога.
+          </p>
+        ) : null}
 
         {!loading && coatingItems.length === 0 ? (
-          <p className="text-sm text-gray-500">У кондитера пока нет доступных покрытий.</p>
+          <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных покрытий.</p>
         ) : null}
 
         {!loading && coatingItems.length > 0 ? (
@@ -130,9 +134,11 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
         ) : null}
       </div>
 
-      <div className="mt-6 border-t border-rose-100 pt-4">
-        <p className="text-sm font-medium text-gray-800">Цвет</p>
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-6 rounded-2xl bg-secondary/80 p-4 shadow-card">
+        <p className="font-display text-xl text-text-primary">Выберите цвет</p>
+        <p className="mt-1 text-xs text-text-secondary">Можно выбрать из палитры или указать свой оттенок</p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           {PRESET_COLORS.map((color) => {
             const isSelected = order.color === color.value;
 
@@ -144,19 +150,16 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
                   triggerTelegramHaptic('selection');
                   handleSelectPresetColor(color);
                 }}
-                className={[
-                  'flex min-h-[44px] items-center gap-2 rounded-xl border px-3 py-2 text-sm transition',
-                  isSelected
-                    ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-200'
-                    : 'border-rose-100 bg-white text-gray-700 hover:border-rose-200',
-                ].join(' ')}
+                className="group flex flex-col items-center gap-1 text-xs font-medium text-text-secondary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2"
                 aria-pressed={isSelected}
+                aria-label={`Выбрать цвет: ${color.label}`}
               >
                 <span
                   className={[
-                    'h-4 w-4 rounded-full border border-gray-300',
+                    'h-10 w-10 rounded-full border border-white/80 shadow-card transition duration-300 ease-out',
                     color.swatchClass,
-                    color.value === 'белый' ? 'shadow-inner' : '',
+                    color.value === 'белый' ? 'shadow-inner shadow-rose-200' : '',
+                    isSelected ? 'scale-110 ring-2 ring-primary-to ring-offset-2 ring-offset-secondary' : 'group-hover:scale-105',
                   ].join(' ')}
                   aria-hidden="true"
                 />
@@ -172,29 +175,43 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
               handleSelectCustomColor();
             }}
             className={[
-              'min-h-[44px] rounded-xl border px-3 py-2 text-sm transition',
+              'flex min-h-[44px] items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-semibold transition duration-300',
               isCustomColor
-                ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-200'
-                : 'border-rose-100 bg-white text-gray-700 hover:border-rose-200',
+                ? 'scale-105 border-primary-to text-primary-to ring-2 ring-primary-to/30'
+                : 'border-rose-200 text-text-secondary hover:border-primary-from hover:text-text-primary',
             ].join(' ')}
             aria-pressed={isCustomColor}
           >
-            Кастомный
+            <span
+              className={[
+                'grid h-5 w-5 place-items-center rounded-full text-sm leading-none transition',
+                isCustomColor ? 'bg-[var(--gradient-primary)] text-white' : 'bg-rose-100 text-rose-600',
+              ].join(' ')}
+              aria-hidden="true"
+            >
+              +
+            </span>
+            Свой цвет
           </button>
         </div>
 
-        {isCustomColor || order.color === '' ? (
-          <label className="mt-3 block text-sm text-gray-700">
+        <div
+          className={[
+            'transition-all duration-300 ease-out',
+            isCustomColor || order.color === '' ? 'mt-3 max-h-28 opacity-100' : 'max-h-0 overflow-hidden opacity-0',
+          ].join(' ')}
+        >
+          <label className="block text-sm text-text-secondary">
             Укажите желаемый цвет
             <input
               type="text"
               value={order.color ?? ''}
               onChange={(event) => updateOrder({ color: event.target.value })}
               placeholder="Например: лавандовый"
-              className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+              className="mt-1 min-h-[44px] w-full rounded-xl border border-transparent bg-surface px-3 py-2 text-sm text-text-primary outline-none transition duration-300 focus:ring-2 focus:ring-primary-from/40"
             />
           </label>
-        ) : null}
+        </div>
       </div>
     </section>
   );

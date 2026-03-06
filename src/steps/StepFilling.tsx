@@ -72,16 +72,20 @@ export function StepFilling({ bakerId }: StepFillingProps) {
   };
 
   return (
-    <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Шаг 3. Начинка</h2>
-      <p className="mt-2 text-sm text-gray-600">Выберите начинку. Цена пересчитывается автоматически.</p>
+    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+      <h2 className="text-center font-display text-3xl text-text-primary">Выберите начинку</h2>
+      <p className="mt-2 text-center text-sm text-text-secondary">Цена пересчитывается автоматически</p>
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}
-        {loadError ? <p className="text-sm text-amber-700">Не удалось загрузить начинки из каталога.</p> : null}
+        {loadError ? (
+          <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+            Не удалось загрузить начинки из каталога.
+          </p>
+        ) : null}
 
         {!loading && fillingItems.length === 0 ? (
-          <p className="text-sm text-gray-500">У кондитера пока нет доступных начинок.</p>
+          <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных начинок.</p>
         ) : null}
 
         {!loading && fillingItems.length > 0 ? (
