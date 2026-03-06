@@ -6,6 +6,7 @@ import { ProgressBar } from './ProgressBar';
 import { StepPlaceholder } from '../steps/StepPlaceholder';
 import { StepOccasion } from '../steps/StepOccasion';
 import { StepShape } from '../steps/StepShape';
+import { StepFilling } from '../steps/StepFilling';
 
 const TOTAL_STEPS = 6;
 
@@ -58,8 +59,12 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
       return Boolean(order.shape) && Boolean(order.servings);
     }
 
+    if (step === 3) {
+      return Boolean(order.filling_id);
+    }
+
     return true;
-  }, [order.occasion, order.servings, order.shape, step]);
+  }, [order.filling_id, order.occasion, order.servings, order.shape, step]);
 
   const handleNext = () => {
     if (!isLastStep) {
@@ -81,7 +86,8 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         <div key={step} className="step-enter">
           {step === 1 ? <StepOccasion /> : null}
           {step === 2 ? <StepShape bakerId={baker.id} /> : null}
-          {step > 2 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
+          {step === 3 ? <StepFilling bakerId={baker.id} /> : null}
+          {step > 3 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
         </div>
       </div>
 

@@ -213,7 +213,7 @@
       "title": "Экран 3 — Начинка",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9
       ],
