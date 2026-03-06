@@ -452,7 +452,7 @@
       "title": "E2E тестирование основного флоу",
       "category": "testing",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         10,
         11,
