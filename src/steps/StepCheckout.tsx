@@ -47,6 +47,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
 
   const minOrderDate = useMemo(() => toIsoDate(addDays(new Date(), baker.min_order_days)), [baker.min_order_days]);
   const isDeliveryEnabled = baker.delivery_enabled;
+  const isCustomDeliveryPrice = baker.delivery_price_type === 'custom';
   const isDeliverySelected = isDeliveryEnabled && order.delivery_type === 'delivery';
   const pickupAddress = baker.pickup_address?.trim() ?? '';
   const showPickupAddress = order.delivery_type === 'pickup' && pickupAddress.length > 0;
@@ -102,7 +103,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
   const coatingPrice = getItemPrice(servings, order.coating_id ? menuItemsById[order.coating_id] : null);
   const decorPrice = order.decor_items.reduce((sum, itemId) => sum + getItemPrice(servings, menuItemsById[itemId]), 0);
   const basePrice = Math.max(0, Math.round(order.total_price - fillingPrice - coatingPrice - decorPrice));
-  const deliveryPrice = isDeliverySelected ? baker.delivery_price : 0;
+  const deliveryPrice = isDeliverySelected && !isCustomDeliveryPrice ? baker.delivery_price : 0;
   const finalTotalPrice = Math.round(order.total_price + deliveryPrice);
 
   const validate = useCallback(() => {
@@ -358,7 +359,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                 ].join(' ')}
                 aria-pressed={order.delivery_type === 'delivery'}
               >
-                Доставка (+{formatPrice(baker.delivery_price)})
+                {isCustomDeliveryPrice ? 'Доставка (рассч. отдельно)' : `Доставка (+${formatPrice(baker.delivery_price)})`}
               </button>
             </div>
           ) : (
@@ -420,7 +421,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
           </div>
           <div className="flex items-center justify-between gap-3">
             <span>Доставка</span>
-            <span>{formatPrice(deliveryPrice)}</span>
+            <span>
+              {isDeliverySelected && isCustomDeliveryPrice ? 'рассчитывается отдельно' : formatPrice(deliveryPrice)}
+            </span>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-primary-from/35 pt-3 text-base">

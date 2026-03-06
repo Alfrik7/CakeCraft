@@ -11,6 +11,7 @@ with upsert_baker as (
     welcome_message,
     min_order_days,
     delivery_enabled,
+    delivery_price_type,
     delivery_price,
     pickup_address,
     working_hours
@@ -24,6 +25,7 @@ with upsert_baker as (
     'Привет! Соберите свой торт, а я приготовлю его с любовью 🎂',
     2,
     true,
+    'fixed',
     500,
     'Москва, ул. Пекарская, 12, подъезд 2',
     '{
@@ -45,6 +47,7 @@ with upsert_baker as (
     welcome_message = excluded.welcome_message,
     min_order_days = excluded.min_order_days,
     delivery_enabled = excluded.delivery_enabled,
+    delivery_price_type = excluded.delivery_price_type,
     delivery_price = excluded.delivery_price,
     pickup_address = excluded.pickup_address,
     working_hours = excluded.working_hours,

@@ -19,6 +19,7 @@ interface ProfileFormState {
   welcomeMessage: string;
   minOrderDays: string;
   deliveryEnabled: boolean;
+  deliveryPriceType: Baker['delivery_price_type'];
   deliveryPrice: string;
   pickupAddress: string;
   workingHours: WorkingHours;
@@ -43,6 +44,7 @@ function getInitialFormState(baker: Baker): ProfileFormState {
     welcomeMessage: baker.welcome_message,
     minOrderDays: String(baker.min_order_days),
     deliveryEnabled: baker.delivery_enabled,
+    deliveryPriceType: baker.delivery_price_type ?? 'fixed',
     deliveryPrice: String(baker.delivery_price),
     pickupAddress: baker.pickup_address ?? '',
     workingHours: baker.working_hours ?? getDefaultWorkingHours(),
@@ -146,7 +148,7 @@ export function AdminProfilePage() {
       return;
     }
 
-    if (!Number.isFinite(deliveryPrice) || deliveryPrice < 0) {
+    if (form.deliveryPriceType === 'fixed' && (!Number.isFinite(deliveryPrice) || deliveryPrice < 0)) {
       setError('Укажите корректную цену доставки.');
       return;
     }
@@ -181,6 +183,7 @@ export function AdminProfilePage() {
         welcome_message: trimmedWelcome,
         min_order_days: minOrderDays,
         delivery_enabled: form.deliveryEnabled,
+        delivery_price_type: form.deliveryPriceType,
         delivery_price: deliveryPrice,
         pickup_address: trimmedPickupAddress || null,
         working_hours: form.workingHours,
@@ -329,13 +332,45 @@ export function AdminProfilePage() {
             <span className="text-sm font-medium text-gray-700">Включить доставку</span>
           </label>
 
+          <div className="mt-3 space-y-2">
+            <p className="text-sm font-medium text-gray-700">Тип стоимости доставки</p>
+            <label className="flex min-h-11 items-center gap-3 rounded-xl border border-gray-200 px-3 py-2">
+              <input
+                type="radio"
+                name="deliveryPriceType"
+                value="fixed"
+                disabled={!form.deliveryEnabled}
+                checked={form.deliveryPriceType === 'fixed'}
+                onChange={() =>
+                  setForm((prev) => (prev ? { ...prev, deliveryPriceType: 'fixed' } : prev))
+                }
+                className="h-4 w-4 border-gray-300 text-rose-500 focus:ring-rose-300"
+              />
+              <span className="text-sm text-gray-700">Фиксированная цена</span>
+            </label>
+            <label className="flex min-h-11 items-center gap-3 rounded-xl border border-gray-200 px-3 py-2">
+              <input
+                type="radio"
+                name="deliveryPriceType"
+                value="custom"
+                disabled={!form.deliveryEnabled}
+                checked={form.deliveryPriceType === 'custom'}
+                onChange={() =>
+                  setForm((prev) => (prev ? { ...prev, deliveryPriceType: 'custom' } : prev))
+                }
+                className="h-4 w-4 border-gray-300 text-rose-500 focus:ring-rose-300"
+              />
+              <span className="text-sm text-gray-700">Рассчитывается отдельно</span>
+            </label>
+          </div>
+
           <label className="mt-3 block text-sm">
             <span className="mb-1 block font-medium text-gray-700">Цена доставки, ₽</span>
             <input
               type="number"
               min={0}
               step={1}
-              disabled={!form.deliveryEnabled}
+              disabled={!form.deliveryEnabled || form.deliveryPriceType !== 'fixed'}
               value={form.deliveryPrice}
               onChange={(event) =>
                 setForm((prev) => (prev ? { ...prev, deliveryPrice: event.target.value } : prev))

@@ -7,6 +7,8 @@ export type WorkingHours = Record<
   }
 >;
 
+export type DeliveryPriceType = 'fixed' | 'custom';
+
 export interface Baker {
   id: string;
   telegram_id: number;
@@ -17,6 +19,7 @@ export interface Baker {
   welcome_message: string;
   min_order_days: number;
   delivery_enabled: boolean;
+  delivery_price_type: DeliveryPriceType;
   delivery_price: number;
   pickup_address: string | null;
   working_hours: WorkingHours | null;
