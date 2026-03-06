@@ -335,7 +335,7 @@
       "title": "Админка — Layout и авторизация",
       "category": "admin",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         8
       ],
