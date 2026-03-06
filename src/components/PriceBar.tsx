@@ -12,7 +12,10 @@ function formatPrice(value: number): string {
 
 export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = false, onNext }: PriceBarProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-100 bg-white/95 px-4 py-3 backdrop-blur">
+    <div
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-100 bg-white/95 px-3 pb-[calc(12px+env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:px-4"
+      style={{ backgroundColor: 'var(--tg-secondary-bg-color, rgba(255,255,255,0.95))' }}
+    >
       <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
         <div>
           <p className="text-xs text-gray-500">Текущая стоимость</p>
@@ -20,6 +23,10 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
         </div>
         <button
           className="min-h-[44px] rounded-xl bg-rose-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-200"
+          style={{
+            backgroundColor: canProceed ? 'var(--tg-button-color, #f43f5e)' : undefined,
+            color: 'var(--tg-button-text-color, #ffffff)',
+          }}
           onClick={onNext}
           disabled={!canProceed}
           type="button"

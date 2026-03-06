@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
+import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -76,9 +77,7 @@ export function StepFilling({ bakerId }: StepFillingProps) {
       <p className="mt-2 text-sm text-gray-600">Выберите начинку. Цена пересчитывается автоматически.</p>
 
       <div className="mt-5">
-        {loading ? (
-          <p className="text-sm text-gray-500">Загружаем начинки...</p>
-        ) : null}
+        {loading ? <SkeletonMenuGrid /> : null}
         {loadError ? <p className="text-sm text-amber-700">Не удалось загрузить начинки из каталога.</p> : null}
 
         {!loading && fillingItems.length === 0 ? (

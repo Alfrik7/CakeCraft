@@ -1,4 +1,5 @@
 import { useOrderContext } from '../context/OrderContext';
+import { triggerTelegramHaptic } from '../lib/telegram';
 
 const OCCASION_OPTIONS = [
   { value: 'birthday', label: 'День рождения', icon: '🎂' },
@@ -24,7 +25,10 @@ export function StepOccasion() {
             <button
               key={option.value}
               type="button"
-              onClick={() => updateOrder({ occasion: option.value })}
+              onClick={() => {
+                triggerTelegramHaptic('selection');
+                updateOrder({ occasion: option.value });
+              }}
               className={[
                 'flex min-h-[52px] items-center gap-3 rounded-xl border px-4 py-3 text-left transition',
                 isSelected

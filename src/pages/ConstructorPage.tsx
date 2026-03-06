@@ -60,8 +60,13 @@ export function ConstructorPage() {
 
   if (loading) {
     return (
-      <main className="grid min-h-screen place-items-center bg-rose-50/50 px-4">
-        <p className="text-sm text-gray-500">Загружаем данные кондитера...</p>
+      <main className="min-h-screen bg-rose-50/50 px-4 pt-6">
+        <div className="mx-auto max-w-xl rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+          <div className="h-4 w-1/3 animate-pulse rounded bg-rose-100" aria-hidden="true" />
+          <div className="mt-3 h-6 w-5/6 animate-pulse rounded bg-rose-100" aria-hidden="true" />
+          <div className="mt-5 h-2 w-full animate-pulse rounded bg-rose-100" aria-hidden="true" />
+          <p className="mt-5 text-sm text-gray-500">Загружаем данные кондитера...</p>
+        </div>
       </main>
     );
   }

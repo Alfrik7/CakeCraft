@@ -311,7 +311,7 @@
       "title": "Мобильная адаптивность и UX-полировка клиентской части",
       "category": "frontend",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         10,
         11,

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Baker } from '../types';
 import { useOrderContext } from '../context/OrderContext';
 import { PriceBar } from './PriceBar';
@@ -9,6 +9,7 @@ import { StepFilling } from '../steps/StepFilling';
 import { StepCoating } from '../steps/StepCoating';
 import { StepDecor } from '../steps/StepDecor';
 import { StepCheckout } from '../steps/StepCheckout';
+import { applyTelegramTheme, getTelegramWebApp, initTelegramWebApp, triggerTelegramHaptic } from '../lib/telegram';
 
 const TOTAL_STEPS = 6;
 
@@ -23,6 +24,17 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   const [checkoutCanSubmit, setCheckoutCanSubmit] = useState(false);
   const [checkoutSubmitHandler, setCheckoutSubmitHandler] = useState<(() => Promise<boolean>) | null>(null);
   const { order } = useOrderContext();
+  const handleBackStep = useCallback(() => {
+    setStep((prev) => {
+      if (prev <= 1) {
+        return prev;
+      }
+
+      triggerTelegramHaptic('selection');
+      return prev - 1;
+    });
+  }, []);
+
   const registerCheckoutSubmitHandler = (handler: (() => Promise<boolean>) | null) => {
     setCheckoutSubmitHandler(() => handler);
   };
@@ -68,6 +80,8 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   ]);
 
   const handleNext = async () => {
+    triggerTelegramHaptic('selection');
+
     if (!isLastStep) {
       setStep((prev) => prev + 1);
       return;
@@ -82,13 +96,47 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     setIsSubmitting(false);
 
     if (success) {
+      triggerTelegramHaptic('success');
       setIsSubmitted(true);
     }
   };
 
+  useEffect(() => {
+    const app = initTelegramWebApp();
+
+    if (!app) {
+      return;
+    }
+
+    applyTelegramTheme(app);
+  }, []);
+
+  useEffect(() => {
+    const app = getTelegramWebApp();
+
+    if (!app) {
+      return;
+    }
+
+    if (step > 1 && !isSubmitted) {
+      app.BackButton.show();
+      app.BackButton.onClick(handleBackStep);
+
+      return () => {
+        app.BackButton.offClick(handleBackStep);
+        app.BackButton.hide();
+      };
+    }
+
+    app.BackButton.offClick(handleBackStep);
+    app.BackButton.hide();
+
+    return undefined;
+  }, [handleBackStep, isSubmitted, step]);
+
   return (
-    <main className="min-h-screen bg-rose-50/50 pb-24">
-      <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 pt-6">
+    <main className="min-h-screen bg-rose-50/50 pb-[calc(116px+env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-xl flex-col gap-4 px-3 pt-4 sm:px-4 sm:pt-6">
         <header className="rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
           <p className="text-sm text-gray-500">{baker.name}</p>
           <h1 className="mt-1 text-lg font-semibold text-gray-900">{baker.welcome_message}</h1>

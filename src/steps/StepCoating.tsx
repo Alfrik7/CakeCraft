@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
+import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
+import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
 const PRESET_COLORS = [
@@ -101,7 +103,7 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
       <p className="mt-2 text-sm text-gray-600">Выберите покрытие и оттенок торта.</p>
 
       <div className="mt-5">
-        {loading ? <p className="text-sm text-gray-500">Загружаем покрытия...</p> : null}
+        {loading ? <SkeletonMenuGrid /> : null}
         {loadError ? <p className="text-sm text-amber-700">Не удалось загрузить покрытия из каталога.</p> : null}
 
         {!loading && coatingItems.length === 0 ? (
@@ -138,7 +140,10 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
               <button
                 key={color.id}
                 type="button"
-                onClick={() => handleSelectPresetColor(color)}
+                onClick={() => {
+                  triggerTelegramHaptic('selection');
+                  handleSelectPresetColor(color);
+                }}
                 className={[
                   'flex min-h-[44px] items-center gap-2 rounded-xl border px-3 py-2 text-sm transition',
                   isSelected
@@ -162,7 +167,10 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
 
           <button
             type="button"
-            onClick={handleSelectCustomColor}
+            onClick={() => {
+              triggerTelegramHaptic('selection');
+              handleSelectCustomColor();
+            }}
             className={[
               'min-h-[44px] rounded-xl border px-3 py-2 text-sm transition',
               isCustomColor

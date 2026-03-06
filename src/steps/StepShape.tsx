@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
+import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
+import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
 const SERVINGS_OPTIONS = [6, 8, 12, 16, 20] as const;
@@ -107,7 +109,7 @@ export function StepShape({ bakerId }: StepShapeProps) {
 
       <div className="mt-5">
         {loading ? (
-          <p className="text-sm text-gray-500">Загружаем формы...</p>
+          <SkeletonMenuGrid />
         ) : (
           <>
             {useFallback ? (
@@ -124,7 +126,10 @@ export function StepShape({ bakerId }: StepShapeProps) {
                       <button
                         key={item.id}
                         type="button"
-                        onClick={() => updateOrder({ shape: item.name })}
+                        onClick={() => {
+                          triggerTelegramHaptic('selection');
+                          updateOrder({ shape: item.name });
+                        }}
                         className={[
                           'overflow-hidden rounded-xl border bg-white text-left transition',
                           isSelected
@@ -166,7 +171,10 @@ export function StepShape({ bakerId }: StepShapeProps) {
               <button
                 key={servings}
                 type="button"
-                onClick={() => updateOrder({ servings })}
+                onClick={() => {
+                  triggerTelegramHaptic('selection');
+                  updateOrder({ servings });
+                }}
                 className={[
                   'min-h-[44px] min-w-[56px] rounded-xl border px-4 py-2 text-sm font-medium transition',
                   isSelected

@@ -1,9 +1,11 @@
 import { type ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
+import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
 import { supabase } from '../lib/supabase';
+import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
 const MAX_REFERENCE_PHOTO_SIZE_BYTES = 5 * 1024 * 1024;
@@ -163,7 +165,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
       <p className="mt-2 text-sm text-gray-600">Добавьте элементы декора, пожелания и референс.</p>
 
       <div className="mt-5">
-        {loading ? <p className="text-sm text-gray-500">Загружаем декор...</p> : null}
+        {loading ? <SkeletonMenuGrid /> : null}
         {loadError ? <p className="text-sm text-amber-700">Не удалось загрузить декор из каталога.</p> : null}
 
         {!loading && decorItems.length === 0 ? (
@@ -202,7 +204,10 @@ export function StepDecor({ bakerId }: StepDecorProps) {
                 {item.name}
                 <button
                   type="button"
-                  onClick={() => removeDecorItem(item.id)}
+                  onClick={() => {
+                    triggerTelegramHaptic('selection');
+                    removeDecorItem(item.id);
+                  }}
                   className="rounded-full border border-rose-300 px-2 py-0.5 text-[11px] leading-none text-rose-700 transition hover:bg-rose-100"
                   aria-label={`Удалить ${item.name}`}
                 >

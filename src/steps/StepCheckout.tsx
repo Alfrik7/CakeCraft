@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SkeletonParagraph } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
 import { createOrder, getBlockedDates, getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
+import { triggerTelegramHaptic } from '../lib/telegram';
 import type { Baker, MenuItem } from '../types';
 
 function formatPrice(value: number): string {
@@ -294,7 +296,7 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
           </label>
         </div>
 
-        {loadingBlockedDates ? <p className="text-xs text-gray-500">Загружаем заблокированные даты...</p> : null}
+        {loadingBlockedDates ? <SkeletonParagraph /> : null}
         {blockedDatesError ? (
           <p className="text-xs text-amber-700">Не удалось загрузить заблокированные даты, проверьте дату вручную.</p>
         ) : null}
@@ -310,7 +312,10 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => updateOrder({ delivery_type: 'pickup', address: null })}
+                onClick={() => {
+                  triggerTelegramHaptic('selection');
+                  updateOrder({ delivery_type: 'pickup', address: null });
+                }}
                 className={[
                   'min-h-[44px] rounded-xl border px-4 py-2 text-sm transition',
                   order.delivery_type === 'pickup'
@@ -323,7 +328,10 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
               </button>
               <button
                 type="button"
-                onClick={() => updateOrder({ delivery_type: 'delivery' })}
+                onClick={() => {
+                  triggerTelegramHaptic('selection');
+                  updateOrder({ delivery_type: 'delivery' });
+                }}
                 className={[
                   'min-h-[44px] rounded-xl border px-4 py-2 text-sm transition',
                   order.delivery_type === 'delivery'

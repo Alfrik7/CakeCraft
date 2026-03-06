@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getItemPrice } from '../lib/price';
+import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
 interface MenuCardProps {
@@ -31,11 +32,15 @@ function formatItemPrice(item: MenuItem, servings: number | null): string {
 export function MenuCard({ item, selected, onSelect, mode, servings = null }: MenuCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const visibleTags = item.tags.filter((tag) => SUPPORTED_TAGS.has(tag));
+  const handleClick = () => {
+    triggerTelegramHaptic('selection');
+    onSelect();
+  };
 
   return (
     <button
       type="button"
-      onClick={onSelect}
+      onClick={handleClick}
       aria-pressed={selected}
       className={[
         'group relative overflow-hidden rounded-xl border bg-white text-left transition-all duration-200',
