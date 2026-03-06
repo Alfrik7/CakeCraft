@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 export interface OrderDraft {
   baker_id: string;
@@ -26,6 +26,7 @@ interface OrderContextValue {
   order: OrderDraft;
   setOrder: (updater: (prev: OrderDraft) => OrderDraft) => void;
   updateOrder: (patch: Partial<OrderDraft>) => void;
+  resetOrder: () => void;
 }
 
 const OrderContext = createContext<OrderContextValue | undefined>(undefined);
@@ -74,13 +75,18 @@ export function OrderProvider({ bakerId, children }: OrderProviderProps) {
     }));
   };
 
+  const resetOrder: OrderContextValue['resetOrder'] = useCallback(() => {
+    setOrderState(createInitialOrder(bakerId));
+  }, [bakerId]);
+
   const value = useMemo(
     () => ({
       order,
       setOrder,
       updateOrder,
+      resetOrder,
     }),
-    [order],
+    [order, resetOrder],
   );
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Baker } from '../types';
 import { useOrderContext } from '../context/OrderContext';
 import { PriceBar } from './PriceBar';
@@ -23,7 +23,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [checkoutCanSubmit, setCheckoutCanSubmit] = useState(false);
   const [checkoutSubmitHandler, setCheckoutSubmitHandler] = useState<(() => Promise<boolean>) | null>(null);
-  const { order } = useOrderContext();
+  const { order, resetOrder } = useOrderContext();
   const handleBackStep = useCallback(() => {
     setStep((prev) => {
       if (prev <= 1) {
@@ -101,6 +101,15 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
       setIsSubmitted(true);
     }
   };
+
+  const handleRestart = useCallback(() => {
+    triggerTelegramHaptic('selection');
+    resetOrder();
+    setIsSubmitted(false);
+    setStep(1);
+    setCheckoutCanSubmit(false);
+    setCheckoutSubmitHandler(null);
+  }, [resetOrder]);
 
   useEffect(() => {
     const app = initTelegramWebApp();
@@ -187,9 +196,39 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
             />
           ) : null}
           {step === 6 && isSubmitted ? (
-            <section className="rounded-[2rem] bg-surface p-5 shadow-card">
-              <h2 className="font-display text-3xl text-text-primary">Спасибо!</h2>
-              <p className="mt-2 text-sm text-text-secondary">{baker.name} свяжется с вами в ближайшее время ✨</p>
+            <section className="relative overflow-hidden rounded-[2rem] bg-surface p-5 text-center shadow-card sm:p-6">
+              <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                {Array.from({ length: 18 }).map((_, index) => (
+                  <span
+                    key={`confetti-${index}`}
+                    className="confetti-piece"
+                    style={
+                      {
+                        '--confetti-left': `${4 + ((index * 11) % 92)}%`,
+                        '--confetti-delay': `${(index % 7) * 120}ms`,
+                        '--confetti-duration': `${3000 + (index % 5) * 320}ms`,
+                        '--confetti-rotate': `${index % 2 === 0 ? 1 : -1}turn`,
+                        '--confetti-color': index % 3 === 0 ? '#F8A4B8' : index % 3 === 1 ? '#FF6B81' : '#FCD5CE',
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+              </div>
+
+              <div className="relative z-10">
+                <p className="success-cake-emoji mx-auto mt-3 grid h-24 w-24 place-items-center rounded-full bg-primary-from/12 text-6xl shadow-card">
+                  🎂
+                </p>
+                <h2 className="mt-5 font-display text-4xl text-text-primary">Заказ отправлен!</h2>
+                <p className="mt-3 text-base text-text-secondary">{baker.name} свяжется с вами в ближайшее время</p>
+                <button
+                  type="button"
+                  onClick={handleRestart}
+                  className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full border border-primary-from/40 bg-white/70 px-6 py-2.5 text-sm font-semibold text-text-primary shadow-sm transition duration-200 hover:border-primary-from/60 hover:bg-white active:scale-[0.98]"
+                >
+                  Собрать ещё один торт
+                </button>
+              </div>
             </section>
           ) : null}
         </div>

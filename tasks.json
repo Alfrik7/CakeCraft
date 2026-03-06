@@ -199,7 +199,7 @@
       "title": "Экран 'Спасибо': wow-эффект",
       "category": "screens",
       "priority": "medium",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         102
       ],
