@@ -250,7 +250,7 @@
       "title": "Экран 5 — Декор",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9
       ],

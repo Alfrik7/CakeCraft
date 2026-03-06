@@ -8,6 +8,7 @@ import { StepOccasion } from '../steps/StepOccasion';
 import { StepShape } from '../steps/StepShape';
 import { StepFilling } from '../steps/StepFilling';
 import { StepCoating } from '../steps/StepCoating';
+import { StepDecor } from '../steps/StepDecor';
 
 const TOTAL_STEPS = 6;
 
@@ -93,7 +94,8 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
           {step === 2 ? <StepShape bakerId={baker.id} /> : null}
           {step === 3 ? <StepFilling bakerId={baker.id} /> : null}
           {step === 4 ? <StepCoating bakerId={baker.id} /> : null}
-          {step > 4 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
+          {step === 5 ? <StepDecor bakerId={baker.id} /> : null}
+          {step === 6 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
         </div>
       </div>
 
