@@ -11,8 +11,9 @@ import type {
 
 type NumericLike = number | string;
 
-type BakerRow = Omit<Baker, 'delivery_price'> & {
+type BakerRow = Omit<Baker, 'delivery_price' | 'theme'> & {
   delivery_price: NumericLike;
+  theme?: Baker['theme'] | null;
 };
 
 type MenuItemRow = Omit<MenuItem, 'price'> & {
@@ -38,6 +39,7 @@ function mapBaker(row: BakerRow): Baker {
     ...row,
     delivery_price_type: row.delivery_price_type ?? 'fixed',
     delivery_price: toNumber(row.delivery_price),
+    theme: row.theme ?? 'pink',
   };
 }
 
@@ -79,6 +81,7 @@ export interface BakerProfilePatch {
   delivery_enabled: boolean;
   delivery_price_type: Baker['delivery_price_type'];
   delivery_price: number;
+  theme: Baker['theme'];
   pickup_address: string | null;
   working_hours: Baker['working_hours'];
 }

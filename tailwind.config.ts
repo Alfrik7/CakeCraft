@@ -6,16 +6,16 @@ export default {
     extend: {
       colors: {
         primary: {
-          from: '#F8A4B8',
-          to: '#E8677C'
+          from: 'rgb(var(--color-primary-from-rgb) / <alpha-value>)',
+          to: 'rgb(var(--color-primary-to-rgb) / <alpha-value>)'
         },
-        secondary: '#FFF5F0',
-        background: '#FFF0F3',
-        surface: '#FFFAFA',
-        accent: '#FF6B81',
+        secondary: 'rgb(var(--color-background-from-rgb) / <alpha-value>)',
+        background: 'rgb(var(--color-background-from-rgb) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent-rgb) / <alpha-value>)',
         text: {
-          primary: '#3D2C2C',
-          secondary: '#9B8A8A'
+          primary: 'rgb(var(--color-text-primary-rgb) / <alpha-value>)',
+          secondary: 'rgb(var(--color-text-secondary-rgb) / <alpha-value>)'
         }
       },
       fontFamily: {
@@ -23,9 +23,9 @@ export default {
         display: ['Playfair Display', 'serif']
       },
       boxShadow: {
-        card: '0 8px 32px rgba(232, 103, 124, 0.1)',
-        'card-hover': '0 12px 40px rgba(232, 103, 124, 0.18)',
-        float: '0 20px 60px rgba(0, 0, 0, 0.08)'
+        card: '0 8px 32px rgba(var(--color-primary-to-rgb), 0.14)',
+        'card-hover': '0 12px 40px rgba(var(--color-primary-to-rgb), 0.2)',
+        float: '0 20px 60px rgba(var(--color-text-primary-rgb), 0.16)'
       },
       borderRadius: {
         card: '1rem'

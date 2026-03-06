@@ -132,7 +132,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
         ) : (
           <div className="content-fade-in">
             {useFallback || loadError ? (
-              <div className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+              <div className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
                 {useFallback
                   ? 'Формы из каталога не найдены. Показываем базовые варианты.'
                   : 'Не удалось загрузить формы из каталога.'}

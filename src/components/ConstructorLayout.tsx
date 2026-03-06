@@ -10,6 +10,7 @@ import { StepCoating } from '../steps/StepCoating';
 import { StepDecor } from '../steps/StepDecor';
 import { StepCheckout } from '../steps/StepCheckout';
 import { applyTelegramTheme, getTelegramWebApp, initTelegramWebApp, triggerTelegramHaptic } from '../lib/telegram';
+import { applyBakerTheme } from '../lib/theme';
 
 const TOTAL_STEPS = 6;
 
@@ -115,6 +116,14 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   }, [resetOrder]);
 
   useEffect(() => {
+    applyBakerTheme(baker.theme);
+
+    return () => {
+      applyBakerTheme('pink');
+    };
+  }, [baker.theme]);
+
+  useEffect(() => {
     const app = initTelegramWebApp();
 
     if (!app) {
@@ -215,7 +224,12 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
                         '--confetti-delay': `${(index % 7) * 120}ms`,
                         '--confetti-duration': `${3000 + (index % 5) * 320}ms`,
                         '--confetti-rotate': `${index % 2 === 0 ? 1 : -1}turn`,
-                        '--confetti-color': index % 3 === 0 ? '#F8A4B8' : index % 3 === 1 ? '#FF6B81' : '#FCD5CE',
+                        '--confetti-color':
+                          index % 3 === 0
+                            ? 'var(--color-primary-from)'
+                            : index % 3 === 1
+                              ? 'var(--color-accent)'
+                              : 'var(--color-background-from)',
                       } as CSSProperties
                     }
                   />

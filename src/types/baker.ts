@@ -8,6 +8,7 @@ export type WorkingHours = Record<
 >;
 
 export type DeliveryPriceType = 'fixed' | 'custom';
+export type BakerTheme = 'pink' | 'chocolate' | 'minimal' | 'lavender' | 'mint';
 
 export interface Baker {
   id: string;
@@ -21,6 +22,7 @@ export interface Baker {
   delivery_enabled: boolean;
   delivery_price_type: DeliveryPriceType;
   delivery_price: number;
+  theme: BakerTheme;
   pickup_address: string | null;
   working_hours: WorkingHours | null;
   created_at: string;

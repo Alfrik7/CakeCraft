@@ -7,31 +7,26 @@ const OCCASION_OPTIONS = [
     value: 'birthday',
     label: 'День рождения',
     icon: '🎂',
-    gradientClass: 'from-rose-200 via-pink-100 to-orange-100',
   },
   {
     value: 'wedding',
     label: 'Свадьба',
     icon: '💒',
-    gradientClass: 'from-fuchsia-200 via-rose-100 to-pink-100',
   },
   {
     value: 'kids_party',
     label: 'Детский праздник',
     icon: '🎈',
-    gradientClass: 'from-sky-200 via-cyan-100 to-blue-100',
   },
   {
     value: 'corporate',
     label: 'Корпоратив',
     icon: '🏢',
-    gradientClass: 'from-amber-200 via-orange-100 to-rose-100',
   },
   {
     value: 'other',
     label: 'Без повода',
     icon: '🎁',
-    gradientClass: 'from-violet-200 via-purple-100 to-pink-100',
   },
 ] as const;
 
@@ -71,10 +66,13 @@ export function StepOccasion() {
             >
               <span
                 className={[
-                  'absolute inset-0 bg-gradient-to-br opacity-85 transition-opacity duration-300',
-                  option.gradientClass,
+                  'absolute inset-0 opacity-85 transition-opacity duration-300',
                   isSelected ? 'opacity-100' : 'group-hover:opacity-95',
                 ].join(' ')}
+                style={{
+                  backgroundImage:
+                    'linear-gradient(145deg, rgba(var(--color-primary-from-rgb), 0.56) 0%, rgba(var(--color-accent-rgb), 0.35) 58%, rgba(var(--color-background-from-rgb), 0.9) 100%)',
+                }}
                 aria-hidden="true"
               />
               <span

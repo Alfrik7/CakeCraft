@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
+import { BAKER_THEMES } from '../../lib/theme';
 import { getBakerById, updateBakerProfile, uploadBakerLogo } from '../../lib/api';
 import type { Baker, WorkingHours } from '../../types';
 
@@ -21,6 +22,7 @@ interface ProfileFormState {
   deliveryEnabled: boolean;
   deliveryPriceType: Baker['delivery_price_type'];
   deliveryPrice: string;
+  theme: Baker['theme'];
   pickupAddress: string;
   workingHours: WorkingHours;
   logoFile: File | null;
@@ -46,6 +48,7 @@ function getInitialFormState(baker: Baker): ProfileFormState {
     deliveryEnabled: baker.delivery_enabled,
     deliveryPriceType: baker.delivery_price_type ?? 'fixed',
     deliveryPrice: String(baker.delivery_price),
+    theme: baker.theme ?? 'pink',
     pickupAddress: baker.pickup_address ?? '',
     workingHours: baker.working_hours ?? getDefaultWorkingHours(),
     logoFile: null,
@@ -185,6 +188,7 @@ export function AdminProfilePage() {
         delivery_enabled: form.deliveryEnabled,
         delivery_price_type: form.deliveryPriceType,
         delivery_price: deliveryPrice,
+        theme: form.theme,
         pickup_address: trimmedPickupAddress || null,
         working_hours: form.workingHours,
       });
@@ -315,6 +319,50 @@ export function AdminProfilePage() {
                 className="h-11 w-full rounded-xl border border-gray-200 px-3 text-sm"
               />
             </label>
+
+            <div className="block text-sm sm:col-span-2">
+              <span className="mb-2 block font-medium text-gray-700">Тема конструктора</span>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {BAKER_THEMES.map((themePreset) => {
+                  const isSelected = form.theme === themePreset.id;
+
+                  return (
+                    <button
+                      key={themePreset.id}
+                      type="button"
+                      onClick={() =>
+                        setForm((prev) => (prev ? { ...prev, theme: themePreset.id } : prev))
+                      }
+                      className={[
+                        'flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition',
+                        isSelected ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white hover:bg-gray-50',
+                      ].join(' ')}
+                      aria-pressed={isSelected}
+                    >
+                      <span
+                        className="h-10 w-10 shrink-0 rounded-lg border border-white/60 shadow-sm"
+                        style={{
+                          backgroundImage: `linear-gradient(135deg, ${themePreset.colors.primaryFrom} 0%, ${themePreset.colors.primaryTo} 100%)`,
+                        }}
+                        aria-hidden="true"
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-gray-800">{themePreset.label}</span>
+                        <span className="mt-1 block h-2.5 w-20 rounded-full border border-gray-200/80 bg-gray-100">
+                          <span
+                            className="block h-full rounded-full"
+                            style={{
+                              width: '70%',
+                              backgroundImage: `linear-gradient(90deg, ${themePreset.colors.primaryFrom} 0%, ${themePreset.colors.primaryTo} 100%)`,
+                            }}
+                          />
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 

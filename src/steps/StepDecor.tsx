@@ -179,7 +179,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
         {!loading ? (
           <div className="content-fade-in">
             {loadError ? (
-              <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+              <p className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
                 Не удалось загрузить декор из каталога.
               </p>
             ) : null}
@@ -231,7 +231,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
                     triggerTelegramHaptic('selection');
                     removeDecorItem(item.id);
                   }}
-                  className="tap-scale tap-target grid place-items-center rounded-full bg-white/85 text-[11px] leading-none text-rose-700 transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  className="tap-scale tap-target grid place-items-center rounded-full bg-white/85 text-[11px] leading-none text-primary-to transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                   aria-label={`Удалить ${item.name}`}
                 >
                   ✕
@@ -259,8 +259,8 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
         <p className="text-sm font-medium text-text-primary">Референс-фото</p>
         <label
           className={[
-            'mt-2 flex min-h-[150px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-rose-300 bg-rose-50/50 px-4 py-6 text-center transition duration-300',
-            uploadingPhoto ? 'cursor-wait opacity-80' : 'hover:border-primary-to hover:bg-rose-50',
+            'mt-2 flex min-h-[150px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary-from/40 bg-primary-from/10 px-4 py-6 text-center transition duration-300',
+            uploadingPhoto ? 'cursor-wait opacity-80' : 'hover:border-primary-to hover:bg-primary-from/15',
           ].join(' ')}
         >
           <span className="sr-only">Загрузить фото</span>
@@ -272,7 +272,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
             className="sr-only"
           />
           <span
-            className="grid h-11 w-11 place-items-center rounded-full bg-white text-xl text-rose-500 shadow-card"
+            className="grid h-11 w-11 place-items-center rounded-full bg-white text-xl text-primary-to shadow-card"
             aria-hidden="true"
           >
             📷
@@ -281,7 +281,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
           <span className="mt-1 text-xs text-text-secondary">JPG, PNG или WEBP до 5 MB</span>
         </label>
         {uploadingPhoto ? <p className="mt-2 text-sm text-text-secondary">Загружаем фото...</p> : null}
-        {uploadError ? <p className="mt-2 text-sm text-rose-700">{uploadError}</p> : null}
+        {uploadError ? <p className="mt-2 text-sm text-[var(--color-danger)]">{uploadError}</p> : null}
 
         {order.reference_photo_url ? (
           <div className="mt-3 overflow-hidden rounded-2xl bg-white shadow-card">
@@ -296,7 +296,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
                 href={order.reference_photo_url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-medium text-rose-700 underline-offset-2 hover:underline"
+                className="text-xs font-medium text-primary-to underline-offset-2 hover:underline"
               >
                 Открыть в новой вкладке
               </a>
@@ -306,7 +306,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
                   triggerTelegramHaptic('selection');
                   removeReferencePhoto();
                 }}
-                className="tap-scale min-h-[44px] rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                className="tap-scale min-h-[44px] rounded-full bg-primary-from/20 px-3 text-xs font-semibold text-primary-to transition hover:bg-primary-from/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35"
               >
                 Удалить фото
               </button>

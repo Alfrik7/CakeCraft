@@ -82,7 +82,7 @@ export function StepCoating({ bakerId, onBack }: StepCoatingProps) {
         {!loading ? (
           <div className="content-fade-in">
             {loadError ? (
-              <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+              <p className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
                 Не удалось загрузить покрытия из каталога.
               </p>
             ) : null}

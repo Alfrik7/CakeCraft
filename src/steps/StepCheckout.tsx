@@ -248,7 +248,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
             placeholder="Например: Анна"
             className={fieldBaseClass}
           />
-          {fieldErrors.client_name ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.client_name}</p> : null}
+          {fieldErrors.client_name ? (
+            <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.client_name}</p>
+          ) : null}
         </label>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_170px]">
@@ -261,7 +263,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
               placeholder="@username / +7..."
               className={fieldBaseClass}
             />
-            {fieldErrors.client_contact ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.client_contact}</p> : null}
+            {fieldErrors.client_contact ? (
+              <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.client_contact}</p>
+            ) : null}
           </label>
 
           <label className={labelClass}>
@@ -294,7 +298,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base text-primary-to">📅</span>
             </div>
             <p className="mt-1 text-xs text-text-secondary">Минимальная дата заказа: {minOrderDate}</p>
-            {fieldErrors.order_date ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.order_date}</p> : null}
+            {fieldErrors.order_date ? (
+              <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.order_date}</p>
+            ) : null}
           </label>
 
           <label className={labelClass}>
@@ -315,7 +321,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
         {!loadingBlockedDates ? (
           <div className="content-fade-in">
             {blockedDatesError ? (
-              <p className="text-xs text-rose-700">Не удалось загрузить заблокированные даты, проверьте дату вручную.</p>
+              <p className="text-xs text-[var(--color-danger)]">
+                Не удалось загрузить заблокированные даты, проверьте дату вручную.
+              </p>
             ) : null}
             {blockedDateSet.size > 0 ? (
               <p className="text-xs text-text-secondary">
@@ -376,7 +384,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                 placeholder="Город, улица, дом, подъезд"
                 className={fieldBaseClass}
               />
-              {fieldErrors.address ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.address}</p> : null}
+              {fieldErrors.address ? (
+                <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.address}</p>
+              ) : null}
             </label>
           ) : null}
 
@@ -434,7 +444,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
         </div>
       </div>
 
-      {submitError ? <p className="mt-4 text-sm text-rose-700">{submitError}</p> : null}
+      {submitError ? <p className="mt-4 text-sm text-[var(--color-danger)]">{submitError}</p> : null}
     </section>
   );
 }

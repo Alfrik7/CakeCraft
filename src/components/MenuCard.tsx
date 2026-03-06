@@ -81,13 +81,13 @@ export function MenuCard({
       aria-label={`${actionLabel}: ${item.name}`}
       className={[
         'tap-scale group relative overflow-hidden rounded-2xl bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35 focus-visible:ring-offset-2',
         selected
-          ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-[#E8677C] shadow-card-hover'
+          ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-primary-to shadow-card-hover'
           : 'hover:-translate-y-0.5 hover:shadow-card-hover',
       ].join(' ')}
     >
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-rose-50">
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-primary-from/10">
         {!item.photo_url ? (
           <div className="grid h-full w-full place-items-center text-xs font-semibold text-text-secondary">Фото недоступно</div>
         ) : (
@@ -113,7 +113,7 @@ export function MenuCard({
             {visibleTags.map((tag) => (
               <span
                 key={`${item.id}-${tag}`}
-                className="rounded-full bg-[linear-gradient(135deg,#F8A4B8_0%,#E8677C_100%)] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
+                className="rounded-full bg-[var(--gradient-primary)] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
               >
                 {tag}
               </span>
@@ -149,7 +149,7 @@ export function MenuCard({
           </div>
         ) : null}
 
-        <p className="mt-auto pt-3 text-right font-display text-xl text-[#E8677C]">{formatItemPrice(item, servings, priceMode)}</p>
+        <p className="mt-auto pt-3 text-right font-display text-xl text-primary-to">{formatItemPrice(item, servings, priceMode)}</p>
       </div>
     </button>
   );

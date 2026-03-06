@@ -11,7 +11,7 @@ export function StepHeader({ title, subtitle, onBack }: StepHeaderProps) {
         <button
           type="button"
           onClick={onBack}
-          className="tap-scale mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-transparent text-text-primary transition duration-200 hover:bg-rose-100/70 active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35"
+          className="tap-scale mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-transparent text-text-primary transition duration-200 hover:bg-primary-from/20 active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35"
           aria-label="Назад"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden="true">

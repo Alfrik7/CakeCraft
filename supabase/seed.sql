@@ -13,6 +13,7 @@ with upsert_baker as (
     delivery_enabled,
     delivery_price_type,
     delivery_price,
+    theme,
     pickup_address,
     working_hours
   )
@@ -27,6 +28,7 @@ with upsert_baker as (
     true,
     'fixed',
     500,
+    'pink',
     'Москва, ул. Пекарская, 12, подъезд 2',
     '{
       "monday": {"from": "10:00", "to": "19:00"},
@@ -49,6 +51,7 @@ with upsert_baker as (
     delivery_enabled = excluded.delivery_enabled,
     delivery_price_type = excluded.delivery_price_type,
     delivery_price = excluded.delivery_price,
+    theme = excluded.theme,
     pickup_address = excluded.pickup_address,
     working_hours = excluded.working_hours,
     updated_at = now()
