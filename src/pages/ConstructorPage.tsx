@@ -60,12 +60,16 @@ export function ConstructorPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-rose-50/50 px-4 pt-6">
-        <div className="mx-auto max-w-xl rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-          <div className="h-4 w-1/3 animate-pulse rounded bg-rose-100" aria-hidden="true" />
-          <div className="mt-3 h-6 w-5/6 animate-pulse rounded bg-rose-100" aria-hidden="true" />
-          <div className="mt-5 h-2 w-full animate-pulse rounded bg-rose-100" aria-hidden="true" />
-          <p className="mt-5 text-sm text-gray-500">Загружаем данные кондитера...</p>
+      <main className="relative min-h-screen overflow-x-clip bg-[var(--gradient-primary-soft)] px-3 pt-4 sm:px-4 sm:pt-6">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <span className="absolute -left-16 top-10 h-48 w-48 rounded-full bg-primary-from/10 blur-3xl" />
+          <span className="absolute -right-12 top-56 h-56 w-56 rounded-full bg-primary-to/10 blur-3xl" />
+        </div>
+        <div className="relative mx-auto max-w-[480px] rounded-[2rem] bg-surface/90 p-5 shadow-card backdrop-blur-sm">
+          <div className="h-4 w-1/3 animate-pulse rounded-full bg-primary-from/20" aria-hidden="true" />
+          <div className="mt-3 h-6 w-5/6 animate-pulse rounded-full bg-primary-from/20" aria-hidden="true" />
+          <div className="mt-5 h-2 w-full animate-pulse rounded-full bg-primary-from/20" aria-hidden="true" />
+          <p className="mt-5 text-sm text-text-secondary">Загружаем данные кондитера...</p>
         </div>
       </main>
     );

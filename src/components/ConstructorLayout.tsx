@@ -40,6 +40,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   };
 
   const isLastStep = step === TOTAL_STEPS;
+  const bakerInitial = baker.name.trim().charAt(0).toUpperCase() || 'C';
   const canProceed = useMemo(() => {
     if (isSubmitting || isSubmitted) {
       return false;
@@ -135,11 +136,37 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   }, [handleBackStep, isSubmitted, step]);
 
   return (
-    <main className="min-h-screen bg-rose-50/50 pb-[calc(116px+env(safe-area-inset-bottom))]">
-      <div className="mx-auto flex max-w-xl flex-col gap-4 px-3 pt-4 sm:px-4 sm:pt-6">
-        <header className="rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">{baker.name}</p>
-          <h1 className="mt-1 text-lg font-semibold text-gray-900">{baker.welcome_message}</h1>
+    <main className="relative min-h-screen overflow-x-clip bg-[var(--gradient-primary-soft)] pb-[calc(116px+env(safe-area-inset-bottom))]">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <span className="absolute -left-16 top-10 h-48 w-48 rounded-full bg-primary-from/10 blur-3xl" />
+        <span className="absolute -right-12 top-56 h-56 w-56 rounded-full bg-primary-to/10 blur-3xl" />
+        <span className="absolute bottom-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto flex w-full max-w-[480px] flex-col gap-4 px-3 pt-4 sm:px-4 sm:pt-6">
+        <header className="rounded-[2rem] bg-surface/90 p-4 shadow-card backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            {baker.logo_url ? (
+              <img
+                src={baker.logo_url}
+                alt={`Логотип ${baker.name}`}
+                className="h-14 w-14 rounded-full object-cover shadow-card"
+                loading="lazy"
+              />
+            ) : (
+              <div
+                className="grid h-14 w-14 place-items-center rounded-full font-display text-xl text-white shadow-card"
+                style={{ backgroundImage: 'var(--gradient-primary)' }}
+              >
+                {bakerInitial}
+              </div>
+            )}
+            <div>
+              <p className="font-display text-2xl leading-tight text-text-primary">{baker.name}</p>
+              <p className="text-sm text-text-secondary">Кондитерская студия</p>
+            </div>
+          </div>
+          <h1 className="mt-3 text-base font-medium text-text-primary">{baker.welcome_message}</h1>
           <div className="mt-4">
             <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
           </div>
@@ -159,9 +186,9 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
             />
           ) : null}
           {step === 6 && isSubmitted ? (
-            <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-900">Спасибо!</h2>
-              <p className="mt-2 text-sm text-gray-600">{baker.name} свяжется с вами в ближайшее время ✨</p>
+            <section className="rounded-[2rem] bg-surface p-5 shadow-card">
+              <h2 className="font-display text-3xl text-text-primary">Спасибо!</h2>
+              <p className="mt-2 text-sm text-text-secondary">{baker.name} свяжется с вами в ближайшее время ✨</p>
             </section>
           ) : null}
         </div>
