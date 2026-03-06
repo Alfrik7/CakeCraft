@@ -98,7 +98,7 @@
       "title": "Схема базы данных — таблица blocked_dates",
       "category": "database",
       "priority": "medium",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         3
       ],
