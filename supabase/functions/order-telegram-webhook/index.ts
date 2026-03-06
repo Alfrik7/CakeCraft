@@ -63,6 +63,7 @@ interface TelegramCallbackPayload {
 const TELEGRAM_BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
 const ORDER_WEBHOOK_SECRET = Deno.env.get('ORDER_WEBHOOK_SECRET');
 const TELEGRAM_WEBHOOK_SECRET = Deno.env.get('TELEGRAM_WEBHOOK_SECRET');
+const OWNER_TELEGRAM_ID = Deno.env.get('OWNER_TELEGRAM_ID');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
@@ -265,16 +266,22 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
   const text = await buildOrderMessage(order);
   const callbackPrefix = `ord:${order.id}:`;
 
+  const targetChatId = baker.telegram_id ?? OWNER_TELEGRAM_ID;
+
+  if (!targetChatId) {
+    return new Response('No telegram chat_id configured for baker', { status: 500 });
+  }
+
   await callTelegram('sendMessage', {
-    chat_id: baker.telegram_id,
+    chat_id: targetChatId,
     parse_mode: 'HTML',
     disable_web_page_preview: true,
     text,
     reply_markup: {
       inline_keyboard: [
         [
-          { text: 'Подтвердить', callback_data: `${callbackPrefix}confirmed` },
-          { text: 'Отклонить', callback_data: `${callbackPrefix}cancelled` },
+          { text: 'Confirm', callback_data: `${callbackPrefix}confirmed` },
+          { text: 'Decline', callback_data: `${callbackPrefix}cancelled` },
         ],
       ],
     },
@@ -329,6 +336,60 @@ async function handleTelegramCallback(payload: TelegramCallbackPayload): Promise
   }
 
   const { orderId, status } = parsed;
+  const callbackUserId = query.from?.id;
+
+  if (typeof callbackUserId !== 'number') {
+    await callTelegram('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: 'Unknown callback user',
+      show_alert: true,
+    });
+
+    return new Response(JSON.stringify({ ok: false }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const { data: orderForCheck, error: orderCheckError } = await supabase
+    .from('orders')
+    .select('id, baker_id')
+    .eq('id', orderId)
+    .maybeSingle<{ id: string; baker_id: string }>();
+
+  if (orderCheckError || !orderForCheck) {
+    await callTelegram('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: 'Order not found',
+      show_alert: true,
+    });
+
+    return new Response(JSON.stringify({ ok: false }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const { data: bakerForCheck, error: bakerCheckError } = await supabase
+    .from('bakers')
+    .select('telegram_id')
+    .eq('id', orderForCheck.baker_id)
+    .maybeSingle<{ telegram_id: string | number }>();
+
+  const allowedTelegramId = Number(bakerForCheck?.telegram_id ?? OWNER_TELEGRAM_ID);
+
+  if (bakerCheckError || !Number.isFinite(allowedTelegramId) || callbackUserId !== allowedTelegramId) {
+    await callTelegram('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: 'You are not allowed to update this order',
+      show_alert: true,
+    });
+
+    return new Response(JSON.stringify({ ok: false }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   const { data: updatedOrder, error: updateError } = await supabase
     .from('orders')

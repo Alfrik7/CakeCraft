@@ -15,7 +15,7 @@ with upsert_baker as (
     working_hours
   )
   values (
-    79990001122,
+    612190238,
     'Демо Кондитерская CakeCraft',
     'demo-baker',
     'https://picsum.photos/seed/cakecraft-logo/400/400',
