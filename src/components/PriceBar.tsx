@@ -1,0 +1,31 @@
+interface PriceBarProps {
+  totalPrice: number;
+  isLastStep: boolean;
+  canProceed: boolean;
+  onNext: () => void;
+}
+
+function formatPrice(value: number): string {
+  return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
+}
+
+export function PriceBar({ totalPrice, isLastStep, canProceed, onNext }: PriceBarProps) {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-100 bg-white/95 px-4 py-3 backdrop-blur">
+      <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
+        <div>
+          <p className="text-xs text-gray-500">Текущая стоимость</p>
+          <p className="text-lg font-semibold text-gray-900">{formatPrice(totalPrice)}</p>
+        </div>
+        <button
+          className="min-h-[44px] rounded-xl bg-rose-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-200"
+          onClick={onNext}
+          disabled={!canProceed}
+          type="button"
+        >
+          {isLastStep ? 'Отправить' : 'Далее'}
+        </button>
+      </div>
+    </div>
+  );
+}

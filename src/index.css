@@ -8,3 +8,22 @@ body {
   background-color: #fffaf5;
   color: #1f2937;
 }
+
+#root {
+  min-height: 100vh;
+}
+
+@keyframes step-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-enter {
+  animation: step-enter 220ms ease-out;
+}
