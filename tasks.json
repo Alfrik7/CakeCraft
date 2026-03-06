@@ -132,7 +132,7 @@
       "title": "TypeScript типы и хелперы",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         3,
         4,
