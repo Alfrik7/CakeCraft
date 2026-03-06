@@ -69,6 +69,17 @@ export interface MenuItemPayload {
 
 type MenuItemPatch = Partial<Omit<MenuItemPayload, 'baker_id' | 'category'>>;
 
+export interface BakerProfilePatch {
+  name: string;
+  logo_url?: string | null;
+  email: string | null;
+  welcome_message: string;
+  min_order_days: number;
+  delivery_enabled: boolean;
+  delivery_price: number;
+  working_hours: Baker['working_hours'];
+}
+
 export async function getBaker(slug: string): Promise<Baker | null> {
   const { data, error } = await supabase
     .from('bakers')
@@ -82,6 +93,54 @@ export async function getBaker(slug: string): Promise<Baker | null> {
   }
 
   return data ? mapBaker(data) : null;
+}
+
+export async function getBakerById(bakerId: string): Promise<Baker | null> {
+  const { data, error } = await supabase
+    .from('bakers')
+    .select('*')
+    .eq('id', bakerId)
+    .limit(1)
+    .maybeSingle<BakerRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data ? mapBaker(data) : null;
+}
+
+export async function updateBakerProfile(bakerId: string, patch: BakerProfilePatch): Promise<Baker> {
+  const { data, error } = await supabase
+    .from('bakers')
+    .update(patch)
+    .eq('id', bakerId)
+    .select('*')
+    .single<BakerRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return mapBaker(data);
+}
+
+export async function uploadBakerLogo(bakerId: string, file: File): Promise<string> {
+  const fileExt = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : '';
+  const safeExt = fileExt && /^[a-z0-9]+$/.test(fileExt) ? fileExt : 'jpg';
+  const filePath = `gallery/${bakerId}/logo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
+
+  const { error } = await supabase.storage.from('photos').upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: true,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  const { data } = supabase.storage.from('photos').getPublicUrl(filePath);
+  return data.publicUrl;
 }
 
 export async function getMenuItems(bakerId: string, category: MenuCategory): Promise<MenuItem[]> {

@@ -394,7 +394,7 @@
       "title": "Админка — Профиль кондитера",
       "category": "admin",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         18
       ],

@@ -14,6 +14,7 @@ interface AuthContextValue {
   session: AdminSession | null;
   isLoading: boolean;
   loginBySlug: (slug: string) => Promise<boolean>;
+  updateSessionProfile: (profile: { bakerName: string; bakerLogoUrl: string | null }) => void;
   logout: () => void;
 }
 
@@ -80,11 +81,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
   };
 
+  const updateSessionProfile = (profile: { bakerName: string; bakerLogoUrl: string | null }) => {
+    setSession((prev) => {
+      if (!prev) {
+        return prev;
+      }
+
+      const next: AdminSession = {
+        ...prev,
+        bakerName: profile.bakerName,
+        bakerLogoUrl: profile.bakerLogoUrl,
+      };
+
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
   const value = useMemo(
     () => ({
       session,
       isLoading,
       loginBySlug,
+      updateSessionProfile,
       logout,
     }),
     [session, isLoading],
