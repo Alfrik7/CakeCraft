@@ -174,7 +174,7 @@
       "title": "Экран 1 — Повод",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9
       ],
