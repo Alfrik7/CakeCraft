@@ -35,13 +35,21 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                   <span
                     className={[
                       'mt-[2px] inline-flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all duration-300 ease-out',
-                      isActive ? 'progress-step-active border-transparent shadow-card-hover' : '',
-                      isCompleted ? 'scale-90 border-primary-to bg-primary-to' : '',
+                      isActive ? 'progress-step-active border-primary-to/30 bg-primary-from/15' : '',
+                      isCompleted ? 'border-primary-to bg-primary-to' : '',
                       !isActive && !isCompleted ? 'border-primary-from/60 bg-surface/90' : '',
                     ].join(' ')}
-                    style={isActive ? { backgroundImage: 'var(--gradient-primary)' } : undefined}
+                    style={isCompleted ? { backgroundImage: 'var(--gradient-primary)' } : undefined}
                     aria-current={isActive ? 'step' : undefined}
-                  />
+                  >
+                    {isActive ? (
+                      <span
+                        className="block h-2.5 w-2.5 rounded-full shadow-card-hover"
+                        style={{ backgroundImage: 'var(--gradient-primary)' }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                  </span>
                   <span
                     className={[
                       'text-[11px] leading-tight',
