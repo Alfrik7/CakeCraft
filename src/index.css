@@ -55,19 +55,92 @@ body {
   animation: content-fade-in 300ms ease-out;
 }
 
-@keyframes step-enter {
+@keyframes step-slide-in-forward {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(26px, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-.step-enter {
-  animation: step-enter 220ms ease-out;
+@keyframes step-slide-in-backward {
+  from {
+    opacity: 0;
+    transform: translate3d(-26px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.step-transition-forward {
+  animation: step-slide-in-forward 300ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.step-transition-backward {
+  animation: step-slide-in-backward 300ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes staggered-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.stagger-item {
+  animation: staggered-fade-in 320ms ease-out both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+@keyframes card-select-spring {
+  0% {
+    transform: scale(1);
+  }
+  55% {
+    transform: scale(1.05);
+  }
+  75% {
+    transform: scale(0.99);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}
+
+.menu-card-selected-spring {
+  animation: card-select-spring 340ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+.tap-scale {
+  transition: transform 180ms ease-out;
+}
+
+.tap-scale:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-transition-forward,
+  .step-transition-backward,
+  .stagger-item,
+  .menu-card-selected-spring,
+  .tap-scale {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .tap-scale:active {
+    transform: none;
+  }
 }
 
 @keyframes progress-step-pulse {

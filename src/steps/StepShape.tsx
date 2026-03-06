@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
@@ -137,25 +137,35 @@ export function StepShape({ bakerId }: StepShapeProps) {
 
             <div className="grid grid-cols-2 gap-3">
               {useFallback
-                ? fallbackShapeItems.map((item) => (
-                    <MenuCard
+                ? fallbackShapeItems.map((item, index) => (
+                    <div
                       key={item.id}
-                      item={item}
-                      selected={order.shape === item.name}
-                      onSelect={() => updateOrder({ shape: item.name })}
-                      mode="single"
-                      servings={order.servings}
-                    />
+                      className="stagger-item"
+                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                    >
+                      <MenuCard
+                        item={item}
+                        selected={order.shape === item.name}
+                        onSelect={() => updateOrder({ shape: item.name })}
+                        mode="single"
+                        servings={order.servings}
+                      />
+                    </div>
                   ))
-                : shapeItems.map((item) => (
-                    <MenuCard
+                : shapeItems.map((item, index) => (
+                    <div
                       key={item.id}
-                      item={item}
-                      selected={order.shape === item.name}
-                      onSelect={() => updateOrder({ shape: item.name })}
-                      mode="single"
-                      servings={order.servings}
-                    />
+                      className="stagger-item"
+                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                    >
+                      <MenuCard
+                        item={item}
+                        selected={order.shape === item.name}
+                        onSelect={() => updateOrder({ shape: item.name })}
+                        mode="single"
+                        servings={order.servings}
+                      />
+                    </div>
                   ))}
             </div>
           </div>
@@ -178,7 +188,7 @@ export function StepShape({ bakerId }: StepShapeProps) {
                     updateOrder({ servings });
                   }}
                   className={[
-                    'min-h-[44px] min-w-[58px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
+                    'tap-scale min-h-[44px] min-w-[58px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
                     isSelected
                       ? 'bg-[var(--gradient-primary)] text-white shadow-card'
                       : 'border border-rose-200 bg-white text-text-secondary hover:border-primary-from hover:text-text-primary',

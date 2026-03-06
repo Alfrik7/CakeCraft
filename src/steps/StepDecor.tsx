@@ -1,4 +1,4 @@
-import { type ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { type CSSProperties, type ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
@@ -185,18 +185,23 @@ export function StepDecor({ bakerId }: StepDecorProps) {
 
             {decorItems.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
-                {decorItems.map((item) => {
+                {decorItems.map((item, index) => {
                   const isSelected = order.decor_items.includes(item.id);
 
                   return (
-                    <MenuCard
+                    <div
                       key={item.id}
-                      item={item}
-                      selected={isSelected}
-                      onSelect={() => toggleDecorItem(item)}
-                      mode="multi"
-                      servings={order.servings}
-                    />
+                      className="stagger-item"
+                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                    >
+                      <MenuCard
+                        item={item}
+                        selected={isSelected}
+                        onSelect={() => toggleDecorItem(item)}
+                        mode="multi"
+                        servings={order.servings}
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -221,7 +226,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
                     triggerTelegramHaptic('selection');
                     removeDecorItem(item.id);
                   }}
-                  className="grid h-5 w-5 place-items-center rounded-full bg-white/85 text-[11px] leading-none text-rose-700 transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  className="tap-scale grid h-5 w-5 place-items-center rounded-full bg-white/85 text-[11px] leading-none text-rose-700 transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                   aria-label={`Удалить ${item.name}`}
                 >
                   ✕
@@ -296,7 +301,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
                   triggerTelegramHaptic('selection');
                   removeReferencePhoto();
                 }}
-                className="min-h-[32px] rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                className="tap-scale min-h-[32px] rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
               >
                 Удалить фото
               </button>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
@@ -118,18 +118,23 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
 
             {coatingItems.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
-                {coatingItems.map((item) => {
+                {coatingItems.map((item, index) => {
                   const isSelected = selectedCoating?.id === item.id;
 
                   return (
-                    <MenuCard
+                    <div
                       key={item.id}
-                      item={item}
-                      selected={isSelected}
-                      onSelect={() => handleSelectCoating(item)}
-                      mode="single"
-                      servings={order.servings}
-                    />
+                      className="stagger-item"
+                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                    >
+                      <MenuCard
+                        item={item}
+                        selected={isSelected}
+                        onSelect={() => handleSelectCoating(item)}
+                        mode="single"
+                        servings={order.servings}
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -154,7 +159,7 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
                   triggerTelegramHaptic('selection');
                   handleSelectPresetColor(color);
                 }}
-                className="group flex flex-col items-center gap-1 text-xs font-medium text-text-secondary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2"
+                className="tap-scale group flex flex-col items-center gap-1 text-xs font-medium text-text-secondary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2"
                 aria-pressed={isSelected}
                 aria-label={`Выбрать цвет: ${color.label}`}
               >
@@ -179,7 +184,7 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
               handleSelectCustomColor();
             }}
             className={[
-              'flex min-h-[44px] items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-semibold transition duration-300',
+              'tap-scale flex min-h-[44px] items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-semibold transition duration-300',
               isCustomColor
                 ? 'scale-105 border-primary-to text-primary-to ring-2 ring-primary-to/30'
                 : 'border-rose-200 text-text-secondary hover:border-primary-from hover:text-text-primary',

@@ -46,9 +46,11 @@ export function MenuCard({ item, selected, onSelect, mode, servings = null }: Me
       aria-pressed={selected}
       aria-label={`${actionLabel}: ${item.name}`}
       className={[
-        'group relative overflow-hidden rounded-2xl bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
+        'tap-scale group relative overflow-hidden rounded-2xl bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2',
-        selected ? 'scale-[1.02] ring-2 ring-[#E8677C] shadow-card-hover' : 'hover:-translate-y-0.5 hover:shadow-card-hover',
+        selected
+          ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-[#E8677C] shadow-card-hover'
+          : 'hover:-translate-y-0.5 hover:shadow-card-hover',
       ].join(' ')}
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-rose-50">

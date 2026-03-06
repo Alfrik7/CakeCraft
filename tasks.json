@@ -236,7 +236,7 @@
       "title": "Микроанимации и transitions",
       "category": "polish",
       "priority": "medium",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         105,
         106,

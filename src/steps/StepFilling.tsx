@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { useOrderContext } from '../context/OrderContext';
@@ -92,18 +92,23 @@ export function StepFilling({ bakerId }: StepFillingProps) {
 
             {fillingItems.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
-                {fillingItems.map((item) => {
+                {fillingItems.map((item, index) => {
                   const isSelected = selectedFilling?.id === item.id;
 
                   return (
-                    <MenuCard
+                    <div
                       key={item.id}
-                      item={item}
-                      selected={isSelected}
-                      onSelect={() => handleSelectFilling(item)}
-                      mode="single"
-                      servings={order.servings}
-                    />
+                      className="stagger-item"
+                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                    >
+                      <MenuCard
+                        item={item}
+                        selected={isSelected}
+                        onSelect={() => handleSelectFilling(item)}
+                        mode="single"
+                        servings={order.servings}
+                      />
+                    </div>
                   );
                 })}
               </div>

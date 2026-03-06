@@ -19,6 +19,7 @@ interface ConstructorLayoutProps {
 
 export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   const [step, setStep] = useState(1);
+  const [stepDirection, setStepDirection] = useState<'forward' | 'backward'>('forward');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [checkoutCanSubmit, setCheckoutCanSubmit] = useState(false);
@@ -30,6 +31,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         return prev;
       }
 
+      setStepDirection('backward');
       triggerTelegramHaptic('selection');
       return prev - 1;
     });
@@ -84,6 +86,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     triggerTelegramHaptic('selection');
 
     if (!isLastStep) {
+      setStepDirection('forward');
       setStep((prev) => prev + 1);
       return;
     }
@@ -106,6 +109,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     triggerTelegramHaptic('selection');
     resetOrder();
     setIsSubmitted(false);
+    setStepDirection('backward');
     setStep(1);
     setCheckoutCanSubmit(false);
     setCheckoutSubmitHandler(null);
@@ -182,7 +186,10 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
           <h1 className="mt-3 text-base font-medium text-text-primary">{baker.welcome_message}</h1>
         </header>
 
-        <div key={step} className="step-enter">
+        <div
+          key={step}
+          className={stepDirection === 'forward' ? 'step-transition-forward' : 'step-transition-backward'}
+        >
           {step === 1 ? <StepOccasion /> : null}
           {step === 2 ? <StepShape bakerId={baker.id} /> : null}
           {step === 3 ? <StepFilling bakerId={baker.id} /> : null}

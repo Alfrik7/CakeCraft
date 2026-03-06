@@ -23,7 +23,7 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
       return;
     }
 
-    const duration = 260;
+    const duration = 300;
     const startTime = performance.now();
     setIsPriceAnimating(true);
 
@@ -63,7 +63,7 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
           </p>
         </div>
         <button
-          className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white shadow-card transition duration-200 active:scale-95 ${isLastStep ? 'py-3.5 text-base' : 'py-3'} ${canProceed ? 'bg-[var(--gradient-primary)] hover:scale-105 hover:shadow-card-hover' : 'cursor-not-allowed bg-gray-400 opacity-50'}`}
+          className={`tap-scale inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white shadow-card transition duration-200 ${isLastStep ? 'py-3.5 text-base' : 'py-3'} ${canProceed ? 'bg-[var(--gradient-primary)] hover:scale-105 hover:shadow-card-hover' : 'cursor-not-allowed bg-gray-400 opacity-50'}`}
           onClick={onNext}
           disabled={!canProceed}
           type="button"

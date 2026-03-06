@@ -330,7 +330,7 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
                   updateOrder({ delivery_type: 'pickup', address: null });
                 }}
                 className={[
-                  'min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 active:scale-95',
+                  'tap-scale min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300',
                   order.delivery_type === 'pickup'
                     ? 'bg-[var(--gradient-primary)] text-white shadow-card'
                     : 'bg-surface text-text-primary shadow-[inset_0_0_0_1px_rgba(232,103,124,0.22)] hover:shadow-card',
@@ -346,7 +346,7 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
                   updateOrder({ delivery_type: 'delivery' });
                 }}
                 className={[
-                  'min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 active:scale-95',
+                  'tap-scale min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300',
                   order.delivery_type === 'delivery'
                     ? 'bg-[var(--gradient-primary)] text-white shadow-card'
                     : 'bg-surface text-text-primary shadow-[inset_0_0_0_1px_rgba(232,103,124,0.22)] hover:shadow-card',
