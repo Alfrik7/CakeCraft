@@ -1,25 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { MenuCard } from '../components/MenuCard';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
 import type { MenuItem } from '../types';
-
-function formatPrice(value: number): string {
-  return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
-}
-
-function formatItemPrice(item: MenuItem, servings: number | null): string {
-  if (item.price_type === 'per_kg') {
-    if (!servings) {
-      return `${formatPrice(item.price)}/кг`;
-    }
-
-    const total = getItemPrice(servings, item);
-    return `${formatPrice(total)} (${formatPrice(item.price)}/кг)`;
-  }
-
-  return formatPrice(item.price);
-}
 
 interface StepFillingProps {
   bakerId: string;
@@ -102,43 +86,19 @@ export function StepFilling({ bakerId }: StepFillingProps) {
         ) : null}
 
         {!loading && fillingItems.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3">
             {fillingItems.map((item) => {
               const isSelected = selectedFilling?.id === item.id;
 
               return (
-                <button
+                <MenuCard
                   key={item.id}
-                  type="button"
-                  onClick={() => handleSelectFilling(item)}
-                  className={[
-                    'overflow-hidden rounded-xl border text-left transition',
-                    isSelected
-                      ? 'border-rose-400 bg-rose-50 ring-1 ring-rose-200'
-                      : 'border-rose-100 bg-white hover:border-rose-200',
-                  ].join(' ')}
-                  aria-pressed={isSelected}
-                >
-                  {item.photo_url ? (
-                    <img src={item.photo_url} alt={item.name} className="h-28 w-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="grid h-20 w-full place-items-center bg-rose-50 text-sm text-rose-400">
-                      Фото начинки
-                    </div>
-                  )}
-                  <div className="p-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                      {item.tags.map((tag) => (
-                        <span key={`${item.id}-${tag}`} className="rounded-full bg-rose-100 px-2 py-0.5 text-xs text-rose-700">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    {item.description ? <p className="mt-1 text-sm text-gray-600">{item.description}</p> : null}
-                    <p className="mt-2 text-sm font-medium text-gray-700">{formatItemPrice(item, order.servings)}</p>
-                  </div>
-                </button>
+                  item={item}
+                  selected={isSelected}
+                  onSelect={() => handleSelectFilling(item)}
+                  mode="single"
+                  servings={order.servings}
+                />
               );
             })}
           </div>

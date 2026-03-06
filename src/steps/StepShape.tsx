@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { MenuCard } from '../components/MenuCard';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -114,37 +115,42 @@ export function StepShape({ bakerId }: StepShapeProps) {
             ) : null}
             {loadError ? <p className="mb-3 text-sm text-amber-700">Не удалось загрузить формы из каталога.</p> : null}
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {(useFallback ? FALLBACK_SHAPES : shapeItems).map((item) => {
-                const isSelected = order.shape === item.name;
-                const isMenuItem = 'price_type' in item;
-                const price = isMenuItem && order.servings ? getItemPrice(order.servings, item) : item.price;
+            <div className="grid grid-cols-2 gap-3">
+              {useFallback
+                ? FALLBACK_SHAPES.map((item) => {
+                    const isSelected = order.shape === item.name;
 
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => updateOrder({ shape: item.name })}
-                    className={[
-                      'overflow-hidden rounded-xl border text-left transition',
-                      isSelected
-                        ? 'border-rose-400 bg-rose-50 ring-1 ring-rose-200'
-                        : 'border-rose-100 bg-white hover:border-rose-200',
-                    ].join(' ')}
-                    aria-pressed={isSelected}
-                  >
-                    {'photo_url' in item && item.photo_url ? (
-                      <img src={item.photo_url} alt={item.name} className="h-28 w-full object-cover" loading="lazy" />
-                    ) : (
-                      <div className="grid h-20 w-full place-items-center bg-rose-50 text-sm text-rose-400">Фото формы</div>
-                    )}
-                    <div className="p-3">
-                      <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                      <p className="mt-1 text-sm text-gray-500">от {formatPrice(price)}</p>
-                    </div>
-                  </button>
-                );
-              })}
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => updateOrder({ shape: item.name })}
+                        className={[
+                          'overflow-hidden rounded-xl border bg-white text-left transition',
+                          isSelected
+                            ? 'border-rose-400 bg-rose-50 ring-1 ring-rose-200'
+                            : 'border-rose-100 hover:border-rose-200',
+                        ].join(' ')}
+                        aria-pressed={isSelected}
+                      >
+                        <div className="grid h-20 w-full place-items-center bg-rose-50 text-sm text-rose-400">Фото формы</div>
+                        <div className="p-3">
+                          <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                          <p className="mt-1 text-sm text-gray-500">от {formatPrice(item.price)}</p>
+                        </div>
+                      </button>
+                    );
+                  })
+                : shapeItems.map((item) => (
+                    <MenuCard
+                      key={item.id}
+                      item={item}
+                      selected={order.shape === item.name}
+                      onSelect={() => updateOrder({ shape: item.name })}
+                      mode="single"
+                      servings={order.servings}
+                    />
+                  ))}
             </div>
           </>
         )}

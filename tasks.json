@@ -292,7 +292,7 @@
       "title": "Компонент карточки меню (переиспользуемый)",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9
       ],

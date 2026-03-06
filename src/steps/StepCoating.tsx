@@ -1,25 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { MenuCard } from '../components/MenuCard';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
 import type { MenuItem } from '../types';
-
-function formatPrice(value: number): string {
-  return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
-}
-
-function formatItemPrice(item: MenuItem, servings: number | null): string {
-  if (item.price_type === 'per_kg') {
-    if (!servings) {
-      return `${formatPrice(item.price)}/кг`;
-    }
-
-    const total = getItemPrice(servings, item);
-    return `${formatPrice(total)} (${formatPrice(item.price)}/кг)`;
-  }
-
-  return formatPrice(item.price);
-}
 
 const PRESET_COLORS = [
   { id: 'white', label: 'Белый', value: 'белый', swatchClass: 'bg-white' },
@@ -125,35 +109,19 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
         ) : null}
 
         {!loading && coatingItems.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3">
             {coatingItems.map((item) => {
               const isSelected = selectedCoating?.id === item.id;
 
               return (
-                <button
+                <MenuCard
                   key={item.id}
-                  type="button"
-                  onClick={() => handleSelectCoating(item)}
-                  className={[
-                    'overflow-hidden rounded-xl border text-left transition',
-                    isSelected
-                      ? 'border-rose-400 bg-rose-50 ring-1 ring-rose-200'
-                      : 'border-rose-100 bg-white hover:border-rose-200',
-                  ].join(' ')}
-                  aria-pressed={isSelected}
-                >
-                  {item.photo_url ? (
-                    <img src={item.photo_url} alt={item.name} className="h-28 w-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="grid h-20 w-full place-items-center bg-rose-50 text-sm text-rose-400">
-                      Фото покрытия
-                    </div>
-                  )}
-                  <div className="p-3">
-                    <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                    <p className="mt-1 text-sm font-medium text-gray-700">{formatItemPrice(item, order.servings)}</p>
-                  </div>
-                </button>
+                  item={item}
+                  selected={isSelected}
+                  onSelect={() => handleSelectCoating(item)}
+                  mode="single"
+                  servings={order.servings}
+                />
               );
             })}
           </div>
