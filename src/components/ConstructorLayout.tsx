@@ -7,6 +7,7 @@ import { StepPlaceholder } from '../steps/StepPlaceholder';
 import { StepOccasion } from '../steps/StepOccasion';
 import { StepShape } from '../steps/StepShape';
 import { StepFilling } from '../steps/StepFilling';
+import { StepCoating } from '../steps/StepCoating';
 
 const TOTAL_STEPS = 6;
 
@@ -63,8 +64,12 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
       return Boolean(order.filling_id);
     }
 
+    if (step === 4) {
+      return Boolean(order.coating_id) && Boolean(order.color?.trim());
+    }
+
     return true;
-  }, [order.filling_id, order.occasion, order.servings, order.shape, step]);
+  }, [order.coating_id, order.color, order.filling_id, order.occasion, order.servings, order.shape, step]);
 
   const handleNext = () => {
     if (!isLastStep) {
@@ -87,7 +92,8 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
           {step === 1 ? <StepOccasion /> : null}
           {step === 2 ? <StepShape bakerId={baker.id} /> : null}
           {step === 3 ? <StepFilling bakerId={baker.id} /> : null}
-          {step > 3 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
+          {step === 4 ? <StepCoating bakerId={baker.id} /> : null}
+          {step > 4 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
         </div>
       </div>
 

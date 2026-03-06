@@ -232,7 +232,7 @@
       "title": "Экран 4 — Покрытие и цвет",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9
       ],
