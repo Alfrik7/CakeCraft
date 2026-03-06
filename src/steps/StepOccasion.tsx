@@ -2,22 +2,47 @@ import { useOrderContext } from '../context/OrderContext';
 import { triggerTelegramHaptic } from '../lib/telegram';
 
 const OCCASION_OPTIONS = [
-  { value: 'birthday', label: 'День рождения', icon: '🎂' },
-  { value: 'wedding', label: 'Свадьба', icon: '💒' },
-  { value: 'kids_party', label: 'Детский праздник', icon: '🎈' },
-  { value: 'corporate', label: 'Корпоратив', icon: '🏢' },
-  { value: 'other', label: 'Без повода / Другое', icon: '🎁' },
+  {
+    value: 'birthday',
+    label: 'День рождения',
+    icon: '🎂',
+    gradientClass: 'from-rose-200 via-pink-100 to-orange-100',
+  },
+  {
+    value: 'wedding',
+    label: 'Свадьба',
+    icon: '💒',
+    gradientClass: 'from-fuchsia-200 via-rose-100 to-pink-100',
+  },
+  {
+    value: 'kids_party',
+    label: 'Детский праздник',
+    icon: '🎈',
+    gradientClass: 'from-sky-200 via-cyan-100 to-blue-100',
+  },
+  {
+    value: 'corporate',
+    label: 'Корпоратив',
+    icon: '🏢',
+    gradientClass: 'from-amber-200 via-orange-100 to-rose-100',
+  },
+  {
+    value: 'other',
+    label: 'Без повода',
+    icon: '🎁',
+    gradientClass: 'from-violet-200 via-purple-100 to-pink-100',
+  },
 ] as const;
 
 export function StepOccasion() {
   const { order, updateOrder } = useOrderContext();
 
   return (
-    <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Шаг 1. Повод</h2>
-      <p className="mt-2 text-sm text-gray-600">Выберите повод для торта.</p>
+    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+      <h2 className="text-center font-display text-3xl text-text-primary">Какой у вас повод?</h2>
+      <p className="mt-2 text-center text-sm text-text-secondary">Выберите повод для вашего торта</p>
 
-      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="mt-5 grid grid-cols-2 gap-3">
         {OCCASION_OPTIONS.map((option) => {
           const isSelected = order.occasion === option.value;
 
@@ -30,17 +55,32 @@ export function StepOccasion() {
                 updateOrder({ occasion: option.value });
               }}
               className={[
-                'flex min-h-[52px] items-center gap-3 rounded-xl border px-4 py-3 text-left transition',
+                'group relative aspect-square overflow-hidden rounded-2xl border border-white/70 bg-white text-center shadow-card transition duration-300',
+                'flex flex-col items-center justify-center gap-2 px-3',
                 isSelected
-                  ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-200'
-                  : 'border-rose-100 bg-white text-gray-700 hover:border-rose-200 hover:bg-rose-50/40',
+                  ? 'occasion-selected ring-2 ring-primary-from shadow-card-hover'
+                  : 'hover:-translate-y-0.5 hover:shadow-card-hover',
               ].join(' ')}
               aria-pressed={isSelected}
             >
-              <span className="text-xl leading-none" aria-hidden="true">
+              <span
+                className={[
+                  'absolute inset-0 bg-gradient-to-br opacity-85 transition-opacity duration-300',
+                  option.gradientClass,
+                  isSelected ? 'opacity-100' : 'group-hover:opacity-95',
+                ].join(' ')}
+                aria-hidden="true"
+              />
+              <span
+                className={[
+                  'relative text-4xl leading-none transition-transform duration-300',
+                  isSelected ? 'scale-110' : 'group-hover:scale-105',
+                ].join(' ')}
+                aria-hidden="true"
+              >
                 {option.icon}
               </span>
-              <span className="text-sm font-medium">{option.label}</span>
+              <span className="relative text-sm font-semibold text-text-primary">{option.label}</span>
             </button>
           );
         })}

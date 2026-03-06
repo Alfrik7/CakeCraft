@@ -56,3 +56,22 @@ body {
 .progress-step-active {
   animation: progress-step-pulse 1.6s ease-out infinite;
 }
+
+@keyframes occasion-select-bounce {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.06);
+  }
+  75% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}
+
+.occasion-selected {
+  animation: occasion-select-bounce 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}

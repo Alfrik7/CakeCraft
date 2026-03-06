@@ -101,7 +101,7 @@
       "title": "Экран 1 — Повод: редизайн",
       "category": "screens",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         102,
         105
