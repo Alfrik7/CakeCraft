@@ -18,14 +18,10 @@ const SERVINGS_HINTS: Record<(typeof SERVINGS_OPTIONS)[number], string> = {
 };
 
 const FALLBACK_SHAPES = [
-  { id: 'fallback-round', name: 'Круглая форма', price: 1800 },
-  { id: 'fallback-square', name: 'Квадратная форма', price: 1950 },
-  { id: 'fallback-heart', name: 'Форма сердце', price: 2100 },
+  { id: 'fallback-round', name: 'Круглая форма', price: 1800, description: 'Классический вариант для любого повода' },
+  { id: 'fallback-square', name: 'Квадратная форма', price: 1950, description: 'Больше места для декора и надписей' },
+  { id: 'fallback-heart', name: 'Форма сердце', price: 2100, description: 'Романтичная подача для особенного дня' },
 ] as const;
-
-function formatPrice(value: number): string {
-  return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
-}
 
 interface StepShapeProps {
   bakerId: string;
@@ -36,6 +32,25 @@ export function StepShape({ bakerId }: StepShapeProps) {
   const [shapeItems, setShapeItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+
+  const fallbackShapeItems = useMemo<MenuItem[]>(
+    () =>
+      FALLBACK_SHAPES.map((shape, index) => ({
+        id: shape.id,
+        baker_id: bakerId,
+        category: 'shape',
+        name: shape.name,
+        description: shape.description,
+        photo_url: null,
+        price: shape.price,
+        price_type: 'fixed',
+        is_active: true,
+        sort_order: index,
+        tags: [],
+        created_at: '',
+      })),
+    [bakerId],
+  );
 
   useEffect(() => {
     let isActive = true;
@@ -103,49 +118,35 @@ export function StepShape({ bakerId }: StepShapeProps) {
   const useFallback = !loading && shapeItems.length === 0;
 
   return (
-    <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Шаг 2. Форма и размер</h2>
-      <p className="mt-2 text-sm text-gray-600">Выберите форму торта и количество порций.</p>
+    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+      <h2 className="text-center font-display text-3xl text-text-primary">Выберите форму</h2>
+      <p className="mt-2 text-center text-sm text-text-secondary">Определитесь с формой и количеством порций</p>
 
       <div className="mt-5">
         {loading ? (
           <SkeletonMenuGrid />
         ) : (
           <>
-            {useFallback ? (
-              <p className="mb-3 text-sm text-amber-700">Формы не найдены. Показываем базовые варианты.</p>
+            {useFallback || loadError ? (
+              <div className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+                {useFallback
+                  ? 'Формы из каталога не найдены. Показываем базовые варианты.'
+                  : 'Не удалось загрузить формы из каталога.'}
+              </div>
             ) : null}
-            {loadError ? <p className="mb-3 text-sm text-amber-700">Не удалось загрузить формы из каталога.</p> : null}
 
             <div className="grid grid-cols-2 gap-3">
               {useFallback
-                ? FALLBACK_SHAPES.map((item) => {
-                    const isSelected = order.shape === item.name;
-
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => {
-                          triggerTelegramHaptic('selection');
-                          updateOrder({ shape: item.name });
-                        }}
-                        className={[
-                          'overflow-hidden rounded-xl border bg-white text-left transition',
-                          isSelected
-                            ? 'border-rose-400 bg-rose-50 ring-1 ring-rose-200'
-                            : 'border-rose-100 hover:border-rose-200',
-                        ].join(' ')}
-                        aria-pressed={isSelected}
-                      >
-                        <div className="grid h-20 w-full place-items-center bg-rose-50 text-sm text-rose-400">Фото формы</div>
-                        <div className="p-3">
-                          <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                          <p className="mt-1 text-sm text-gray-500">от {formatPrice(item.price)}</p>
-                        </div>
-                      </button>
-                    );
-                  })
+                ? fallbackShapeItems.map((item) => (
+                    <MenuCard
+                      key={item.id}
+                      item={item}
+                      selected={order.shape === item.name}
+                      onSelect={() => updateOrder({ shape: item.name })}
+                      mode="single"
+                      servings={order.servings}
+                    />
+                  ))
                 : shapeItems.map((item) => (
                     <MenuCard
                       key={item.id}
@@ -161,35 +162,38 @@ export function StepShape({ bakerId }: StepShapeProps) {
         )}
       </div>
 
-      <div className="mt-6 border-t border-rose-100 pt-4">
-        <p className="text-sm font-medium text-gray-800">Количество порций</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {SERVINGS_OPTIONS.map((servings) => {
-            const isSelected = order.servings === servings;
+      <div className="mt-6 rounded-2xl bg-secondary/70 p-4">
+        <p className="text-sm font-semibold text-text-primary">Размер торта (порции)</p>
+        <div className="-mx-1 mt-3 overflow-x-auto px-1 pb-1">
+          <div className="flex min-w-max gap-2">
+            {SERVINGS_OPTIONS.map((servings) => {
+              const isSelected = order.servings === servings;
 
-            return (
-              <button
-                key={servings}
-                type="button"
-                onClick={() => {
-                  triggerTelegramHaptic('selection');
-                  updateOrder({ servings });
-                }}
-                className={[
-                  'min-h-[44px] min-w-[56px] rounded-xl border px-4 py-2 text-sm font-medium transition',
-                  isSelected
-                    ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-200'
-                    : 'border-rose-100 bg-white text-gray-700 hover:border-rose-200',
-                ].join(' ')}
-                aria-pressed={isSelected}
-              >
-                {servings}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={servings}
+                  type="button"
+                  onClick={() => {
+                    triggerTelegramHaptic('selection');
+                    updateOrder({ servings });
+                  }}
+                  className={[
+                    'min-h-[44px] min-w-[58px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
+                    isSelected
+                      ? 'bg-[var(--gradient-primary)] text-white shadow-card'
+                      : 'border border-rose-200 bg-white text-text-secondary hover:border-primary-from hover:text-text-primary',
+                  ].join(' ')}
+                  aria-pressed={isSelected}
+                >
+                  {servings}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <p className="mt-3 text-sm text-gray-600">
-          {servingsHint ?? 'Выберите количество порций, чтобы увидеть ориентир по количеству гостей.'}
+        <p className="mt-3 text-xs text-rose-800">
+          <span className="rounded-full bg-rose-200/80 px-2 py-0.5 font-semibold text-rose-900">Подсказка</span>{' '}
+          {servingsHint ?? 'Выберите порции, чтобы увидеть ориентир по количеству гостей.'}
         </p>
       </div>
     </section>
