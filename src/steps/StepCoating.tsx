@@ -5,19 +5,7 @@ import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
-import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
-
-const PRESET_COLORS = [
-  { id: 'white', label: 'Белый', value: 'белый', swatchClass: 'bg-white' },
-  { id: 'pink', label: 'Розовый', value: 'розовый', swatchClass: 'bg-pink-300' },
-  { id: 'sky', label: 'Голубой', value: 'голубой', swatchClass: 'bg-sky-300' },
-  { id: 'chocolate', label: 'Шоколадный', value: 'шоколадный', swatchClass: 'bg-amber-800' },
-  { id: 'red', label: 'Красный', value: 'красный', swatchClass: 'bg-red-500' },
-  { id: 'black', label: 'Чёрный', value: 'чёрный', swatchClass: 'bg-gray-900' },
-] as const;
-
-const PRESET_COLOR_VALUES = new Set<string>(PRESET_COLORS.map((color) => color.value));
 
 interface StepCoatingProps {
   bakerId: string;
@@ -25,12 +13,10 @@ interface StepCoatingProps {
 }
 
 export function StepCoating({ bakerId, onBack }: StepCoatingProps) {
-  const { order, setOrder, updateOrder } = useOrderContext();
+  const { order, setOrder } = useOrderContext();
   const [coatingItems, setCoatingItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-
-  const isCustomColor = Boolean(order.color && !PRESET_COLOR_VALUES.has(order.color));
 
   useEffect(() => {
     let isActive = true;
@@ -87,21 +73,9 @@ export function StepCoating({ bakerId, onBack }: StepCoatingProps) {
     });
   };
 
-  const handleSelectPresetColor = (color: (typeof PRESET_COLORS)[number]) => {
-    updateOrder({ color: color.value });
-  };
-
-  const handleSelectCustomColor = () => {
-    if (isCustomColor) {
-      return;
-    }
-
-    updateOrder({ color: '' });
-  };
-
   return (
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <StepHeader title="Выберите покрытие" subtitle="И определитесь с цветом торта" onBack={onBack} />
+      <StepHeader title="Выберите покрытие" subtitle="Выберите вариант оформления поверхности торта" onBack={onBack} />
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}
@@ -142,86 +116,6 @@ export function StepCoating({ bakerId, onBack }: StepCoatingProps) {
             ) : null}
           </div>
         ) : null}
-      </div>
-
-      <div className="mt-6 rounded-2xl bg-secondary/80 p-4 shadow-card">
-        <p className="font-display text-xl text-text-primary">Выберите цвет</p>
-        <p className="mt-1 text-xs text-text-secondary">Можно выбрать из палитры или указать свой оттенок</p>
-
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {PRESET_COLORS.map((color) => {
-            const isSelected = order.color === color.value;
-
-            return (
-              <button
-                key={color.id}
-                type="button"
-                onClick={() => {
-                  triggerTelegramHaptic('selection');
-                  handleSelectPresetColor(color);
-                }}
-                className="tap-scale tap-target group flex flex-col items-center gap-1 text-xs font-medium text-text-secondary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2"
-                aria-pressed={isSelected}
-                aria-label={`Выбрать цвет: ${color.label}`}
-              >
-                <span
-                  className={[
-                    'h-10 w-10 rounded-full border border-white/80 shadow-card transition duration-300 ease-out',
-                    color.swatchClass,
-                    color.value === 'белый' ? 'shadow-inner shadow-rose-200' : '',
-                    isSelected ? 'scale-110 ring-2 ring-primary-to ring-offset-2 ring-offset-secondary' : 'group-hover:scale-105',
-                  ].join(' ')}
-                  aria-hidden="true"
-                />
-                {color.label}
-              </button>
-            );
-          })}
-
-          <button
-            type="button"
-            onClick={() => {
-              triggerTelegramHaptic('selection');
-              handleSelectCustomColor();
-            }}
-            className={[
-              'tap-scale flex min-h-[44px] items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-semibold transition duration-300',
-              isCustomColor
-                ? 'scale-105 border-primary-to text-primary-to ring-2 ring-primary-to/30'
-                : 'border-rose-200 text-text-secondary hover:border-primary-from hover:text-text-primary',
-            ].join(' ')}
-            aria-pressed={isCustomColor}
-          >
-            <span
-              className={[
-                'grid h-5 w-5 place-items-center rounded-full text-sm leading-none transition',
-                isCustomColor ? 'bg-[var(--gradient-primary)] text-white' : 'bg-rose-100 text-rose-600',
-              ].join(' ')}
-              aria-hidden="true"
-            >
-              +
-            </span>
-            Свой цвет
-          </button>
-        </div>
-
-        <div
-          className={[
-            'transition-all duration-300 ease-out',
-            isCustomColor || order.color === '' ? 'mt-3 max-h-28 opacity-100' : 'max-h-0 overflow-hidden opacity-0',
-          ].join(' ')}
-        >
-          <label className="block text-sm text-text-secondary">
-            Укажите желаемый цвет
-            <input
-              type="text"
-              value={order.color ?? ''}
-              onChange={(event) => updateOrder({ color: event.target.value })}
-              placeholder="Например: лавандовый"
-              className="mt-1 min-h-[44px] w-full rounded-xl border border-transparent bg-surface px-3 py-2 text-sm text-text-primary outline-none transition duration-300 focus:ring-2 focus:ring-primary-from/40"
-            />
-          </label>
-        </div>
       </div>
     </section>
   );

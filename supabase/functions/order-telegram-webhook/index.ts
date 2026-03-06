@@ -15,7 +15,6 @@ interface OrderRow {
   servings: number | null;
   filling_id: string | null;
   coating_id: string | null;
-  color: string | null;
   decor_items: string[];
   topper_text: string | null;
   reference_photo_url: string | null;
@@ -233,7 +232,6 @@ async function buildOrderMessage(order: OrderRow): Promise<string> {
     `<b>Порции:</b> ${order.servings ?? 'Не указано'}`,
     `<b>Начинка:</b> ${escapeHtml(filling)}`,
     `<b>Покрытие:</b> ${escapeHtml(coating)}`,
-    `<b>Цвет:</b> ${escapeHtml(order.color ?? 'Не указан')}`,
     `<b>Декор:</b> ${escapeHtml(decor)}`,
     `<b>Топпер:</b> ${escapeHtml(order.topper_text ?? 'Нет')}`,
     `<b>Комментарий:</b> ${escapeHtml(order.comment ?? 'Нет')}`,

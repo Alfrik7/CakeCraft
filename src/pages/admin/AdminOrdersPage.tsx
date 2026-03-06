@@ -325,9 +325,6 @@ export function AdminOrdersPage() {
                       <span className="font-medium text-gray-900">Покрытие:</span> {coatingName || 'Не выбрано'}
                     </p>
                     <p>
-                      <span className="font-medium text-gray-900">Цвет:</span> {order.color || 'Не указан'}
-                    </p>
-                    <p>
                       <span className="font-medium text-gray-900">Декор:</span>{' '}
                       {decorNames.length ? decorNames.join(', ') : 'Не выбран'}
                     </p>

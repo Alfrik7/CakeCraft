@@ -61,7 +61,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     }
 
     if (step === 4) {
-      return Boolean(order.coating_id) && Boolean(order.color?.trim());
+      return Boolean(order.coating_id);
     }
 
     if (step === 6) {
@@ -74,7 +74,6 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     isSubmitted,
     isSubmitting,
     order.coating_id,
-    order.color,
     order.filling_id,
     order.occasion,
     order.servings,
