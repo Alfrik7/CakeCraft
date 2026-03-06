@@ -1,0 +1,15 @@
+# CakeCraft — Progress Log
+# Этот файл используется как память между сессиями Ralph Loop.
+# Каждая сессия ДОБАВЛЯЕТ (append) записи, не перезаписывает файл.
+# Формат: [дата] [task_id] — что сделано, что узнал, на что обратить внимание.
+
+---
+[INIT] Проект CakeCraft — интерактивное меню-конструктор для кондитеров.
+[INIT] Стек: React + Vite + TypeScript + Tailwind CSS + Supabase + Telegram Bot API.
+[INIT] Архитектура: один деплой, много кондитеров. Каждый кондитер получает уникальный URL по slug.
+[INIT] Клиентская часть: 6-шаговый конструктор торта с фото-карточками и авторасчётом цены.
+[INIT] Админка: редактор меню, заказы, профиль.
+[INIT] Уведомления: Telegram-бот + email (email — фаза V1).
+[INIT] Всего 25 задач. Критических — 16. Порядок: инфра → БД → типы → layout → экраны → админка → бот → тесты → деплой.
+
+[2026-03-06] [task-1] Инициализирован проект React + Vite + TypeScript + Tailwind CSS. Добавлены базовый роутинг через react-router-dom, строгий TypeScript (strict=true), конфиги ESLint и Prettier, создана структура папок src/components, src/pages, src/lib, src/types, src/hooks, src/assets. Проверки: `npm run build`, `npm run lint`, `npm run format` — успешно; `npm run dev` стартует корректно (Vite ready на http://127.0.0.1:4173/).
