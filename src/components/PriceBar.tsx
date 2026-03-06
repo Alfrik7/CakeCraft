@@ -2,6 +2,7 @@ interface PriceBarProps {
   totalPrice: number;
   isLastStep: boolean;
   canProceed: boolean;
+  isSubmitting?: boolean;
   onNext: () => void;
 }
 
@@ -9,7 +10,7 @@ function formatPrice(value: number): string {
   return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
 }
 
-export function PriceBar({ totalPrice, isLastStep, canProceed, onNext }: PriceBarProps) {
+export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = false, onNext }: PriceBarProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-100 bg-white/95 px-4 py-3 backdrop-blur">
       <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
@@ -23,7 +24,7 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, onNext }: PriceBa
           disabled={!canProceed}
           type="button"
         >
-          {isLastStep ? 'Отправить' : 'Далее'}
+          {isLastStep ? (isSubmitting ? 'Отправка...' : 'Отправить заказ') : 'Далее'}
         </button>
       </div>
     </div>

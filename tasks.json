@@ -270,7 +270,7 @@
       "title": "Экран 6 — Оформление заказа",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9,
         6

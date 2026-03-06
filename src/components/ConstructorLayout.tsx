@@ -3,12 +3,12 @@ import type { Baker } from '../types';
 import { useOrderContext } from '../context/OrderContext';
 import { PriceBar } from './PriceBar';
 import { ProgressBar } from './ProgressBar';
-import { StepPlaceholder } from '../steps/StepPlaceholder';
 import { StepOccasion } from '../steps/StepOccasion';
 import { StepShape } from '../steps/StepShape';
 import { StepFilling } from '../steps/StepFilling';
 import { StepCoating } from '../steps/StepCoating';
 import { StepDecor } from '../steps/StepDecor';
+import { StepCheckout } from '../steps/StepCheckout';
 
 const TOTAL_STEPS = 6;
 
@@ -18,41 +18,21 @@ interface ConstructorLayoutProps {
 
 export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [checkoutCanSubmit, setCheckoutCanSubmit] = useState(false);
+  const [checkoutSubmitHandler, setCheckoutSubmitHandler] = useState<(() => Promise<boolean>) | null>(null);
   const { order } = useOrderContext();
+  const registerCheckoutSubmitHandler = (handler: (() => Promise<boolean>) | null) => {
+    setCheckoutSubmitHandler(() => handler);
+  };
 
-  const steps = useMemo(
-    () => [
-      {
-        title: 'Шаг 1. Повод',
-        description: 'Выберите повод для торта.',
-      },
-      {
-        title: 'Шаг 2. Форма и размер',
-        description: 'Определите форму и количество порций.',
-      },
-      {
-        title: 'Шаг 3. Начинка',
-        description: 'Выберите вкус и текстуру начинки.',
-      },
-      {
-        title: 'Шаг 4. Покрытие и цвет',
-        description: 'Выберите покрытие и цветовую палитру.',
-      },
-      {
-        title: 'Шаг 5. Декор',
-        description: 'Добавьте элементы декора и пожелания.',
-      },
-      {
-        title: 'Шаг 6. Оформление заказа',
-        description: 'Заполните контактные данные и подтвердите заказ.',
-      },
-    ],
-    [],
-  );
-
-  const currentStep = steps[step - 1];
   const isLastStep = step === TOTAL_STEPS;
   const canProceed = useMemo(() => {
+    if (isSubmitting || isSubmitted) {
+      return false;
+    }
+
     if (step === 1) {
       return Boolean(order.occasion);
     }
@@ -69,12 +49,40 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
       return Boolean(order.coating_id) && Boolean(order.color?.trim());
     }
 
-    return true;
-  }, [order.coating_id, order.color, order.filling_id, order.occasion, order.servings, order.shape, step]);
+    if (step === 6) {
+      return checkoutCanSubmit;
+    }
 
-  const handleNext = () => {
+    return true;
+  }, [
+    checkoutCanSubmit,
+    isSubmitted,
+    isSubmitting,
+    order.coating_id,
+    order.color,
+    order.filling_id,
+    order.occasion,
+    order.servings,
+    order.shape,
+    step,
+  ]);
+
+  const handleNext = async () => {
     if (!isLastStep) {
       setStep((prev) => prev + 1);
+      return;
+    }
+
+    if (!checkoutSubmitHandler) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    const success = await checkoutSubmitHandler();
+    setIsSubmitting(false);
+
+    if (success) {
+      setIsSubmitted(true);
     }
   };
 
@@ -95,11 +103,31 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
           {step === 3 ? <StepFilling bakerId={baker.id} /> : null}
           {step === 4 ? <StepCoating bakerId={baker.id} /> : null}
           {step === 5 ? <StepDecor bakerId={baker.id} /> : null}
-          {step === 6 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
+          {step === 6 && !isSubmitted ? (
+            <StepCheckout
+              baker={baker}
+              registerSubmitHandler={registerCheckoutSubmitHandler}
+              onCanSubmitChange={setCheckoutCanSubmit}
+            />
+          ) : null}
+          {step === 6 && isSubmitted ? (
+            <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+              <h2 className="text-2xl font-semibold text-gray-900">Спасибо!</h2>
+              <p className="mt-2 text-sm text-gray-600">{baker.name} свяжется с вами в ближайшее время ✨</p>
+            </section>
+          ) : null}
         </div>
       </div>
 
-      <PriceBar totalPrice={order.total_price} isLastStep={isLastStep} canProceed={canProceed} onNext={handleNext} />
+      {!isSubmitted ? (
+        <PriceBar
+          totalPrice={order.total_price}
+          isLastStep={isLastStep}
+          canProceed={canProceed}
+          isSubmitting={isSubmitting}
+          onNext={handleNext}
+        />
+      ) : null}
     </main>
   );
 }
