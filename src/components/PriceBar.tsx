@@ -48,7 +48,7 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
 
   const buttonText = isLastStep ? (isSubmitting ? 'Отправка...' : 'Отправить заказ') : 'Далее';
   const buttonClass = canProceed
-    ? 'bg-[var(--gradient-primary)] text-white hover:scale-105 hover:shadow-card-hover'
+    ? '[background-image:var(--gradient-primary)] text-white hover:scale-105 hover:shadow-card-hover'
     : 'cursor-not-allowed border border-primary-from/35 bg-white text-text-secondary';
 
   return (

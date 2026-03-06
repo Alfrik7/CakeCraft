@@ -83,7 +83,7 @@ export function MenuCard({
         'tap-scale group relative overflow-hidden rounded-2xl bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35 focus-visible:ring-offset-2',
         selected
-          ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-primary-to shadow-card-hover'
+          ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-primary-to shadow-card-hover [background-image:var(--gradient-primary)]'
           : 'hover:-translate-y-0.5 hover:shadow-card-hover',
       ].join(' ')}
     >
@@ -113,7 +113,7 @@ export function MenuCard({
             {visibleTags.map((tag) => (
               <span
                 key={`${item.id}-${tag}`}
-                className="rounded-full bg-[var(--gradient-primary)] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
+                className="rounded-full [background-image:var(--gradient-primary)] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
               >
                 {tag}
               </span>
@@ -123,7 +123,7 @@ export function MenuCard({
       </div>
 
       <div className="flex min-h-[92px] flex-col p-3">
-        <p className="text-sm font-bold text-text-primary">{item.name}</p>
+        <p className={['text-sm font-bold', selected ? 'text-white' : 'text-text-primary'].join(' ')}>{item.name}</p>
 
         {item.description ? (
           <div
@@ -132,7 +132,7 @@ export function MenuCard({
           >
             <p
               ref={descriptionRef}
-              className="text-xs leading-4 text-text-secondary"
+              className={['text-xs leading-4', selected ? 'text-white/90' : 'text-text-secondary'].join(' ')}
               style={
                 isDescriptionToggleEnabled && isDescriptionExpanded
                   ? undefined
@@ -149,7 +149,9 @@ export function MenuCard({
           </div>
         ) : null}
 
-        <p className="mt-auto pt-3 text-right font-display text-xl text-primary-to">{formatItemPrice(item, servings, priceMode)}</p>
+        <p className={['mt-auto pt-3 text-right font-display text-xl', selected ? 'text-white' : 'text-primary-to'].join(' ')}>
+          {formatItemPrice(item, servings, priceMode)}
+        </p>
       </div>
     </button>
   );

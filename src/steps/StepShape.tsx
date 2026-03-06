@@ -194,7 +194,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
                   className={[
                     'tap-scale min-h-[44px] min-w-[96px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
                     isSelected
-                      ? 'bg-[var(--gradient-primary)] text-white shadow-card'
+                      ? '[background-image:var(--gradient-primary)] text-white shadow-card'
                       : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
                   ].join(' ')}
                   aria-pressed={isSelected}

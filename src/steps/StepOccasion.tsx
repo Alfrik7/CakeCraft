@@ -54,7 +54,7 @@ export function StepOccasion() {
                 'tap-scale stagger-item group relative aspect-square overflow-hidden rounded-2xl border border-white/70 bg-white text-center shadow-card transition duration-300',
                 'flex flex-col items-center justify-center gap-2 px-3',
                 isSelected
-                  ? 'occasion-selected ring-2 ring-primary-from shadow-card-hover'
+                  ? 'occasion-selected ring-2 ring-primary-from shadow-card-hover [background-image:var(--gradient-primary)]'
                   : 'hover:-translate-y-0.5 hover:shadow-card-hover',
               ].join(' ')}
               style={
@@ -66,25 +66,27 @@ export function StepOccasion() {
             >
               <span
                 className={[
-                  'absolute inset-0 opacity-85 transition-opacity duration-300',
-                  isSelected ? 'opacity-100' : 'group-hover:opacity-95',
+                  'pointer-events-none absolute inset-0 transition-opacity duration-300',
+                  isSelected ? 'opacity-100' : 'opacity-0',
                 ].join(' ')}
                 style={{
                   backgroundImage:
-                    'linear-gradient(145deg, rgba(var(--color-primary-from-rgb), 0.56) 0%, rgba(var(--color-accent-rgb), 0.35) 58%, rgba(var(--color-background-from-rgb), 0.9) 100%)',
+                    'linear-gradient(145deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%)',
                 }}
                 aria-hidden="true"
               />
               <span
                 className={[
                   'relative text-4xl leading-none transition-transform duration-300',
-                  isSelected ? 'scale-110' : 'group-hover:scale-105',
+                  isSelected ? 'scale-110 drop-shadow-[0_3px_7px_rgba(91,23,39,0.28)]' : 'group-hover:scale-105',
                 ].join(' ')}
                 aria-hidden="true"
               >
                 {option.icon}
               </span>
-              <span className="relative text-sm font-semibold text-text-primary">{option.label}</span>
+              <span className={['relative text-sm font-semibold', isSelected ? 'text-white' : 'text-text-primary'].join(' ')}>
+                {option.label}
+              </span>
             </button>
           );
         })}

@@ -346,7 +346,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                 className={[
                   'tap-scale min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300',
                   order.delivery_type === 'pickup'
-                    ? 'bg-[var(--gradient-primary)] text-white shadow-card'
+                    ? '[background-image:var(--gradient-primary)] text-white shadow-card'
                     : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
                 ].join(' ')}
                 aria-pressed={order.delivery_type === 'pickup'}
@@ -362,7 +362,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                 className={[
                   'tap-scale min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300',
                   order.delivery_type === 'delivery'
-                    ? 'bg-[var(--gradient-primary)] text-white shadow-card'
+                    ? '[background-image:var(--gradient-primary)] text-white shadow-card'
                     : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
                 ].join(' ')}
                 aria-pressed={order.delivery_type === 'delivery'}
@@ -438,7 +438,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-primary-from/35 pt-3 text-base">
           <span>Итого</span>
-          <span className="bg-[var(--gradient-primary)] bg-clip-text font-display text-2xl font-semibold text-transparent">
+          <span className="[background-image:var(--gradient-primary)] bg-clip-text font-display text-2xl font-semibold text-transparent">
             {formatPrice(finalTotalPrice)}
           </span>
         </div>

@@ -222,7 +222,7 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
             {selectedDecorItems.map((item) => (
               <span
                 key={item.id}
-                className="inline-flex min-h-[44px] animate-[step-enter_220ms_ease-out] items-center gap-2 rounded-full bg-[var(--gradient-primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm"
+                className="inline-flex min-h-[44px] animate-[step-enter_220ms_ease-out] items-center gap-2 rounded-full [background-image:var(--gradient-primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm"
               >
                 {item.name}
                 <button
