@@ -8,10 +8,12 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
+    "supabase:check": "node scripts/check-supabase.mjs",
     "format": "prettier --check .",
     "format:write": "prettier --write ."
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.1"
