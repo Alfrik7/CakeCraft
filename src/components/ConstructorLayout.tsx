@@ -136,7 +136,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   }, [handleBackStep, isSubmitted, step]);
 
   return (
-    <main className="relative min-h-screen overflow-x-clip bg-[var(--gradient-primary-soft)] pb-[calc(116px+env(safe-area-inset-bottom))]">
+    <main className="relative min-h-screen overflow-x-clip bg-[var(--gradient-primary-soft)] pb-[calc(132px+env(safe-area-inset-bottom))]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <span className="absolute -left-16 top-10 h-48 w-48 rounded-full bg-primary-from/10 blur-3xl" />
         <span className="absolute -right-12 top-56 h-56 w-56 rounded-full bg-primary-to/10 blur-3xl" />

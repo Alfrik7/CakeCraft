@@ -62,7 +62,7 @@
       "title": "Плавающая плашка цены: редизайн",
       "category": "design-system",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         101
       ],

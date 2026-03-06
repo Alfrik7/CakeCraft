@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 interface PriceBarProps {
   totalPrice: number;
   isLastStep: boolean;
@@ -11,27 +13,73 @@ function formatPrice(value: number): string {
 }
 
 export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = false, onNext }: PriceBarProps) {
+  const [animatedPrice, setAnimatedPrice] = useState(totalPrice);
+  const [isPriceAnimating, setIsPriceAnimating] = useState(false);
+  const prevPriceRef = useRef(totalPrice);
+
+  useEffect(() => {
+    const previous = prevPriceRef.current;
+    if (previous === totalPrice) {
+      return;
+    }
+
+    const duration = 260;
+    const startTime = performance.now();
+    setIsPriceAnimating(true);
+
+    const tick = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - (1 - progress) * (1 - progress);
+      const nextPrice = previous + (totalPrice - previous) * eased;
+      setAnimatedPrice(nextPrice);
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        setAnimatedPrice(totalPrice);
+        setIsPriceAnimating(false);
+        prevPriceRef.current = totalPrice;
+      }
+    };
+
+    requestAnimationFrame(tick);
+  }, [totalPrice]);
+
+  const buttonText = isLastStep ? (isSubmitting ? 'Отправка...' : 'Отправить заказ') : 'Далее';
+
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-20 bg-white/80 px-3 pb-[calc(12px+env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl sm:px-4"
-      style={{ backgroundColor: 'var(--tg-secondary-bg-color, rgba(255,255,255,0.95))' }}
+      className="fixed inset-x-0 bottom-0 z-20 px-3 pb-[calc(12px+env(safe-area-inset-bottom))] pt-3 sm:px-4"
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(20px)' }}
     >
-      <div className="mx-auto flex max-w-[480px] items-center justify-between gap-4 rounded-t-3xl bg-surface/90 px-4 py-3 shadow-float">
+      <div className="mx-auto flex max-w-[480px] items-center justify-between gap-4 rounded-t-3xl border border-white/65 bg-white/85 px-4 py-3 shadow-[0_-8px_30px_rgba(61,44,44,0.08)]">
         <div>
-          <p className="text-xs text-gray-500">Текущая стоимость</p>
-          <p className="text-lg font-semibold text-gray-900">{formatPrice(totalPrice)}</p>
+          <p className="text-xs text-text-secondary">Текущая стоимость</p>
+          <p
+            className={`bg-[var(--gradient-primary)] bg-clip-text font-display text-[1.65rem] leading-tight text-transparent transition-all duration-300 ${isPriceAnimating ? 'scale-[1.03] opacity-90' : 'scale-100 opacity-100'}`}
+          >
+            {formatPrice(animatedPrice)}
+          </p>
         </div>
         <button
-          className="min-h-[44px] rounded-xl bg-rose-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-200"
-          style={{
-            backgroundColor: canProceed ? 'var(--tg-button-color, #f43f5e)' : undefined,
-            color: 'var(--tg-button-text-color, #ffffff)',
-          }}
+          className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white shadow-card transition duration-200 active:scale-95 ${isLastStep ? 'py-3.5 text-base' : 'py-3'} ${canProceed ? 'bg-[var(--gradient-primary)] hover:scale-105 hover:shadow-card-hover' : 'cursor-not-allowed bg-gray-400 opacity-50'}`}
           onClick={onNext}
           disabled={!canProceed}
           type="button"
         >
-          {isLastStep ? (isSubmitting ? 'Отправка...' : 'Отправить заказ') : 'Далее'}
+          <span>{buttonText}</span>
+          {isLastStep ? (
+            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M3.75 10H16.25M16.25 10L11 4.75M16.25 10L11 15.25"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : null}
         </button>
       </div>
     </div>
