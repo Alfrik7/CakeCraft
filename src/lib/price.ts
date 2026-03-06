@@ -1,6 +1,12 @@
 import type { MenuItem } from '../types';
 
-const KG_PER_SERVING = 0.15;
+const SERVINGS_TO_WEIGHT_KG: Record<number, number> = {
+  6: 0.6,
+  8: 0.8,
+  12: 1.2,
+  16: 1.6,
+  20: 2,
+};
 
 function normalizePrice(value: number | string): number {
   const parsed = typeof value === 'number' ? value : Number(value);
@@ -9,10 +15,14 @@ function normalizePrice(value: number | string): number {
 
 export function estimateWeightKg(servings: number): number {
   if (!Number.isFinite(servings) || servings <= 0) {
-    return 1;
+    return 0;
   }
 
-  return Math.max(1, servings * KG_PER_SERVING);
+  if (servings in SERVINGS_TO_WEIGHT_KG) {
+    return SERVINGS_TO_WEIGHT_KG[servings];
+  }
+
+  return servings / 10;
 }
 
 export function getItemPrice(servings: number, item?: Pick<MenuItem, 'price' | 'price_type'> | null): number {

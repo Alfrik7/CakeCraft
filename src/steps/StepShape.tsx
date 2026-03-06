@@ -10,12 +10,12 @@ import type { MenuItem } from '../types';
 
 const SERVINGS_OPTIONS = [6, 8, 12, 16, 20] as const;
 
-const SERVINGS_HINTS: Record<(typeof SERVINGS_OPTIONS)[number], string> = {
-  6: '6 порций ≈ на 4-6 человек',
-  8: '8 порций ≈ на 6-8 человек',
-  12: '12 порций ≈ на 10-12 человек',
-  16: '16 порций ≈ на 14-16 человек',
-  20: '20 порций ≈ на 18-20 человек',
+const SERVINGS_LABELS: Record<(typeof SERVINGS_OPTIONS)[number], string> = {
+  6: '6 (600г)',
+  8: '8 (800г)',
+  12: '12 (1.2кг)',
+  16: '16 (1.6кг)',
+  20: '20 (2кг)',
 };
 
 const FALLBACK_SHAPES = [
@@ -116,7 +116,6 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
     });
   }, [order.servings, selectedShapeItem, selectedFallbackShape, setOrder]);
 
-  const servingsHint = order.servings ? SERVINGS_HINTS[order.servings as keyof typeof SERVINGS_HINTS] : null;
   const useFallback = !loading && shapeItems.length === 0;
 
   return (
@@ -193,23 +192,19 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
                     updateOrder({ servings });
                   }}
                   className={[
-                    'tap-scale min-h-[44px] min-w-[58px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
+                    'tap-scale min-h-[44px] min-w-[96px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
                     isSelected
                       ? 'bg-[var(--gradient-primary)] text-white shadow-card'
                       : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
                   ].join(' ')}
                   aria-pressed={isSelected}
                 >
-                  {servings}
+                  {SERVINGS_LABELS[servings]}
                 </button>
               );
             })}
           </div>
         </div>
-        <p className="mt-3 text-xs text-rose-800">
-          <span className="rounded-full bg-rose-200/80 px-2 py-0.5 font-semibold text-rose-900">Подсказка</span>{' '}
-          {servingsHint ?? 'Выберите порции, чтобы увидеть ориентир по количеству гостей.'}
-        </p>
       </div>
     </section>
   );
