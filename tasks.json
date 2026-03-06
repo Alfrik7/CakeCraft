@@ -476,7 +476,7 @@
       "title": "Деплой на Vercel/Cloudflare Pages",
       "category": "infrastructure",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         17,
         24
