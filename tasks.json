@@ -354,7 +354,7 @@
       "title": "Админка — Редактор меню",
       "category": "admin",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         18
       ],

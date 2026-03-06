@@ -46,6 +46,21 @@ function mapOrder(row: OrderRow): Order {
   };
 }
 
+export interface MenuItemPayload {
+  baker_id: string;
+  category: MenuCategory;
+  name: string;
+  description?: string | null;
+  photo_url?: string | null;
+  price: number;
+  price_type: MenuItem['price_type'];
+  is_active?: boolean;
+  sort_order?: number;
+  tags?: string[];
+}
+
+type MenuItemPatch = Partial<Omit<MenuItemPayload, 'baker_id' | 'category'>>;
+
 export async function getBaker(slug: string): Promise<Baker | null> {
   const { data, error } = await supabase
     .from('bakers')
@@ -76,6 +91,122 @@ export async function getMenuItems(bakerId: string, category: MenuCategory): Pro
   }
 
   return (data ?? []).map(mapMenuItem);
+}
+
+export async function getAdminMenuItems(bakerId: string, category: MenuCategory): Promise<MenuItem[]> {
+  const { data, error } = await supabase
+    .from('menu_items')
+    .select('*')
+    .eq('baker_id', bakerId)
+    .eq('category', category)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true })
+    .returns<MenuItemRow[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []).map(mapMenuItem);
+}
+
+export async function createMenuItem(payload: MenuItemPayload): Promise<MenuItem> {
+  const insertPayload = {
+    description: null,
+    photo_url: null,
+    is_active: true,
+    sort_order: 0,
+    tags: [],
+    ...payload,
+  };
+
+  const { data, error } = await supabase
+    .from('menu_items')
+    .insert(insertPayload)
+    .select('*')
+    .single<MenuItemRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return mapMenuItem(data);
+}
+
+export async function updateMenuItem(id: string, bakerId: string, patch: MenuItemPatch): Promise<MenuItem> {
+  const { data, error } = await supabase
+    .from('menu_items')
+    .update(patch)
+    .eq('id', id)
+    .eq('baker_id', bakerId)
+    .select('*')
+    .single<MenuItemRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return mapMenuItem(data);
+}
+
+export async function setMenuItemActive(
+  id: string,
+  bakerId: string,
+  isActive: boolean,
+): Promise<MenuItem> {
+  return updateMenuItem(id, bakerId, { is_active: isActive });
+}
+
+export async function deleteMenuItem(id: string, bakerId: string): Promise<void> {
+  const { error } = await supabase.from('menu_items').delete().eq('id', id).eq('baker_id', bakerId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function reorderMenuItems(
+  bakerId: string,
+  category: MenuCategory,
+  orderedIds: string[],
+): Promise<void> {
+  if (orderedIds.length === 0) {
+    return;
+  }
+
+  const updates = orderedIds.map((id, index) =>
+    supabase
+      .from('menu_items')
+      .update({ sort_order: index })
+      .eq('id', id)
+      .eq('baker_id', bakerId)
+      .eq('category', category),
+  );
+
+  const results = await Promise.all(updates);
+  const failed = results.find((result) => result.error);
+
+  if (failed?.error) {
+    throw failed.error;
+  }
+}
+
+export async function uploadMenuPhoto(bakerId: string, file: File): Promise<string> {
+  const fileExt = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : '';
+  const safeExt = fileExt && /^[a-z0-9]+$/.test(fileExt) ? fileExt : 'jpg';
+  const filePath = `menu/${bakerId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
+
+  const { error } = await supabase.storage.from('photos').upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  const { data } = supabase.storage.from('photos').getPublicUrl(filePath);
+  return data.publicUrl;
 }
 
 export async function createOrder(data: OrderFormData): Promise<Order> {
