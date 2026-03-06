@@ -13,6 +13,7 @@
   --gradient-primary: linear-gradient(135deg, #f8a4b8 0%, #e8677c 100%);
   --gradient-primary-soft: linear-gradient(180deg, #fff5f0 0%, #ffe8ec 100%);
   --gradient-surface: linear-gradient(180deg, #fffafa 0%, #fff5f0 100%);
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M6 8.25L10 12.25L14 8.25' stroke='%23E8677C' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 body {
@@ -74,4 +75,13 @@ body {
 
 .occasion-selected {
   animation: occasion-select-bounce 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.datepicker-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+.datepicker-input::-webkit-datetime-edit {
+  color: #3d2c2c;
 }

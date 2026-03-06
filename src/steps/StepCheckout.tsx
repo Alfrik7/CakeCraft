@@ -223,45 +223,49 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
     };
   }, [registerSubmitHandler, submitOrder]);
 
+  const fieldBaseClass =
+    'mt-1 min-h-[44px] w-full rounded-xl border border-transparent bg-surface px-3 py-2 text-sm text-text-primary outline-none transition duration-300 focus:ring-2 focus:ring-primary-from/40';
+  const labelClass = 'block text-xs font-semibold uppercase tracking-[0.04em] text-text-secondary';
+
   return (
-    <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Шаг 6. Оформление заказа</h2>
-      <p className="mt-2 text-sm text-gray-600">Заполните контактные данные и проверьте состав заказа.</p>
+    <section className="rounded-3xl bg-white/85 p-5 shadow-card backdrop-blur-sm sm:p-6">
+      <h2 className="text-center font-display text-3xl text-text-primary">Оформление заказа</h2>
+      <p className="mt-2 text-center text-sm text-text-secondary">Заполните контакты и выберите удобный формат получения</p>
 
       <div className="mt-5 space-y-4">
-        <label className="block text-sm text-gray-700">
+        <label className={labelClass}>
           Имя клиента *
           <input
             type="text"
             value={order.client_name}
             onChange={(event) => updateOrder({ client_name: event.target.value })}
             placeholder="Например: Анна"
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+            className={fieldBaseClass}
           />
-          {fieldErrors.client_name ? <p className="mt-1 text-xs text-amber-700">{fieldErrors.client_name}</p> : null}
+          {fieldErrors.client_name ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.client_name}</p> : null}
         </label>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_170px]">
-          <label className="block text-sm text-gray-700">
+          <label className={labelClass}>
             Контакт *
             <input
               type="text"
               value={order.client_contact}
               onChange={(event) => updateOrder({ client_contact: event.target.value })}
               placeholder="@username / +7..."
-              className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+              className={fieldBaseClass}
             />
-            {fieldErrors.client_contact ? <p className="mt-1 text-xs text-amber-700">{fieldErrors.client_contact}</p> : null}
+            {fieldErrors.client_contact ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.client_contact}</p> : null}
           </label>
 
-          <label className="block text-sm text-gray-700">
+          <label className={labelClass}>
             Тип контакта
             <select
               value={order.client_contact_type}
               onChange={(event) =>
                 updateOrder({ client_contact_type: event.target.value as 'telegram' | 'whatsapp' | 'phone' })
               }
-              className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+              className={[fieldBaseClass, 'appearance-none bg-[image:var(--select-chevron)] bg-[position:right_0.7rem_center] bg-[length:0.75rem] bg-no-repeat pr-9'].join(' ')}
             >
               <option value="telegram">Telegram</option>
               <option value="whatsapp">WhatsApp</option>
@@ -271,42 +275,48 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="block text-sm text-gray-700">
+          <label className={labelClass}>
             Дата заказа *
-            <input
-              type="date"
-              min={minOrderDate}
-              value={order.order_date}
-              onChange={(event) => updateOrder({ order_date: event.target.value })}
-              className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
-            />
-            <p className="mt-1 text-xs text-gray-500">Минимальная дата заказа: {minOrderDate}</p>
-            {fieldErrors.order_date ? <p className="mt-1 text-xs text-amber-700">{fieldErrors.order_date}</p> : null}
+            <div className="relative mt-1">
+              <input
+                type="date"
+                min={minOrderDate}
+                value={order.order_date}
+                onChange={(event) => updateOrder({ order_date: event.target.value })}
+                className={[fieldBaseClass, 'datepicker-input mt-0 pr-10'].join(' ')}
+              />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base text-primary-to">📅</span>
+            </div>
+            <p className="mt-1 text-xs text-text-secondary">Минимальная дата заказа: {minOrderDate}</p>
+            {fieldErrors.order_date ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.order_date}</p> : null}
           </label>
 
-          <label className="block text-sm text-gray-700">
+          <label className={labelClass}>
             Время (опционально)
-            <input
-              type="time"
-              value={order.order_time ?? ''}
-              onChange={(event) => updateOrder({ order_time: event.target.value || null })}
-              className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
-            />
+            <div className="relative mt-1">
+              <input
+                type="time"
+                value={order.order_time ?? ''}
+                onChange={(event) => updateOrder({ order_time: event.target.value || null })}
+                className={[fieldBaseClass, 'datepicker-input mt-0 pr-10'].join(' ')}
+              />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base text-primary-to">🕒</span>
+            </div>
           </label>
         </div>
 
         {loadingBlockedDates ? <SkeletonParagraph /> : null}
         {blockedDatesError ? (
-          <p className="text-xs text-amber-700">Не удалось загрузить заблокированные даты, проверьте дату вручную.</p>
+          <p className="text-xs text-rose-700">Не удалось загрузить заблокированные даты, проверьте дату вручную.</p>
         ) : null}
         {!loadingBlockedDates && blockedDateSet.size > 0 ? (
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-text-secondary">
             Недоступные даты: {Array.from(blockedDateSet).sort().join(', ')}
           </p>
         ) : null}
 
-        <div className="border-t border-rose-100 pt-4">
-          <p className="text-sm font-medium text-gray-800">Получение заказа</p>
+        <div className="border-t border-primary-from/15 pt-4">
+          <p className={labelClass}>Получение заказа</p>
           {isDeliveryEnabled ? (
             <div className="mt-3 flex flex-wrap gap-2">
               <button
@@ -316,10 +326,10 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
                   updateOrder({ delivery_type: 'pickup', address: null });
                 }}
                 className={[
-                  'min-h-[44px] rounded-xl border px-4 py-2 text-sm transition',
+                  'min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 active:scale-95',
                   order.delivery_type === 'pickup'
-                    ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-200'
-                    : 'border-rose-100 bg-white text-gray-700 hover:border-rose-200',
+                    ? 'bg-[var(--gradient-primary)] text-white shadow-card'
+                    : 'bg-surface text-text-primary shadow-[inset_0_0_0_1px_rgba(232,103,124,0.22)] hover:shadow-card',
                 ].join(' ')}
                 aria-pressed={order.delivery_type === 'pickup'}
               >
@@ -332,10 +342,10 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
                   updateOrder({ delivery_type: 'delivery' });
                 }}
                 className={[
-                  'min-h-[44px] rounded-xl border px-4 py-2 text-sm transition',
+                  'min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 active:scale-95',
                   order.delivery_type === 'delivery'
-                    ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-200'
-                    : 'border-rose-100 bg-white text-gray-700 hover:border-rose-200',
+                    ? 'bg-[var(--gradient-primary)] text-white shadow-card'
+                    : 'bg-surface text-text-primary shadow-[inset_0_0_0_1px_rgba(232,103,124,0.22)] hover:shadow-card',
                 ].join(' ')}
                 aria-pressed={order.delivery_type === 'delivery'}
               >
@@ -343,52 +353,52 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
               </button>
             </div>
           ) : (
-            <p className="mt-2 text-sm text-gray-600">Доступен только самовывоз.</p>
+            <p className="mt-2 text-sm text-text-secondary">Доступен только самовывоз.</p>
           )}
 
           {isDeliverySelected ? (
-            <label className="mt-3 block text-sm text-gray-700">
+            <label className={[labelClass, 'mt-4'].join(' ')}>
               Адрес доставки *
               <textarea
                 value={order.address ?? ''}
                 onChange={(event) => updateOrder({ address: event.target.value })}
                 rows={2}
                 placeholder="Город, улица, дом, подъезд"
-                className="mt-1 w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+                className={fieldBaseClass}
               />
-              {fieldErrors.address ? <p className="mt-1 text-xs text-amber-700">{fieldErrors.address}</p> : null}
+              {fieldErrors.address ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.address}</p> : null}
             </label>
           ) : null}
         </div>
 
-        <label className="block border-t border-rose-100 pt-4 text-sm text-gray-700">
+        <label className={[labelClass, 'block border-t border-primary-from/15 pt-4'].join(' ')}>
           Комментарий
           <textarea
             value={order.comment ?? ''}
             onChange={(event) => updateOrder({ comment: event.target.value })}
             rows={3}
             placeholder="Дополнительные пожелания по заказу"
-            className="mt-1 w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+            className={fieldBaseClass}
           />
         </label>
       </div>
 
-      <div className="mt-6 rounded-xl border border-rose-100 bg-rose-50/40 p-4">
-        <p className="text-sm font-medium text-gray-900">Итоговая стоимость</p>
-        <div className="mt-3 space-y-2 text-sm text-gray-700">
-          <div className="flex items-center justify-between gap-3">
+      <div className="mt-6 rounded-2xl bg-secondary/95 p-4 shadow-card">
+        <p className="font-display text-xl text-text-primary">Итоговая стоимость</p>
+        <div className="mt-3 space-y-2 text-sm text-text-primary">
+          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
             <span>База (форма и размер)</span>
             <span>{formatPrice(basePrice)}</span>
           </div>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
             <span>Начинка</span>
             <span>{formatPrice(fillingPrice)}</span>
           </div>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
             <span>Покрытие</span>
             <span>{formatPrice(coatingPrice)}</span>
           </div>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
             <span>Декор</span>
             <span>{formatPrice(decorPrice)}</span>
           </div>
@@ -397,13 +407,15 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
             <span>{formatPrice(deliveryPrice)}</span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between border-t border-rose-200 pt-3 text-base font-semibold text-gray-900">
+        <div className="mt-3 flex items-center justify-between border-t border-primary-from/35 pt-3 text-base">
           <span>Итого</span>
-          <span>{formatPrice(finalTotalPrice)}</span>
+          <span className="bg-[var(--gradient-primary)] bg-clip-text font-display text-2xl font-semibold text-transparent">
+            {formatPrice(finalTotalPrice)}
+          </span>
         </div>
       </div>
 
-      {submitError ? <p className="mt-4 text-sm text-amber-700">{submitError}</p> : null}
+      {submitError ? <p className="mt-4 text-sm text-rose-700">{submitError}</p> : null}
     </section>
   );
 }

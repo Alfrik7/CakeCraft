@@ -180,7 +180,7 @@
       "title": "Экран 6 — Оформление заказа: редизайн",
       "category": "screens",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         102
       ],
