@@ -12,6 +12,7 @@ with upsert_baker as (
     min_order_days,
     delivery_enabled,
     delivery_price,
+    pickup_address,
     working_hours
   )
   values (
@@ -24,6 +25,7 @@ with upsert_baker as (
     2,
     true,
     500,
+    'Москва, ул. Пекарская, 12, подъезд 2',
     '{
       "monday": {"from": "10:00", "to": "19:00"},
       "tuesday": {"from": "10:00", "to": "19:00"},
@@ -44,6 +46,7 @@ with upsert_baker as (
     min_order_days = excluded.min_order_days,
     delivery_enabled = excluded.delivery_enabled,
     delivery_price = excluded.delivery_price,
+    pickup_address = excluded.pickup_address,
     working_hours = excluded.working_hours,
     updated_at = now()
   returning id

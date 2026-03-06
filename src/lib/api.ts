@@ -77,6 +77,7 @@ export interface BakerProfilePatch {
   min_order_days: number;
   delivery_enabled: boolean;
   delivery_price: number;
+  pickup_address: string | null;
   working_hours: Baker['working_hours'];
 }
 

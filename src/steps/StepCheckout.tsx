@@ -48,6 +48,8 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
   const minOrderDate = useMemo(() => toIsoDate(addDays(new Date(), baker.min_order_days)), [baker.min_order_days]);
   const isDeliveryEnabled = baker.delivery_enabled;
   const isDeliverySelected = isDeliveryEnabled && order.delivery_type === 'delivery';
+  const pickupAddress = baker.pickup_address?.trim() ?? '';
+  const showPickupAddress = order.delivery_type === 'pickup' && pickupAddress.length > 0;
 
   useEffect(() => {
     let isActive = true;
@@ -375,6 +377,13 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
               />
               {fieldErrors.address ? <p className="mt-1 text-xs text-rose-700">{fieldErrors.address}</p> : null}
             </label>
+          ) : null}
+
+          {showPickupAddress ? (
+            <div className="mt-3 rounded-2xl border border-primary-from/30 bg-primary-from/10 px-3 py-2 text-sm text-text-primary">
+              <p className="font-semibold">📍 Адрес самовывоза</p>
+              <p className="mt-1">{pickupAddress}</p>
+            </div>
           ) : null}
         </div>
 

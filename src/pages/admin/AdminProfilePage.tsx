@@ -20,6 +20,7 @@ interface ProfileFormState {
   minOrderDays: string;
   deliveryEnabled: boolean;
   deliveryPrice: string;
+  pickupAddress: string;
   workingHours: WorkingHours;
   logoFile: File | null;
 }
@@ -43,6 +44,7 @@ function getInitialFormState(baker: Baker): ProfileFormState {
     minOrderDays: String(baker.min_order_days),
     deliveryEnabled: baker.delivery_enabled,
     deliveryPrice: String(baker.delivery_price),
+    pickupAddress: baker.pickup_address ?? '',
     workingHours: baker.working_hours ?? getDefaultWorkingHours(),
     logoFile: null,
   };
@@ -125,6 +127,7 @@ export function AdminProfilePage() {
     const trimmedName = form.name.trim();
     const trimmedWelcome = form.welcomeMessage.trim();
     const trimmedEmail = form.email.trim();
+    const trimmedPickupAddress = form.pickupAddress.trim();
     const minOrderDays = Number(form.minOrderDays);
     const deliveryPrice = Number(form.deliveryPrice.replace(',', '.'));
 
@@ -179,6 +182,7 @@ export function AdminProfilePage() {
         min_order_days: minOrderDays,
         delivery_enabled: form.deliveryEnabled,
         delivery_price: deliveryPrice,
+        pickup_address: trimmedPickupAddress || null,
         working_hours: form.workingHours,
       });
 
@@ -279,6 +283,19 @@ export function AdminProfilePage() {
                   setForm((prev) => (prev ? { ...prev, welcomeMessage: event.target.value } : prev))
                 }
                 className="w-full resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm"
+              />
+            </label>
+
+            <label className="block text-sm sm:col-span-2">
+              <span className="mb-1 block font-medium text-gray-700">Адрес самовывоза</span>
+              <textarea
+                rows={2}
+                value={form.pickupAddress}
+                onChange={(event) =>
+                  setForm((prev) => (prev ? { ...prev, pickupAddress: event.target.value } : prev))
+                }
+                className="w-full resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm"
+                placeholder="Город, улица, дом, ориентир"
               />
             </label>
 
