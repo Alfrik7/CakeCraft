@@ -193,7 +193,7 @@
       "title": "Экран 2 — Форма и размер",
       "category": "frontend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         9
       ],

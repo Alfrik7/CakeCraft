@@ -5,6 +5,7 @@ import { PriceBar } from './PriceBar';
 import { ProgressBar } from './ProgressBar';
 import { StepPlaceholder } from '../steps/StepPlaceholder';
 import { StepOccasion } from '../steps/StepOccasion';
+import { StepShape } from '../steps/StepShape';
 
 const TOTAL_STEPS = 6;
 
@@ -48,7 +49,17 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
 
   const currentStep = steps[step - 1];
   const isLastStep = step === TOTAL_STEPS;
-  const canProceed = step === 1 ? Boolean(order.occasion) : true;
+  const canProceed = useMemo(() => {
+    if (step === 1) {
+      return Boolean(order.occasion);
+    }
+
+    if (step === 2) {
+      return Boolean(order.shape) && Boolean(order.servings);
+    }
+
+    return true;
+  }, [order.occasion, order.servings, order.shape, step]);
 
   const handleNext = () => {
     if (!isLastStep) {
@@ -68,11 +79,9 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         </header>
 
         <div key={step} className="step-enter">
-          {step === 1 ? (
-            <StepOccasion />
-          ) : (
-            <StepPlaceholder title={currentStep.title} description={currentStep.description} />
-          )}
+          {step === 1 ? <StepOccasion /> : null}
+          {step === 2 ? <StepShape bakerId={baker.id} /> : null}
+          {step > 2 ? <StepPlaceholder title={currentStep.title} description={currentStep.description} /> : null}
         </div>
       </div>
 
