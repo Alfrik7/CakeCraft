@@ -61,7 +61,7 @@
       "title": "Схема базы данных — таблица menu_items",
       "category": "database",
       "priority": "critical",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": [
         3
       ],
