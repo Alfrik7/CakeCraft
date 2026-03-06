@@ -217,7 +217,7 @@
       "title": "Skeleton loaders и loading states",
       "category": "components",
       "priority": "medium",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         101,
         105

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ConstructorLayout } from '../components/ConstructorLayout';
+import { SkeletonProgressBar } from '../components/SkeletonProgressBar';
 import { OrderProvider } from '../context/OrderContext';
 import { getBaker } from '../lib/api';
 import type { Baker } from '../types';
@@ -65,11 +66,16 @@ export function ConstructorPage() {
           <span className="absolute -left-16 top-10 h-48 w-48 rounded-full bg-primary-from/10 blur-3xl" />
           <span className="absolute -right-12 top-56 h-56 w-56 rounded-full bg-primary-to/10 blur-3xl" />
         </div>
-        <div className="relative mx-auto max-w-[480px] rounded-[2rem] bg-surface/90 p-5 shadow-card backdrop-blur-sm">
-          <div className="h-4 w-1/3 animate-pulse rounded-full bg-primary-from/20" aria-hidden="true" />
-          <div className="mt-3 h-6 w-5/6 animate-pulse rounded-full bg-primary-from/20" aria-hidden="true" />
-          <div className="mt-5 h-2 w-full animate-pulse rounded-full bg-primary-from/20" aria-hidden="true" />
-          <p className="mt-5 text-sm text-text-secondary">Загружаем данные кондитера...</p>
+        <div className="relative mx-auto flex w-full max-w-[480px] flex-col gap-4">
+          <div className="sticky top-0 z-30 -mx-3 bg-surface/55 px-3 pb-3 pt-[max(env(safe-area-inset-top),0.5rem)] backdrop-blur-xl sm:-mx-4 sm:px-4 sm:pt-4">
+            <SkeletonProgressBar />
+          </div>
+          <div className="rounded-[2rem] bg-surface/90 p-5 shadow-card backdrop-blur-sm">
+            <div className="skeleton-shimmer h-4 w-1/3 rounded-full" aria-hidden="true" />
+            <div className="skeleton-shimmer mt-3 h-6 w-5/6 rounded-full" aria-hidden="true" />
+            <div className="skeleton-shimmer mt-5 h-2 w-full rounded-full" aria-hidden="true" />
+            <p className="mt-5 text-sm text-text-secondary">Загружаем данные кондитера...</p>
+          </div>
         </div>
       </main>
     );

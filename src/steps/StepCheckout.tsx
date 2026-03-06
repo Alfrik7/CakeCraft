@@ -306,13 +306,17 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
         </div>
 
         {loadingBlockedDates ? <SkeletonParagraph /> : null}
-        {blockedDatesError ? (
-          <p className="text-xs text-rose-700">Не удалось загрузить заблокированные даты, проверьте дату вручную.</p>
-        ) : null}
-        {!loadingBlockedDates && blockedDateSet.size > 0 ? (
-          <p className="text-xs text-text-secondary">
-            Недоступные даты: {Array.from(blockedDateSet).sort().join(', ')}
-          </p>
+        {!loadingBlockedDates ? (
+          <div className="content-fade-in">
+            {blockedDatesError ? (
+              <p className="text-xs text-rose-700">Не удалось загрузить заблокированные даты, проверьте дату вручную.</p>
+            ) : null}
+            {blockedDateSet.size > 0 ? (
+              <p className="text-xs text-text-secondary">
+                Недоступные даты: {Array.from(blockedDateSet).sort().join(', ')}
+              </p>
+            ) : null}
+          </div>
         ) : null}
 
         <div className="border-t border-primary-from/15 pt-4">

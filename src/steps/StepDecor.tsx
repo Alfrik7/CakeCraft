@@ -171,32 +171,36 @@ export function StepDecor({ bakerId }: StepDecorProps) {
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}
-        {loadError ? (
-          <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
-            Не удалось загрузить декор из каталога.
-          </p>
-        ) : null}
+        {!loading ? (
+          <div className="content-fade-in">
+            {loadError ? (
+              <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+                Не удалось загрузить декор из каталога.
+              </p>
+            ) : null}
 
-        {!loading && decorItems.length === 0 ? (
-          <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных элементов декора.</p>
-        ) : null}
+            {decorItems.length === 0 ? (
+              <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных элементов декора.</p>
+            ) : null}
 
-        {!loading && decorItems.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
-            {decorItems.map((item) => {
-              const isSelected = order.decor_items.includes(item.id);
+            {decorItems.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {decorItems.map((item) => {
+                  const isSelected = order.decor_items.includes(item.id);
 
-              return (
-                <MenuCard
-                  key={item.id}
-                  item={item}
-                  selected={isSelected}
-                  onSelect={() => toggleDecorItem(item)}
-                  mode="multi"
-                  servings={order.servings}
-                />
-              );
-            })}
+                  return (
+                    <MenuCard
+                      key={item.id}
+                      item={item}
+                      selected={isSelected}
+                      onSelect={() => toggleDecorItem(item)}
+                      mode="multi"
+                      servings={order.servings}
+                    />
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

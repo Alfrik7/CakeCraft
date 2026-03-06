@@ -56,7 +56,7 @@ export function MenuCard({ item, selected, onSelect, mode, servings = null }: Me
           <div className="grid h-full w-full place-items-center text-xs font-semibold text-text-secondary">Фото недоступно</div>
         ) : (
           <>
-            {!imageLoaded ? <div className="absolute inset-0 animate-pulse bg-rose-100" aria-hidden="true" /> : null}
+            {!imageLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
             <img
               src={item.photo_url}
               alt={item.name}

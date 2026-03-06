@@ -126,7 +126,7 @@ export function StepShape({ bakerId }: StepShapeProps) {
         {loading ? (
           <SkeletonMenuGrid />
         ) : (
-          <>
+          <div className="content-fade-in">
             {useFallback || loadError ? (
               <div className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
                 {useFallback
@@ -158,7 +158,7 @@ export function StepShape({ bakerId }: StepShapeProps) {
                     />
                   ))}
             </div>
-          </>
+          </div>
         )}
       </div>
 
