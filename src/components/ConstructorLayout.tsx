@@ -143,7 +143,11 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         <span className="absolute bottom-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-[480px] flex-col gap-4 px-3 pt-4 sm:px-4 sm:pt-6">
+      <div className="relative mx-auto flex w-full max-w-[480px] flex-col gap-4 px-3 pb-2 pt-3 sm:px-4 sm:pt-4">
+        <div className="sticky top-0 z-30 -mx-3 border-b border-primary-from/20 bg-surface/55 px-3 pb-3 pt-[max(env(safe-area-inset-top),0.5rem)] backdrop-blur-xl sm:-mx-4 sm:px-4 sm:pt-4">
+          <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
+        </div>
+
         <header className="rounded-[2rem] bg-surface/90 p-4 shadow-card backdrop-blur-sm">
           <div className="flex items-center gap-3">
             {baker.logo_url ? (
@@ -167,9 +171,6 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
             </div>
           </div>
           <h1 className="mt-3 text-base font-medium text-text-primary">{baker.welcome_message}</h1>
-          <div className="mt-4">
-            <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
-          </div>
         </header>
 
         <div key={step} className="step-enter">

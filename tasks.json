@@ -25,7 +25,9 @@
       "category": "design-system",
       "priority": "critical",
       "status": "done",
-      "dependencies": [101],
+      "dependencies": [
+        101
+      ],
       "description": "Обновить корневой layout приложения. Фон: мягкий вертикальный градиент от #FFF5F0 (верх) к #FFE8EC (низ). Основной контейнер: max-width 480px, центрирован, без жёстких рамок — контент 'плавает' на градиентном фоне. Добавить декоративные элементы: полупрозрачные круги (blob) на фоне (#F8A4B8 с opacity 0.1) для создания глубины. Шапка кондитера: аватарка (круглая, с тенью), имя кондитера шрифтом Playfair Display, приветственное сообщение — Nunito. Убрать все прямоугольные рамки и жёсткие линии.",
       "acceptance_criteria": [
         "Градиентный фон отображается",
@@ -41,8 +43,10 @@
       "title": "Прогресс-бар: редизайн",
       "category": "design-system",
       "priority": "critical",
-      "status": "pending",
-      "dependencies": [101],
+      "status": "done",
+      "dependencies": [
+        101
+      ],
       "description": "Переработать прогресс-бар из прямоугольных блоков в стильную линию. Новый дизайн: горизонтальная линия с круглыми точками на каждом шаге. Активный шаг — заполненный круг с градиентом primary + лёгкая пульсирующая анимация. Пройденные шаги — заполненные круги (чуть меньше). Будущие шаги — пустые круги с бордером. Линия между шагами: градиент от заполненного до пустого. Под каждой точкой — короткая подпись (Повод, Форма, Начинка, Покрытие, Декор, Заказ) мелким шрифтом. Фиксирован вверху с blur-эффектом фона (backdrop-blur).",
       "acceptance_criteria": [
         "Круглые точки вместо прямоугольных блоков",
@@ -59,7 +63,9 @@
       "category": "design-system",
       "priority": "critical",
       "status": "pending",
-      "dependencies": [101],
+      "dependencies": [
+        101
+      ],
       "description": "Переработать нижнюю плашку с ценой. Новый дизайн: glass-morphism эффект (background: rgba(255,255,255,0.85), backdrop-blur: 20px). Скруглённые верхние углы (rounded-t-3xl). Лёгкая верхняя тень. Цена — крупным шрифтом Playfair Display с градиентным цветом текста. Кнопка 'Далее' — скруглённая (rounded-full) с градиентом primary, белый текст, тень. При наведении — лёгкое увеличение (scale-105). Disabled состояние — серая с opacity 0.5. Кнопка 'Отправить заказ' на последнем шаге — крупнее, с иконкой. Плавная анимация обновления цены (transition).",
       "acceptance_criteria": [
         "Glass-morphism фон плашки",
@@ -76,7 +82,9 @@
       "category": "components",
       "priority": "critical",
       "status": "pending",
-      "dependencies": [101],
+      "dependencies": [
+        101
+      ],
       "description": "Полностью переработать компонент MenuCard. Новый дизайн по референсу Cake World: крупное фото (aspect-ratio 1/1, object-cover, rounded-2xl) занимает верхнюю часть карточки. Название под фото — шрифт Nunito Bold. Описание — мелкий текст, text-secondary, max 2 строки. Цена — справа внизу, шрифт Playfair Display, цвет primary. Теги (Хит, Новинка) — маленькие pill-бейджи с градиентом, абсолютно позиционированы на фото (верхний левый угол). Карточка: белый фон, shadow-card, rounded-2xl, padding 0 (фото вплотную к краям). Selected состояние: ring-2 ring-primary, shadow-card-hover, scale-[1.02] с transition. Сетка: 2 колонки, gap-3. Hover: лёгкий подъём (translateY(-2px)).",
       "acceptance_criteria": [
         "Фото 1:1 с rounded-2xl",
@@ -94,7 +102,10 @@
       "category": "screens",
       "priority": "high",
       "status": "pending",
-      "dependencies": [102, 105],
+      "dependencies": [
+        102,
+        105
+      ],
       "description": "Переработать экран выбора повода. Вместо простых кнопок — крупные карточки с иллюстрациями/эмодзи. Каждая карточка: фон — мягкий градиент (уникальный для каждого повода), крупный эмодзи по центру (🎂🎁💒🎈🏢), название под эмодзи. Размер карточек — 2 в ряд, квадратные. При выборе — анимация 'bounce' + ring + тень. Заголовок экрана: 'Какой у вас повод?' шрифтом Playfair Display, по центру.",
       "acceptance_criteria": [
         "5 карточек с уникальными градиентами",
@@ -111,7 +122,10 @@
       "category": "screens",
       "priority": "high",
       "status": "pending",
-      "dependencies": [102, 105],
+      "dependencies": [
+        102,
+        105
+      ],
       "description": "Переработать экран выбора формы. Карточки форм через новый MenuCard. Селектор порций: вместо простых кнопок — горизонтальный слайдер из pill-кнопок (rounded-full). Активная порция — с градиентом primary и белым текстом. Подсказка по гостям — в стилизованном tooltip (розовый фон, мелкий текст). Заголовок: 'Выберите форму' шрифтом Playfair Display.",
       "acceptance_criteria": [
         "Карточки форм через MenuCard",
@@ -127,7 +141,10 @@
       "category": "screens",
       "priority": "high",
       "status": "pending",
-      "dependencies": [102, 105],
+      "dependencies": [
+        102,
+        105
+      ],
       "description": "Переработать экраны начинки и покрытия. Карточки через новый MenuCard. Для покрытия — палитра цветов: круглые кнопки (w-10 h-10 rounded-full) с тенью, при выборе — ring-2 + scale-110. Кастомный цвет — кнопка с иконкой '+' и текстовое поле с плавным появлением. Секция цвета — отдельный блок с заголовком 'Выберите цвет' на кремовом фоне с rounded-2xl.",
       "acceptance_criteria": [
         "Начинки через MenuCard",
@@ -144,7 +161,10 @@
       "category": "screens",
       "priority": "high",
       "status": "pending",
-      "dependencies": [102, 105],
+      "dependencies": [
+        102,
+        105
+      ],
       "description": "Переработать экран декора. Карточки через MenuCard в режиме multi-select. Выбранные элементы — стилизованные chips с градиентным фоном, иконкой X для удаления, лёгкая появляющаяся анимация. Поле загрузки фото: dashed border с розовым цветом, иконка камеры по центру, текст 'Загрузите фото-референс'. При загрузке — превью с кнопкой удаления. Поле надписи для топпера — стилизованный input с rounded-xl, розовым focus ring. Комментарий — textarea с тем же стилем.",
       "acceptance_criteria": [
         "Мульти-выбор через MenuCard",
@@ -161,7 +181,9 @@
       "category": "screens",
       "priority": "high",
       "status": "pending",
-      "dependencies": [102],
+      "dependencies": [
+        102
+      ],
       "description": "Переработать экран оформления. Все input-поля: rounded-xl, бордер transparent, фон surface (#FFFAFA), при фокусе — ring-2 ring-primary с плавной анимацией. Labels — мелкий текст, text-secondary, над полем. Кнопки доставки — pill-кнопки (как порции). Date picker — стилизованный. Блок итоговой стоимости: карточка с кремовым фоном (secondary), rounded-2xl, тень. Строки расшифровки — с разделителями (dashed border). Итого — крупный шрифт Playfair Display с градиентным цветом. Кнопка 'Отправить' — крупная, gradient primary, rounded-full, иконка стрелки.",
       "acceptance_criteria": [
         "Стилизованные input-поля с анимацией фокуса",
@@ -178,7 +200,9 @@
       "category": "screens",
       "priority": "medium",
       "status": "pending",
-      "dependencies": [102],
+      "dependencies": [
+        102
+      ],
       "description": "Переработать экран благодарности после отправки заказа. По центру — крупный эмодзи торта (🎂) с анимацией появления (scale from 0 to 1 + bounce). Текст 'Заказ отправлен!' — Playfair Display, крупный. Подтекст '{baker.name} свяжется с вами в ближайшее время' — Nunito, text-secondary. Конфетти-анимация на фоне (CSS only, без библиотек). Кнопка 'Собрать ещё один торт' — outline стиль, rounded-full.",
       "acceptance_criteria": [
         "Анимация появления эмодзи",
@@ -194,7 +218,10 @@
       "category": "components",
       "priority": "medium",
       "status": "pending",
-      "dependencies": [101, 105],
+      "dependencies": [
+        101,
+        105
+      ],
       "description": "Добавить стилизованные skeleton loaders для всех компонентов. Skeleton для MenuCard — rounded-2xl блок с shimmer-анимацией (розовый shimmer вместо серого). Skeleton для текста — rounded-full полоски. Skeleton для прогресс-бара. Transition при загрузке данных — fade-in (opacity 0→1) за 300ms. Все loading states должны использовать розовую цветовую палитру.",
       "acceptance_criteria": [
         "Skeleton для MenuCard с shimmer",
@@ -210,7 +237,14 @@
       "category": "polish",
       "priority": "medium",
       "status": "pending",
-      "dependencies": [105, 106, 107, 108, 109, 110],
+      "dependencies": [
+        105,
+        106,
+        107,
+        108,
+        109,
+        110
+      ],
       "description": "Добавить микроанимации по всему приложению. Переход между шагами: slide-in/slide-out (влево при 'далее', вправо при 'назад') за 300ms ease-out. Появление карточек: staggered fade-in (каждая следующая на 50ms позже). Кнопки: scale(0.97) при нажатии (active state). Плашка цены: плавный transition при обновлении числа (counter animation). Выбор карточки: spring animation (slight overshoot). Все transitions — ease-out или cubic-bezier для натуральности.",
       "acceptance_criteria": [
         "Slide transition между шагами",
@@ -227,7 +261,16 @@
       "category": "polish",
       "priority": "high",
       "status": "pending",
-      "dependencies": [106, 107, 108, 109, 110, 111, 112, 113],
+      "dependencies": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113
+      ],
       "description": "Пройти по всем экранам на мобильных размерах (360px, 390px, 428px). Проверить: карточки не обрезаются, текст читаемый, кнопки удобные для тапа (мин 44px), плашка цены не перекрывает контент, скролл плавный, шрифты загружаются. Убедиться что нет горизонтального скролла. Проверить в Chrome DevTools device emulation. Исправить все визуальные баги.",
       "acceptance_criteria": [
         "Все экраны корректны на 360px",

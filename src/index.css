@@ -40,3 +40,19 @@ body {
 .step-enter {
   animation: step-enter 220ms ease-out;
 }
+
+@keyframes progress-step-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 103, 124, 0.38);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(232, 103, 124, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 103, 124, 0);
+  }
+}
+
+.progress-step-active {
+  animation: progress-step-pulse 1.6s ease-out infinite;
+}
