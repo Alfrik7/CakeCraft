@@ -47,6 +47,9 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
   }, [totalPrice]);
 
   const buttonText = isLastStep ? (isSubmitting ? 'Отправка...' : 'Отправить заказ') : 'Далее';
+  const buttonClass = canProceed
+    ? 'bg-[var(--gradient-primary)] text-white hover:scale-105 hover:shadow-card-hover'
+    : 'cursor-not-allowed border border-primary-from/35 bg-white text-text-secondary';
 
   return (
     <div
@@ -57,13 +60,13 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
         <div>
           <p className="text-xs text-text-secondary">Текущая стоимость</p>
           <p
-            className={`bg-[var(--gradient-primary)] bg-clip-text font-display text-[1.65rem] leading-tight text-transparent transition-all duration-300 ${isPriceAnimating ? 'scale-[1.03] opacity-90' : 'scale-100 opacity-100'}`}
+            className={`font-display text-[1.65rem] leading-tight text-text-primary transition-all duration-300 ${isPriceAnimating ? 'scale-[1.03] opacity-90' : 'scale-100 opacity-100'}`}
           >
             {formatPrice(animatedPrice)}
           </p>
         </div>
         <button
-          className={`tap-scale inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white shadow-card transition duration-200 ${isLastStep ? 'py-3.5 text-base' : 'py-3'} ${canProceed ? 'bg-[var(--gradient-primary)] hover:scale-105 hover:shadow-card-hover' : 'cursor-not-allowed bg-gray-400 opacity-50'}`}
+          className={`tap-scale inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold shadow-card transition duration-200 ${isLastStep ? 'py-3.5 text-base' : 'py-3'} ${buttonClass}`}
           onClick={onNext}
           disabled={!canProceed}
           type="button"
