@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SkeletonParagraph } from '../components/SkeletonMenuGrid';
+import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { createOrder, getBlockedDates, getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -30,11 +31,12 @@ function addDays(date: Date, days: number): Date {
 
 interface StepCheckoutProps {
   baker: Baker;
+  onBack: () => void;
   registerSubmitHandler: (handler: (() => Promise<boolean>) | null) => void;
   onCanSubmitChange: (value: boolean) => void;
 }
 
-export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }: StepCheckoutProps) {
+export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmitChange }: StepCheckoutProps) {
   const { order, updateOrder } = useOrderContext();
   const [loadingBlockedDates, setLoadingBlockedDates] = useState(true);
   const [blockedDateSet, setBlockedDateSet] = useState<Set<string>>(new Set());
@@ -229,8 +231,11 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
 
   return (
     <section className="rounded-3xl bg-white/85 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <h2 className="text-center font-display text-3xl text-text-primary">Оформление заказа</h2>
-      <p className="mt-2 text-center text-sm text-text-secondary">Заполните контакты и выберите удобный формат получения</p>
+      <StepHeader
+        title="Оформление заказа"
+        subtitle="Заполните контакты и выберите удобный формат получения"
+        onBack={onBack}
+      />
 
       <div className="mt-5 space-y-4">
         <label className={labelClass}>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
+import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -25,9 +26,10 @@ const FALLBACK_SHAPES = [
 
 interface StepShapeProps {
   bakerId: string;
+  onBack: () => void;
 }
 
-export function StepShape({ bakerId }: StepShapeProps) {
+export function StepShape({ bakerId, onBack }: StepShapeProps) {
   const { order, updateOrder, setOrder } = useOrderContext();
   const [shapeItems, setShapeItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,8 +121,11 @@ export function StepShape({ bakerId }: StepShapeProps) {
 
   return (
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <h2 className="text-center font-display text-3xl text-text-primary">Выберите форму</h2>
-      <p className="mt-2 text-center text-sm text-text-secondary">Определитесь с формой и количеством порций</p>
+      <StepHeader
+        title="Выберите форму"
+        subtitle="Определитесь с формой и количеством порций"
+        onBack={onBack}
+      />
 
       <div className="mt-5">
         {loading ? (

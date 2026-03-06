@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
+import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -20,9 +21,10 @@ const PRESET_COLOR_VALUES = new Set<string>(PRESET_COLORS.map((color) => color.v
 
 interface StepCoatingProps {
   bakerId: string;
+  onBack: () => void;
 }
 
-export function StepCoating({ bakerId }: StepCoatingProps) {
+export function StepCoating({ bakerId, onBack }: StepCoatingProps) {
   const { order, setOrder, updateOrder } = useOrderContext();
   const [coatingItems, setCoatingItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,8 +101,7 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
 
   return (
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <h2 className="text-center font-display text-3xl text-text-primary">Выберите покрытие</h2>
-      <p className="mt-2 text-center text-sm text-text-secondary">И определитесь с цветом торта</p>
+      <StepHeader title="Выберите покрытие" subtitle="И определитесь с цветом торта" onBack={onBack} />
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}

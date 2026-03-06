@@ -1,6 +1,7 @@
 import { type CSSProperties, type ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
+import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -26,9 +27,10 @@ function buildReferencePhotoPath(bakerId: string, fileName: string): string {
 
 interface StepDecorProps {
   bakerId: string;
+  onBack: () => void;
 }
 
-export function StepDecor({ bakerId }: StepDecorProps) {
+export function StepDecor({ bakerId, onBack }: StepDecorProps) {
   const { order, setOrder, updateOrder } = useOrderContext();
   const [decorItems, setDecorItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,8 +168,11 @@ export function StepDecor({ bakerId }: StepDecorProps) {
 
   return (
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <h2 className="text-center font-display text-3xl text-text-primary">Финальный декор</h2>
-      <p className="mt-2 text-center text-sm text-text-secondary">Выберите детали оформления и добавьте референс</p>
+      <StepHeader
+        title="Финальный декор"
+        subtitle="Выберите детали оформления и добавьте референс"
+        onBack={onBack}
+      />
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}

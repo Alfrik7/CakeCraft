@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
+import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
@@ -8,9 +9,10 @@ import type { MenuItem } from '../types';
 
 interface StepFillingProps {
   bakerId: string;
+  onBack: () => void;
 }
 
-export function StepFilling({ bakerId }: StepFillingProps) {
+export function StepFilling({ bakerId, onBack }: StepFillingProps) {
   const { order, setOrder } = useOrderContext();
   const [fillingItems, setFillingItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,8 +75,7 @@ export function StepFilling({ bakerId }: StepFillingProps) {
 
   return (
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <h2 className="text-center font-display text-3xl text-text-primary">Выберите начинку</h2>
-      <p className="mt-2 text-center text-sm text-text-secondary">Цена пересчитывается автоматически</p>
+      <StepHeader title="Выберите начинку" subtitle="Цена пересчитывается автоматически" onBack={onBack} />
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}

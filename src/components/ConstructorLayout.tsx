@@ -191,13 +191,14 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
           className={stepDirection === 'forward' ? 'step-transition-forward' : 'step-transition-backward'}
         >
           {step === 1 ? <StepOccasion /> : null}
-          {step === 2 ? <StepShape bakerId={baker.id} /> : null}
-          {step === 3 ? <StepFilling bakerId={baker.id} /> : null}
-          {step === 4 ? <StepCoating bakerId={baker.id} /> : null}
-          {step === 5 ? <StepDecor bakerId={baker.id} /> : null}
+          {step === 2 ? <StepShape bakerId={baker.id} onBack={handleBackStep} /> : null}
+          {step === 3 ? <StepFilling bakerId={baker.id} onBack={handleBackStep} /> : null}
+          {step === 4 ? <StepCoating bakerId={baker.id} onBack={handleBackStep} /> : null}
+          {step === 5 ? <StepDecor bakerId={baker.id} onBack={handleBackStep} /> : null}
           {step === 6 && !isSubmitted ? (
             <StepCheckout
               baker={baker}
+              onBack={handleBackStep}
               registerSubmitHandler={registerCheckoutSubmitHandler}
               onCanSubmitChange={setCheckoutCanSubmit}
             />
