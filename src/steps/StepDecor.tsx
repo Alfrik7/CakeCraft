@@ -217,7 +217,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
             {selectedDecorItems.map((item) => (
               <span
                 key={item.id}
-                className="inline-flex min-h-[38px] animate-[step-enter_220ms_ease-out] items-center gap-2 rounded-full bg-[var(--gradient-primary)] px-3 py-1 text-xs font-semibold text-white shadow-sm"
+                className="inline-flex min-h-[44px] animate-[step-enter_220ms_ease-out] items-center gap-2 rounded-full bg-[var(--gradient-primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm"
               >
                 {item.name}
                 <button
@@ -226,7 +226,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
                     triggerTelegramHaptic('selection');
                     removeDecorItem(item.id);
                   }}
-                  className="tap-scale grid h-5 w-5 place-items-center rounded-full bg-white/85 text-[11px] leading-none text-rose-700 transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  className="tap-scale tap-target grid place-items-center rounded-full bg-white/85 text-[11px] leading-none text-rose-700 transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                   aria-label={`Удалить ${item.name}`}
                 >
                   ✕
@@ -301,7 +301,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
                   triggerTelegramHaptic('selection');
                   removeReferencePhoto();
                 }}
-                className="tap-scale min-h-[32px] rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                className="tap-scale min-h-[44px] rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
               >
                 Удалить фото
               </button>

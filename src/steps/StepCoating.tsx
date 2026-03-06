@@ -159,7 +159,7 @@ export function StepCoating({ bakerId }: StepCoatingProps) {
                   triggerTelegramHaptic('selection');
                   handleSelectPresetColor(color);
                 }}
-                className="tap-scale group flex flex-col items-center gap-1 text-xs font-medium text-text-secondary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2"
+                className="tap-scale tap-target group flex flex-col items-center gap-1 text-xs font-medium text-text-secondary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2"
                 aria-pressed={isSelected}
                 aria-label={`Выбрать цвет: ${color.label}`}
               >

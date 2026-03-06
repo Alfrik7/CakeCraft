@@ -260,7 +260,7 @@
       "title": "Финальная полировка и мобильная проверка",
       "category": "polish",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         106,
         107,
