@@ -10,13 +10,16 @@
   --tg-link-color: #e11d48;
   --tg-button-color: #f43f5e;
   --tg-button-text-color: #ffffff;
+  --gradient-primary: linear-gradient(135deg, #f8a4b8 0%, #e8677c 100%);
+  --gradient-primary-soft: linear-gradient(180deg, #fff5f0 0%, #ffe8ec 100%);
+  --gradient-surface: linear-gradient(180deg, #fffafa 0%, #fff5f0 100%);
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: var(--tg-bg-color);
-  color: var(--tg-text-color);
+  font-family: 'Nunito', sans-serif;
+  background-color: #fff0f3;
+  color: #3d2c2c;
 }
 
 #root {

@@ -1,8 +1,4 @@
 #!/bin/bash
-# CakeCraft — Ralph Loop
-# Запуск: chmod +x ralph.sh && ./ralph.sh
-# Или с ограничением итераций: ./ralph.sh 20
-
 MAX_ITERATIONS=${1:-30}
 ITERATION=0
 
@@ -17,10 +13,9 @@ while [ $ITERATION -lt $MAX_ITERATIONS ]; do
   echo "$(date '+%Y-%m-%d %H:%M:%S')"
   echo ""
 
-  # Проверяем, остались ли pending задачи
-  PENDING=$(cat tasks.json | grep '"status": "pending"' | wc -l)
-  IN_PROGRESS=$(cat tasks.json | grep '"status": "in_progress"' | wc -l)
-  DONE=$(cat tasks.json | grep '"status": "done"' | wc -l)
+  PENDING=$(grep -c '"status": "pending"' tasks.json 2>/dev/null || echo 0)
+  IN_PROGRESS=$(grep -c '"status": "in_progress"' tasks.json 2>/dev/null || echo 0)
+  DONE=$(grep -c '"status": "done"' tasks.json 2>/dev/null || echo 0)
 
   echo "Tasks: pending=$PENDING, in_progress=$IN_PROGRESS, done=$DONE"
 
@@ -29,23 +24,10 @@ while [ $ITERATION -lt $MAX_ITERATIONS ]; do
     break
   fi
 
-  # Запуск Claude Code (замени на codex/opencode при необходимости)
-  claude-code --print \
-    --system-prompt "$(cat CLAUDE.md)" \
-    "Read tasks.json and progress.txt. 
-     Find the highest-priority task with status 'pending' whose dependencies are all 'done'.
-     Set its status to 'in_progress' in tasks.json.
-     Implement the task following its description and acceptance_criteria.
-     Run tests if applicable (npm test, npm run lint).
-     Commit changes: git add -A && git commit -m 'feat(task-N): title'.
-     Update the task status to 'done' in tasks.json.
-     APPEND your learnings to progress.txt (use >> not >).
-     
-     Ralph iteration $ITERATION/$MAX_ITERATIONS.
-     Output <promise>DONE</promise> when the task is complete."
+  codex "Read tasks.json and CODEX.md. Find the highest-priority task with status pending whose dependencies are all done. Implement it fully following acceptance_criteria. Update existing files in place. When done, update task status to done in tasks.json, append results to progress.txt, and run git add -A and git commit. Ralph iteration $ITERATION of $MAX_ITERATIONS."
 
   EXIT_CODE=$?
-  
+
   if [ $EXIT_CODE -ne 0 ]; then
     echo "⚠️  Agent exited with code $EXIT_CODE. Continuing..."
     sleep 5
@@ -58,6 +40,6 @@ done
 echo ""
 echo "🏁 Ralph Loop finished after $ITERATION iterations"
 echo "Final stats:"
-echo "  Done: $(cat tasks.json | grep '"status": "done"' | wc -l)"
-echo "  Pending: $(cat tasks.json | grep '"status": "pending"' | wc -l)"
-echo "  In Progress: $(cat tasks.json | grep '"status": "in_progress"' | wc -l)"
+echo "  Done: $(grep -c '"status": "done"' tasks.json 2>/dev/null || echo 0)"
+echo "  Pending: $(grep -c '"status": "pending"' tasks.json 2>/dev/null || echo 0)"
+echo "  In Progress: $(grep -c '"status": "in_progress"' tasks.json 2>/dev/null || echo 0)"

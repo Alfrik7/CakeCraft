@@ -1,495 +1,243 @@
 {
   "project": "CakeCraft",
-  "description": "Telegram Mini App — интерактивное меню-конструктор для кондитеров",
-  "version": "MVP",
+  "description": "Design overhaul — от Google-формы к premium кондитерскому стилю",
+  "version": "Design V1",
   "tasks": [
     {
-      "id": 1,
-      "title": "Инициализация проекта",
-      "category": "infrastructure",
+      "id": 101,
+      "title": "Глобальная дизайн-система: цвета, шрифты, тени",
+      "category": "design-system",
       "priority": "critical",
       "status": "done",
       "dependencies": [],
-      "description": "Создать React + Vite + TypeScript проект с Tailwind CSS. Настроить структуру папок: /src/components, /src/pages, /src/lib, /src/types, /src/hooks, /src/assets. Добавить ESLint, Prettier. Настроить базовый роутинг (react-router-dom). Инициализировать git репозиторий.",
+      "description": "Обновить tailwind.config.ts с новой дизайн-системой. Цветовая палитра: primary — розовый градиент (#F8A4B8 → #E8677C), secondary — кремовый (#FFF5F0), background — мягкий розовый (#FFF0F3), surface — белый с лёгким розовым (#FFFAFA), accent — тёплый коралловый (#FF6B81), text-primary — тёмно-коричневый (#3D2C2C), text-secondary — серо-розовый (#9B8A8A). Шрифты: подключить Google Fonts 'Nunito' (основной, скруглённый) и 'Playfair Display' (заголовки, элегантный). Тени: shadow-card (0 8px 32px rgba(232,103,124,0.1)), shadow-card-hover (0 12px 40px rgba(232,103,124,0.18)), shadow-float (0 20px 60px rgba(0,0,0,0.08)). Border-radius: rounded-2xl по дефолту для карточек, rounded-full для кнопок. Добавить CSS custom properties для градиентов.",
       "acceptance_criteria": [
-        "npm run dev запускает приложение без ошибок",
-        "Tailwind CSS работает (тестовый компонент с классами)",
-        "TypeScript strict mode включён",
-        "ESLint + Prettier настроены и не выдают ошибок",
-        "Структура папок создана"
+        "tailwind.config.ts обновлён с новыми цветами, шрифтами, тенями",
+        "Google Fonts подключены в index.html",
+        "CSS переменные для градиентов определены в index.css",
+        "Существующие компоненты не сломаны (npm run build проходит)"
       ],
       "estimated_effort": "small"
     },
     {
-      "id": 2,
-      "title": "Подключение Supabase",
-      "category": "infrastructure",
+      "id": 102,
+      "title": "Фоновый градиент и общий layout",
+      "category": "design-system",
       "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        1
-      ],
-      "description": "Установить @supabase/supabase-js. Создать клиент Supabase в /src/lib/supabase.ts с переменными окружения (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY). Создать .env.example с плейсхолдерами. Добавить .env в .gitignore.",
+      "status": "pending",
+      "dependencies": [101],
+      "description": "Обновить корневой layout приложения. Фон: мягкий вертикальный градиент от #FFF5F0 (верх) к #FFE8EC (низ). Основной контейнер: max-width 480px, центрирован, без жёстких рамок — контент 'плавает' на градиентном фоне. Добавить декоративные элементы: полупрозрачные круги (blob) на фоне (#F8A4B8 с opacity 0.1) для создания глубины. Шапка кондитера: аватарка (круглая, с тенью), имя кондитера шрифтом Playfair Display, приветственное сообщение — Nunito. Убрать все прямоугольные рамки и жёсткие линии.",
       "acceptance_criteria": [
-        "supabase клиент экспортируется из lib/supabase.ts",
-        ".env.example содержит все необходимые переменные",
-        ".env в .gitignore",
-        "Тестовый запрос к Supabase не выдаёт ошибок подключения"
+        "Градиентный фон отображается",
+        "Контейнер 480px центрирован",
+        "Декоративные blob-элементы на фоне",
+        "Шапка кондитера с аватаркой и стилизованным текстом",
+        "Нет прямоугольных рамок/бордеров"
       ],
-      "estimated_effort": "small"
+      "estimated_effort": "medium"
     },
     {
-      "id": 3,
-      "title": "Схема базы данных — таблица bakers",
-      "category": "database",
+      "id": 103,
+      "title": "Прогресс-бар: редизайн",
+      "category": "design-system",
       "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        2
-      ],
-      "description": "Создать SQL-миграцию для таблицы bakers: id (uuid, PK, default gen_random_uuid()), telegram_id (bigint, unique, not null), name (text, not null), slug (text, unique, not null), logo_url (text, nullable), email (text, nullable), welcome_message (text, default 'Добро пожаловать! Соберите свой торт 🎂'), min_order_days (int, default 3), delivery_enabled (boolean, default false), delivery_price (numeric, default 0), working_hours (jsonb, nullable), created_at (timestamptz, default now()), updated_at (timestamptz, default now()). Добавить RLS policy: публичный SELECT по slug, полный доступ по telegram_id для владельца. Файл миграции сохранить в /supabase/migrations/.",
+      "status": "pending",
+      "dependencies": [101],
+      "description": "Переработать прогресс-бар из прямоугольных блоков в стильную линию. Новый дизайн: горизонтальная линия с круглыми точками на каждом шаге. Активный шаг — заполненный круг с градиентом primary + лёгкая пульсирующая анимация. Пройденные шаги — заполненные круги (чуть меньше). Будущие шаги — пустые круги с бордером. Линия между шагами: градиент от заполненного до пустого. Под каждой точкой — короткая подпись (Повод, Форма, Начинка, Покрытие, Декор, Заказ) мелким шрифтом. Фиксирован вверху с blur-эффектом фона (backdrop-blur).",
       "acceptance_criteria": [
-        "SQL файл миграции создан",
-        "Таблица содержит все поля из описания",
-        "RLS policies определены",
-        "Есть trigger для автообновления updated_at"
+        "Круглые точки вместо прямоугольных блоков",
+        "Градиентная линия между шагами",
+        "Пульсирующая анимация на активном шаге",
+        "Подписи под точками",
+        "Backdrop-blur при скролле"
       ],
-      "estimated_effort": "small"
+      "estimated_effort": "medium"
     },
     {
-      "id": 4,
-      "title": "Схема базы данных — таблица menu_items",
-      "category": "database",
+      "id": 104,
+      "title": "Плавающая плашка цены: редизайн",
+      "category": "design-system",
       "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        3
-      ],
-      "description": "Создать SQL-миграцию для таблицы menu_items: id (uuid, PK), baker_id (uuid, FK → bakers.id, ON DELETE CASCADE), category (text, not null, CHECK IN ('shape','filling','coating','decor')), name (text, not null), description (text, nullable), photo_url (text, nullable), price (numeric, not null, default 0), price_type (text, default 'fixed', CHECK IN ('fixed','per_kg')), is_active (boolean, default true), sort_order (int, default 0), tags (text[], default '{}'), created_at (timestamptz, default now()). Индекс по (baker_id, category, sort_order). RLS: публичный SELECT для активных позиций по baker_id, полный доступ для владельца.",
+      "status": "pending",
+      "dependencies": [101],
+      "description": "Переработать нижнюю плашку с ценой. Новый дизайн: glass-morphism эффект (background: rgba(255,255,255,0.85), backdrop-blur: 20px). Скруглённые верхние углы (rounded-t-3xl). Лёгкая верхняя тень. Цена — крупным шрифтом Playfair Display с градиентным цветом текста. Кнопка 'Далее' — скруглённая (rounded-full) с градиентом primary, белый текст, тень. При наведении — лёгкое увеличение (scale-105). Disabled состояние — серая с opacity 0.5. Кнопка 'Отправить заказ' на последнем шаге — крупнее, с иконкой. Плавная анимация обновления цены (transition).",
       "acceptance_criteria": [
-        "SQL файл миграции создан",
-        "FK constraint на bakers.id с CASCADE",
-        "CHECK constraints на category и price_type",
-        "Индекс создан",
-        "RLS policies определены"
+        "Glass-morphism фон плашки",
+        "Градиентная кнопка с hover-анимацией",
+        "Плавная анимация при изменении цены",
+        "Disabled состояние стилизовано",
+        "Rounded-full кнопки"
       ],
-      "estimated_effort": "small"
+      "estimated_effort": "medium"
     },
     {
-      "id": 5,
-      "title": "Схема базы данных — таблица orders",
-      "category": "database",
+      "id": 105,
+      "title": "MenuCard компонент: полный редизайн",
+      "category": "components",
       "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        3
-      ],
-      "description": "Создать SQL-миграцию для таблицы orders: id (uuid, PK), baker_id (uuid, FK → bakers.id), client_name (text, not null), client_contact (text, not null), client_contact_type (text, default 'telegram', CHECK IN ('telegram','whatsapp','phone')), occasion (text, nullable), shape (text, nullable), servings (int, nullable), filling_id (uuid, FK → menu_items.id, nullable), coating_id (uuid, FK → menu_items.id, nullable), color (text, nullable), decor_items (uuid[], default '{}'), topper_text (text, nullable), reference_photo_url (text, nullable), delivery_type (text, default 'pickup', CHECK IN ('pickup','delivery')), address (text, nullable), order_date (date, not null), order_time (text, nullable), comment (text, nullable), total_price (numeric, not null), status (text, default 'new', CHECK IN ('new','confirmed','in_progress','done','cancelled')), created_at (timestamptz, default now()). Индексы по (baker_id, status) и (baker_id, order_date).",
+      "status": "pending",
+      "dependencies": [101],
+      "description": "Полностью переработать компонент MenuCard. Новый дизайн по референсу Cake World: крупное фото (aspect-ratio 1/1, object-cover, rounded-2xl) занимает верхнюю часть карточки. Название под фото — шрифт Nunito Bold. Описание — мелкий текст, text-secondary, max 2 строки. Цена — справа внизу, шрифт Playfair Display, цвет primary. Теги (Хит, Новинка) — маленькие pill-бейджи с градиентом, абсолютно позиционированы на фото (верхний левый угол). Карточка: белый фон, shadow-card, rounded-2xl, padding 0 (фото вплотную к краям). Selected состояние: ring-2 ring-primary, shadow-card-hover, scale-[1.02] с transition. Сетка: 2 колонки, gap-3. Hover: лёгкий подъём (translateY(-2px)).",
       "acceptance_criteria": [
-        "SQL файл миграции создан",
-        "Все FK constraints определены",
-        "CHECK constraints на status, delivery_type, client_contact_type",
-        "Индексы созданы"
+        "Фото 1:1 с rounded-2xl",
+        "Теги как pill-бейджи на фото",
+        "Selected/unselected анимация",
+        "2-колоночная сетка на мобильном",
+        "Hover эффект с подъёмом",
+        "Цена шрифтом Playfair Display"
       ],
-      "estimated_effort": "small"
+      "estimated_effort": "large"
     },
     {
-      "id": 6,
-      "title": "Схема базы данных — таблица blocked_dates",
-      "category": "database",
+      "id": 106,
+      "title": "Экран 1 — Повод: редизайн",
+      "category": "screens",
+      "priority": "high",
+      "status": "pending",
+      "dependencies": [102, 105],
+      "description": "Переработать экран выбора повода. Вместо простых кнопок — крупные карточки с иллюстрациями/эмодзи. Каждая карточка: фон — мягкий градиент (уникальный для каждого повода), крупный эмодзи по центру (🎂🎁💒🎈🏢), название под эмодзи. Размер карточек — 2 в ряд, квадратные. При выборе — анимация 'bounce' + ring + тень. Заголовок экрана: 'Какой у вас повод?' шрифтом Playfair Display, по центру.",
+      "acceptance_criteria": [
+        "5 карточек с уникальными градиентами",
+        "Крупные эмодзи по центру",
+        "Сетка 2 колонки",
+        "Анимация при выборе",
+        "Стилизованный заголовок"
+      ],
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 107,
+      "title": "Экран 2 — Форма и размер: редизайн",
+      "category": "screens",
+      "priority": "high",
+      "status": "pending",
+      "dependencies": [102, 105],
+      "description": "Переработать экран выбора формы. Карточки форм через новый MenuCard. Селектор порций: вместо простых кнопок — горизонтальный слайдер из pill-кнопок (rounded-full). Активная порция — с градиентом primary и белым текстом. Подсказка по гостям — в стилизованном tooltip (розовый фон, мелкий текст). Заголовок: 'Выберите форму' шрифтом Playfair Display.",
+      "acceptance_criteria": [
+        "Карточки форм через MenuCard",
+        "Pill-кнопки для порций с градиентом",
+        "Стилизованная подсказка по гостям",
+        "Заголовок Playfair Display"
+      ],
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 108,
+      "title": "Экраны 3-4 — Начинка и Покрытие: редизайн",
+      "category": "screens",
+      "priority": "high",
+      "status": "pending",
+      "dependencies": [102, 105],
+      "description": "Переработать экраны начинки и покрытия. Карточки через новый MenuCard. Для покрытия — палитра цветов: круглые кнопки (w-10 h-10 rounded-full) с тенью, при выборе — ring-2 + scale-110. Кастомный цвет — кнопка с иконкой '+' и текстовое поле с плавным появлением. Секция цвета — отдельный блок с заголовком 'Выберите цвет' на кремовом фоне с rounded-2xl.",
+      "acceptance_criteria": [
+        "Начинки через MenuCard",
+        "Покрытия через MenuCard",
+        "Круглые кнопки палитры цветов",
+        "Анимация выбора цвета",
+        "Секция цвета на кремовом фоне"
+      ],
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 109,
+      "title": "Экран 5 — Декор: редизайн",
+      "category": "screens",
+      "priority": "high",
+      "status": "pending",
+      "dependencies": [102, 105],
+      "description": "Переработать экран декора. Карточки через MenuCard в режиме multi-select. Выбранные элементы — стилизованные chips с градиентным фоном, иконкой X для удаления, лёгкая появляющаяся анимация. Поле загрузки фото: dashed border с розовым цветом, иконка камеры по центру, текст 'Загрузите фото-референс'. При загрузке — превью с кнопкой удаления. Поле надписи для топпера — стилизованный input с rounded-xl, розовым focus ring. Комментарий — textarea с тем же стилем.",
+      "acceptance_criteria": [
+        "Мульти-выбор через MenuCard",
+        "Стилизованные chips для выбранных элементов",
+        "Красивая зона загрузки фото",
+        "Превью загруженного фото",
+        "Стилизованные input/textarea"
+      ],
+      "estimated_effort": "large"
+    },
+    {
+      "id": 110,
+      "title": "Экран 6 — Оформление заказа: редизайн",
+      "category": "screens",
+      "priority": "high",
+      "status": "pending",
+      "dependencies": [102],
+      "description": "Переработать экран оформления. Все input-поля: rounded-xl, бордер transparent, фон surface (#FFFAFA), при фокусе — ring-2 ring-primary с плавной анимацией. Labels — мелкий текст, text-secondary, над полем. Кнопки доставки — pill-кнопки (как порции). Date picker — стилизованный. Блок итоговой стоимости: карточка с кремовым фоном (secondary), rounded-2xl, тень. Строки расшифровки — с разделителями (dashed border). Итого — крупный шрифт Playfair Display с градиентным цветом. Кнопка 'Отправить' — крупная, gradient primary, rounded-full, иконка стрелки.",
+      "acceptance_criteria": [
+        "Стилизованные input-поля с анимацией фокуса",
+        "Pill-кнопки для доставки",
+        "Карточка итоговой стоимости на кремовом фоне",
+        "Градиентная кнопка отправки",
+        "Единый стиль всех полей формы"
+      ],
+      "estimated_effort": "large"
+    },
+    {
+      "id": 111,
+      "title": "Экран 'Спасибо': wow-эффект",
+      "category": "screens",
       "priority": "medium",
-      "status": "done",
-      "dependencies": [
-        3
-      ],
-      "description": "Создать SQL-миграцию для таблицы blocked_dates: id (uuid, PK), baker_id (uuid, FK → bakers.id, ON DELETE CASCADE), date (date, not null), reason (text, nullable). UNIQUE constraint на (baker_id, date). RLS: публичный SELECT по baker_id, полный доступ для владельца.",
+      "status": "pending",
+      "dependencies": [102],
+      "description": "Переработать экран благодарности после отправки заказа. По центру — крупный эмодзи торта (🎂) с анимацией появления (scale from 0 to 1 + bounce). Текст 'Заказ отправлен!' — Playfair Display, крупный. Подтекст '{baker.name} свяжется с вами в ближайшее время' — Nunito, text-secondary. Конфетти-анимация на фоне (CSS only, без библиотек). Кнопка 'Собрать ещё один торт' — outline стиль, rounded-full.",
       "acceptance_criteria": [
-        "SQL файл миграции создан",
-        "UNIQUE constraint на (baker_id, date)",
-        "RLS policies определены"
-      ],
-      "estimated_effort": "small"
-    },
-    {
-      "id": 7,
-      "title": "Supabase Storage — бакет для фото",
-      "category": "infrastructure",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        2
-      ],
-      "description": "Создать SQL-миграцию для настройки Supabase Storage bucket 'photos' с публичным доступом на чтение. Подпапки: menu/ (фото позиций меню), references/ (референсы от клиентов), gallery/ (портфолио). Максимальный размер файла: 5MB. Разрешённые типы: image/jpeg, image/png, image/webp.",
-      "acceptance_criteria": [
-        "Storage bucket 'photos' создан через миграцию",
-        "Публичный доступ на чтение настроен",
-        "Политика загрузки ограничена по типу и размеру"
-      ],
-      "estimated_effort": "small"
-    },
-    {
-      "id": 8,
-      "title": "TypeScript типы и хелперы",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        3,
-        4,
-        5,
-        6
-      ],
-      "description": "Создать TypeScript типы в /src/types/: Baker, MenuItem, Order, BlockedDate, OrderFormData. Создать хелперы в /src/lib/: api.ts (функции для запросов к Supabase: getBaker(slug), getMenuItems(bakerId, category), createOrder(data), getBlockedDates(bakerId)), price.ts (calculateTotal(servings, filling, coating, decorItems) — логика расчёта цены).",
-      "acceptance_criteria": [
-        "Все типы определены и экспортируются",
-        "API-функции работают с типизацией",
-        "calculateTotal корректно считает цену",
-        "Юнит-тест на calculateTotal"
+        "Анимация появления эмодзи",
+        "Конфетти CSS-анимация",
+        "Стилизованные тексты",
+        "Кнопка повторного заказа"
       ],
       "estimated_effort": "medium"
     },
     {
-      "id": 9,
-      "title": "Layout и навигация клиентского приложения",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        1,
-        8
-      ],
-      "description": "Создать layout для клиентского Mini App: верхний прогресс-бар (6 шагов, текущий подсвечен), контентная область с анимацией перехода между шагами, нижняя плавающая плашка с текущей ценой и кнопкой 'Далее'/'Отправить'. Роутинг: /:slug — загрузка данных кондитера по slug и отображение конструктора. Если slug не найден — страница 404. Хранить состояние заказа в React context (OrderContext).",
+      "id": 112,
+      "title": "Skeleton loaders и loading states",
+      "category": "components",
+      "priority": "medium",
+      "status": "pending",
+      "dependencies": [101, 105],
+      "description": "Добавить стилизованные skeleton loaders для всех компонентов. Skeleton для MenuCard — rounded-2xl блок с shimmer-анимацией (розовый shimmer вместо серого). Skeleton для текста — rounded-full полоски. Skeleton для прогресс-бара. Transition при загрузке данных — fade-in (opacity 0→1) за 300ms. Все loading states должны использовать розовую цветовую палитру.",
       "acceptance_criteria": [
-        "Прогресс-бар отображает 6 шагов",
-        "Плавающая плашка с ценой фиксирована внизу",
-        "Переход между шагами с анимацией",
-        "OrderContext хранит все поля заказа",
-        "/:slug загружает данные кондитера из Supabase",
-        "404 страница для несуществующего slug"
+        "Skeleton для MenuCard с shimmer",
+        "Skeleton для текстовых блоков",
+        "Fade-in при появлении данных",
+        "Розовая палитра shimmer"
       ],
       "estimated_effort": "medium"
     },
     {
-      "id": 10,
-      "title": "Экран 1 — Повод",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9
-      ],
-      "description": "Создать компонент StepOccasion. Отображает карточки-кнопки с иконками для выбора повода: 🎂 День рождения, 💒 Свадьба, 🎈 Детский праздник, 🏢 Корпоратив, 🎁 Без повода / Другое. Одиночный выбор. Выбранная карточка подсвечивается. При выборе записывается в OrderContext.occasion. Кнопка 'Далее' активна только после выбора.",
+      "id": 113,
+      "title": "Микроанимации и transitions",
+      "category": "polish",
+      "priority": "medium",
+      "status": "pending",
+      "dependencies": [105, 106, 107, 108, 109, 110],
+      "description": "Добавить микроанимации по всему приложению. Переход между шагами: slide-in/slide-out (влево при 'далее', вправо при 'назад') за 300ms ease-out. Появление карточек: staggered fade-in (каждая следующая на 50ms позже). Кнопки: scale(0.97) при нажатии (active state). Плашка цены: плавный transition при обновлении числа (counter animation). Выбор карточки: spring animation (slight overshoot). Все transitions — ease-out или cubic-bezier для натуральности.",
       "acceptance_criteria": [
-        "5 карточек с иконками отображаются",
-        "Одиночный выбор работает",
-        "Выбранная карточка визуально отличается",
-        "Значение сохраняется в OrderContext",
-        "Кнопка 'Далее' неактивна без выбора"
-      ],
-      "estimated_effort": "small"
-    },
-    {
-      "id": 11,
-      "title": "Экран 2 — Форма и размер",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9
-      ],
-      "description": "Создать компонент StepShape. Загружает menu_items с category='shape' для данного baker_id. Отображает карточки с фото и названием формы. Одиночный выбор. Ниже — выбор количества порций кнопками (6/8/12/16/20) с подсказкой по количеству гостей ('8 порций ≈ на 6–8 человек'). Базовая цена обновляется в OrderContext при изменении. Если у кондитера нет загруженных форм — показать дефолтные текстовые варианты.",
-      "acceptance_criteria": [
-        "Карточки форм загружаются из Supabase",
-        "Одиночный выбор формы работает",
-        "Кнопки порций работают",
-        "Подсказка по гостям отображается",
-        "Цена обновляется в плавающей плашке",
-        "Fallback на текстовые варианты если нет данных"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 12,
-      "title": "Экран 3 — Начинка",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9
-      ],
-      "description": "Создать компонент StepFilling. Загружает menu_items с category='filling'. Карточки с фото, названием, описанием (если есть) и ценой. Теги 'Хит'/'Новинка' отображаются бейджами на карточке. Одиночный выбор. Цена пересчитывается при выборе. Если цена per_kg — умножается на вес (примерный расчёт из количества порций).",
-      "acceptance_criteria": [
-        "Карточки начинок загружаются из Supabase",
-        "Фото, название, описание, цена отображаются",
-        "Теги отображаются как бейджи",
-        "Цена корректно пересчитывается",
-        "Расчёт per_kg работает"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 13,
-      "title": "Экран 4 — Покрытие и цвет",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9
-      ],
-      "description": "Создать компонент StepCoating. Загружает menu_items с category='coating'. Карточки с фото и ценой. Одиночный выбор. Под выбором покрытия — палитра цветов (пресеты: белый, розовый, голубой, шоколадный, красный, чёрный, кастомный). Кастомный цвет — текстовое поле для ввода. Значения сохраняются в OrderContext.coating_id и OrderContext.color.",
-      "acceptance_criteria": [
-        "Карточки покрытий загружаются",
-        "Палитра цветов отображается",
-        "Кастомный цвет через текстовое поле",
-        "Оба значения сохраняются в контекст"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 14,
-      "title": "Экран 5 — Декор",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9
-      ],
-      "description": "Создать компонент StepDecor. Загружает menu_items с category='decor'. Карточки с фото, названием и ценой. МУЛЬТИВЫБОР — клиент может выбрать несколько элементов, каждый добавляется в 'корзину'. Выбранные элементы отображаются как chips/бейджи с кнопкой удаления. Если выбран топпер — появляется текстовое поле для надписи (OrderContext.topper_text). Поле для загрузки референс-фото (upload в Supabase Storage → references/). Текстовое поле для комментария по декору. Цена обновляется с каждым добавлением/удалением.",
-      "acceptance_criteria": [
-        "Мультивыбор декора работает",
-        "Выбранные элементы видны как chips",
-        "Текстовое поле для топпера появляется условно",
-        "Upload фото работает в Supabase Storage",
-        "Комментарий сохраняется",
-        "Цена пересчитывается при изменениях"
+        "Slide transition между шагами",
+        "Staggered появление карточек",
+        "Scale на кнопках при нажатии",
+        "Плавное обновление цены",
+        "Spring анимация выбора"
       ],
       "estimated_effort": "large"
     },
     {
-      "id": 15,
-      "title": "Экран 6 — Оформление заказа",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9,
-        6
-      ],
-      "description": "Создать компонент StepCheckout. Поля формы: имя клиента (обязательно), контакт (обязательно) с выбором типа (Telegram/WhatsApp/Телефон), дата заказа (date picker, мин. дата = сегодня + min_order_days кондитера, заблокированные даты неактивны), время (опционально), самовывоз/доставка (если delivery_enabled у кондитера), адрес (если доставка), комментарий. Итоговая стоимость с расшифровкой (база + начинка + покрытие + декор + доставка). Кнопка 'Отправить заказ'. Валидация перед отправкой. После успешной отправки — экран 'Спасибо! {baker.name} свяжется с вами в ближайшее время ✨'.",
+      "id": 114,
+      "title": "Финальная полировка и мобильная проверка",
+      "category": "polish",
+      "priority": "high",
+      "status": "pending",
+      "dependencies": [106, 107, 108, 109, 110, 111, 112, 113],
+      "description": "Пройти по всем экранам на мобильных размерах (360px, 390px, 428px). Проверить: карточки не обрезаются, текст читаемый, кнопки удобные для тапа (мин 44px), плашка цены не перекрывает контент, скролл плавный, шрифты загружаются. Убедиться что нет горизонтального скролла. Проверить в Chrome DevTools device emulation. Исправить все визуальные баги.",
       "acceptance_criteria": [
-        "Все поля формы работают",
-        "Date picker исключает заблокированные даты и min_order_days",
-        "Доставка показывается условно",
-        "Расшифровка стоимости корректна",
-        "Валидация не пропускает пустые обязательные поля",
-        "createOrder() записывает в Supabase",
-        "Экран благодарности отображается после отправки"
-      ],
-      "estimated_effort": "large"
-    },
-    {
-      "id": 16,
-      "title": "Компонент карточки меню (переиспользуемый)",
-      "category": "frontend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        9
-      ],
-      "description": "Создать переиспользуемый компонент MenuCard: фото (с lazy loading и placeholder), название, описание (опционально, обрезается по 2 строки), цена (форматированная: '1 200 ₽' или '1 200 ₽/кг'), теги-бейджи (Хит, Новинка, Сезонное), состояния selected/unselected с анимацией. Должен работать для всех категорий (формы, начинки, покрытия, декор). Props: item: MenuItem, selected: boolean, onSelect: () => void, mode: 'single' | 'multi'.",
-      "acceptance_criteria": [
-        "Компонент корректно отображает все поля",
-        "Lazy loading фото работает",
-        "Состояния selected/unselected визуально отличаются",
-        "Работает в режимах single и multi",
-        "Адаптивная сетка (2 колонки на мобильном)"
+        "Все экраны корректны на 360px",
+        "Все экраны корректны на 428px",
+        "Нет горизонтального скролла",
+        "Кнопки мин 44px",
+        "Шрифты Nunito и Playfair загружаются",
+        "npm run build проходит без ошибок"
       ],
       "estimated_effort": "medium"
-    },
-    {
-      "id": 17,
-      "title": "Мобильная адаптивность и UX-полировка клиентской части",
-      "category": "frontend",
-      "priority": "high",
-      "status": "done",
-      "dependencies": [
-        10,
-        11,
-        12,
-        13,
-        14,
-        15
-      ],
-      "description": "Пройти по всем 6 экранам и убедиться: всё корректно отображается на экранах 360px–428px (основные мобильные размеры). Плавающая плашка не перекрывает контент. Скролл работает корректно. Кнопки достаточно большие для тапа (мин. 44px). Шрифты читаемые. Карточки не обрезаются. Фото не ломают лейаут при загрузке. Добавить skeleton loaders при загрузке данных. Добавить Telegram WebApp SDK (window.Telegram.WebApp) для корректной работы внутри Telegram: тема, кнопка назад, haptic feedback.",
-      "acceptance_criteria": [
-        "Все экраны корректны на 360px и 428px",
-        "Skeleton loaders при загрузке",
-        "Telegram WebApp SDK подключён",
-        "Тема Telegram применяется",
-        "Кнопка 'Назад' работает через Telegram BackButton"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 18,
-      "title": "Админка — Layout и авторизация",
-      "category": "admin",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        8
-      ],
-      "description": "Создать отдельный роут /admin. Layout админки: боковое меню (на мобильном — нижняя навигация) с разделами: Меню, Заказы, Профиль. Авторизация: на MVP — простой вход по секретному slug или Telegram Login Widget. Хранить сессию в localStorage. Защищённые роуты — редирект на логин если не авторизован. Показывать имя и аватарку кондитера в хедере.",
-      "acceptance_criteria": [
-        "Роут /admin работает",
-        "Навигация между разделами",
-        "Авторизация работает",
-        "Неавторизованные редиректятся",
-        "Адаптивный layout (sidebar на десктопе, bottom nav на мобильном)"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 19,
-      "title": "Админка — Редактор меню",
-      "category": "admin",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        18
-      ],
-      "description": "Создать раздел 'Моё меню' в админке. Вкладки по категориям: Формы, Начинки, Покрытия, Декор. В каждой вкладке — список карточек позиций. Каждая карточка: фото (thumbnail), название, цена, тогл вкл/выкл. Кнопка 'Добавить позицию' — открывает модалку с формой: загрузка фото (в Supabase Storage → menu/), название, описание, цена, тип цены (фиксированная/за кг), теги (мультивыбор: Хит, Новинка, Сезонное). Редактирование — та же модалка с заполненными данными. Удаление — с подтверждением. Drag-and-drop для сортировки (изменение sort_order).",
-      "acceptance_criteria": [
-        "4 вкладки по категориям",
-        "CRUD операции для позиций работают",
-        "Upload фото работает",
-        "Тогл вкл/выкл обновляет is_active",
-        "Drag-and-drop для сортировки работает",
-        "Удаление с подтверждением"
-      ],
-      "estimated_effort": "large"
-    },
-    {
-      "id": 20,
-      "title": "Админка — Список заказов",
-      "category": "admin",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        18
-      ],
-      "description": "Создать раздел 'Заказы' в админке. Табы по статусам: Новые, Подтверждённые, В работе, Выполненные, Отменённые. Счётчик заказов на каждом табе. Каждый заказ — карточка с: имя клиента, дата заказа, сумма, краткое описание (форма + начинка). По клику — раскрывается полная карточка со всеми деталями + фото референса. Кнопки: 'Подтвердить' (new→confirmed), 'В работу' (confirmed→in_progress), 'Готово' (in_progress→done), 'Отменить', 'Написать клиенту' (открывает ссылку t.me/username или wa.me/phone). Фильтр по дате.",
-      "acceptance_criteria": [
-        "Табы по статусам работают со счётчиками",
-        "Карточки заказов отображают основную информацию",
-        "Раскрытие полной информации работает",
-        "Смена статуса обновляет Supabase",
-        "Ссылка на клиента открывает мессенджер",
-        "Фильтр по дате работает"
-      ],
-      "estimated_effort": "large"
-    },
-    {
-      "id": 21,
-      "title": "Админка — Профиль кондитера",
-      "category": "admin",
-      "priority": "high",
-      "status": "done",
-      "dependencies": [
-        18
-      ],
-      "description": "Создать раздел 'Профиль'. Форма редактирования: название кондитерской / имя мастера, загрузка логотипа/аватарки, email для уведомлений, приветственное сообщение, минимальный срок заказа (дней), доставка вкл/выкл + цена доставки, рабочие часы (простой UI: пн-вс, время с/по). Ссылка на свой конструктор (копируется в один клик): app.cakecraft.ru/{slug}. Кнопка 'Сохранить' обновляет запись в bakers.",
-      "acceptance_criteria": [
-        "Все поля формы работают",
-        "Upload логотипа работает",
-        "Ссылка на конструктор с копированием",
-        "Сохранение обновляет Supabase",
-        "Валидация обязательных полей"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 22,
-      "title": "Telegram-бот — уведомления о заказах",
-      "category": "backend",
-      "priority": "critical",
-      "status": "done",
-      "dependencies": [
-        5
-      ],
-      "description": "Создать Supabase Edge Function или отдельный сервер (Node.js/Deno) с Telegram Bot API. Webhook: при INSERT в таблицу orders — отправить кондитеру сообщение в Telegram с карточкой заказа (форматированное HTML сообщение): эмодзи 🎂, имя клиента, контакт (кликабельная ссылка), все параметры торта, расчётная стоимость, дата. Inline-кнопки: 'Подтвердить', 'Отклонить'. При нажатии — обновить status в orders. Для webhook использовать Supabase Database Webhook → Edge Function → Telegram API.",
-      "acceptance_criteria": [
-        "Edge Function деплоится без ошибок",
-        "При создании заказа кондитер получает сообщение в Telegram",
-        "Сообщение содержит все детали заказа",
-        "Inline-кнопки работают",
-        "Статус заказа обновляется при нажатии"
-      ],
-      "estimated_effort": "large"
-    },
-    {
-      "id": 23,
-      "title": "Seed data — демо-кондитер",
-      "category": "database",
-      "priority": "high",
-      "status": "done",
-      "dependencies": [
-        3,
-        4,
-        7
-      ],
-      "description": "Создать SQL seed файл с демо-данными: 1 кондитер (baker) с заполненным профилем. 3 формы (круг, квадрат, сердце) с фото-заглушками. 5 начинок (Шоколад-вишня, Морковный с крем-чиз, Медовик, Красный бархат, Чизкейк Нью-Йорк) с ценами. 4 покрытия (крем, мастика, велюр, без покрытия). 6 декоров (ягоды, цветы, шоколадный декор, топпер, фигурки из мастики, мacaron). Все с реалистичными ценами (от 200 до 2000₽). Фото — использовать placeholder URL-ы (picsum.photos или unsplash).",
-      "acceptance_criteria": [
-        "Seed файл запускается без ошибок",
-        "Все категории содержат позиции",
-        "Цены реалистичные",
-        "Slug кондитера работает в конструкторе"
-      ],
-      "estimated_effort": "small"
-    },
-    {
-      "id": 24,
-      "title": "E2E тестирование основного флоу",
-      "category": "testing",
-      "priority": "high",
-      "status": "done",
-      "dependencies": [
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        23
-      ],
-      "description": "Создать end-to-end тест основного клиентского флоу: открыть /:slug → выбрать повод → выбрать форму и порции → выбрать начинку → выбрать покрытие и цвет → выбрать декор → заполнить данные → отправить заказ. Проверить: заказ создан в Supabase, итоговая цена корректна, все поля записаны правильно. Использовать Playwright или Cypress.",
-      "acceptance_criteria": [
-        "E2E тест проходит успешно",
-        "Заказ создаётся в БД",
-        "Цена совпадает с расчётной",
-        "Все поля заказа заполнены корректно"
-      ],
-      "estimated_effort": "medium"
-    },
-    {
-      "id": 25,
-      "title": "Деплой на Vercel/Cloudflare Pages",
-      "category": "infrastructure",
-      "priority": "high",
-      "status": "done",
-      "dependencies": [
-        17,
-        24
-      ],
-      "description": "Настроить деплой: подключить GitHub репозиторий к Vercel или Cloudflare Pages. Настроить переменные окружения (Supabase URL, Anon Key). Настроить кастомный домен (если есть) или использовать поддомен. CI/CD: автодеплой при пуше в main. Проверить что всё работает на продакшене.",
-      "acceptance_criteria": [
-        "Приложение доступно по публичному URL",
-        "Все переменные окружения настроены",
-        "Автодеплой при пуше в main",
-        "SSL работает",
-        "Демо-конструктор открывается и работает"
-      ],
-      "estimated_effort": "small"
     }
   ]
 }
