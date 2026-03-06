@@ -272,20 +272,32 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
     return new Response('No telegram chat_id configured for baker', { status: 500 });
   }
 
-  await callTelegram('sendMessage', {
-    chat_id: targetChatId,
-    parse_mode: 'HTML',
-    disable_web_page_preview: true,
-    text,
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: 'Confirm', callback_data: `${callbackPrefix}confirmed` },
-          { text: 'Decline', callback_data: `${callbackPrefix}cancelled` },
-        ],
+  const replyMarkup = {
+    inline_keyboard: [
+      [
+        { text: 'Confirm', callback_data: `${callbackPrefix}confirmed` },
+        { text: 'Decline', callback_data: `${callbackPrefix}cancelled` },
       ],
-    },
-  });
+    ],
+  };
+
+  if (order.reference_photo_url) {
+    await callTelegram('sendPhoto', {
+      chat_id: targetChatId,
+      parse_mode: 'HTML',
+      photo: order.reference_photo_url,
+      caption: text,
+      reply_markup: replyMarkup,
+    });
+  } else {
+    await callTelegram('sendMessage', {
+      chat_id: targetChatId,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+      text,
+      reply_markup: replyMarkup,
+    });
+  }
 
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
