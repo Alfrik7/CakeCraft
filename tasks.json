@@ -413,7 +413,7 @@
       "title": "Telegram-бот — уведомления о заказах",
       "category": "backend",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         5
       ],
