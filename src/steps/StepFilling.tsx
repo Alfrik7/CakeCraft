@@ -108,6 +108,8 @@ export function StepFilling({ bakerId, onBack }: StepFillingProps) {
                         onSelect={() => handleSelectFilling(item)}
                         mode="single"
                         servings={order.servings}
+                        priceMode="per_kg_only"
+                        descriptionMode="toggle"
                       />
                     </div>
                   );

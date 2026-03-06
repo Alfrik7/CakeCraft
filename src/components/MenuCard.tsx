@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getItemPrice } from '../lib/price';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
@@ -9,6 +9,8 @@ interface MenuCardProps {
   onSelect: () => void;
   mode: 'single' | 'multi';
   servings?: number | null;
+  priceMode?: 'default' | 'per_kg_only';
+  descriptionMode?: 'static' | 'toggle';
 }
 
 const SUPPORTED_TAGS = new Set(['Хит', 'Новинка', 'Сезонное']);
@@ -17,7 +19,11 @@ function formatPrice(value: number): string {
   return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
 }
 
-function formatItemPrice(item: MenuItem, servings: number | null): string {
+function formatItemPrice(item: MenuItem, servings: number | null, priceMode: 'default' | 'per_kg_only'): string {
+  if (priceMode === 'per_kg_only') {
+    return `${formatPrice(item.price)}/кг`;
+  }
+
   if (item.price_type === 'per_kg') {
     if (!servings) {
       return `${formatPrice(item.price)}/кг`;
@@ -29,13 +35,41 @@ function formatItemPrice(item: MenuItem, servings: number | null): string {
   return formatPrice(item.price);
 }
 
-export function MenuCard({ item, selected, onSelect, mode, servings = null }: MenuCardProps) {
+export function MenuCard({
+  item,
+  selected,
+  onSelect,
+  mode,
+  servings = null,
+  priceMode = 'default',
+  descriptionMode = 'static',
+}: MenuCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [descriptionHeight, setDescriptionHeight] = useState(0);
+  const descriptionRef = useRef<HTMLParagraphElement | null>(null);
   const visibleTags = item.tags.filter((tag) => SUPPORTED_TAGS.has(tag));
   const actionLabel = mode === 'multi' ? (selected ? 'убрать из списка' : 'добавить в список') : 'выбрать';
+  const isDescriptionToggleEnabled = descriptionMode === 'toggle';
+
+  useEffect(() => {
+    if (!descriptionRef.current) {
+      return;
+    }
+
+    setDescriptionHeight(descriptionRef.current.scrollHeight);
+  }, [item.description, isDescriptionExpanded]);
 
   const handleClick = () => {
     triggerTelegramHaptic('selection');
+    if (isDescriptionToggleEnabled) {
+      setIsDescriptionExpanded((prev) => !prev);
+      if (!selected) {
+        onSelect();
+      }
+      return;
+    }
+
     onSelect();
   };
 
@@ -92,20 +126,30 @@ export function MenuCard({ item, selected, onSelect, mode, servings = null }: Me
         <p className="text-sm font-bold text-text-primary">{item.name}</p>
 
         {item.description ? (
-          <p
-            className="mt-1 text-xs leading-4 text-text-secondary"
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
+          <div
+            className="mt-1 overflow-hidden transition-[max-height] duration-300 ease-out"
+            style={{ maxHeight: isDescriptionToggleEnabled && isDescriptionExpanded ? `${Math.max(descriptionHeight, 32)}px` : '32px' }}
           >
-            {item.description}
-          </p>
+            <p
+              ref={descriptionRef}
+              className="text-xs leading-4 text-text-secondary"
+              style={
+                isDescriptionToggleEnabled && isDescriptionExpanded
+                  ? undefined
+                  : {
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }
+              }
+            >
+              {item.description}
+            </p>
+          </div>
         ) : null}
 
-        <p className="mt-auto pt-3 text-right font-display text-xl text-[#E8677C]">{formatItemPrice(item, servings)}</p>
+        <p className="mt-auto pt-3 text-right font-display text-xl text-[#E8677C]">{formatItemPrice(item, servings, priceMode)}</p>
       </div>
     </button>
   );
