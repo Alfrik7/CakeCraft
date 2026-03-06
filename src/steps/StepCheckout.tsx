@@ -220,9 +220,8 @@ export function StepCheckout({ baker, registerSubmitHandler, onCanSubmitChange }
 
     return () => {
       registerSubmitHandler(null);
-      onCanSubmitChange(false);
     };
-  }, [onCanSubmitChange, registerSubmitHandler, submitOrder]);
+  }, [registerSubmitHandler, submitOrder]);
 
   return (
     <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
