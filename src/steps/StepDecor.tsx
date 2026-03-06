@@ -159,17 +159,26 @@ export function StepDecor({ bakerId }: StepDecorProps) {
     }
   };
 
+  const removeReferencePhoto = () => {
+    updateOrder({ reference_photo_url: null });
+    setUploadError(null);
+  };
+
   return (
-    <section className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Шаг 5. Декор</h2>
-      <p className="mt-2 text-sm text-gray-600">Добавьте элементы декора, пожелания и референс.</p>
+    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+      <h2 className="text-center font-display text-3xl text-text-primary">Финальный декор</h2>
+      <p className="mt-2 text-center text-sm text-text-secondary">Выберите детали оформления и добавьте референс</p>
 
       <div className="mt-5">
         {loading ? <SkeletonMenuGrid /> : null}
-        {loadError ? <p className="text-sm text-amber-700">Не удалось загрузить декор из каталога.</p> : null}
+        {loadError ? (
+          <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs text-rose-700">
+            Не удалось загрузить декор из каталога.
+          </p>
+        ) : null}
 
         {!loading && decorItems.length === 0 ? (
-          <p className="text-sm text-gray-500">У кондитера пока нет доступных элементов декора.</p>
+          <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных элементов декора.</p>
         ) : null}
 
         {!loading && decorItems.length > 0 ? (
@@ -193,13 +202,13 @@ export function StepDecor({ bakerId }: StepDecorProps) {
       </div>
 
       {selectedDecorItems.length > 0 ? (
-        <div className="mt-6 border-t border-rose-100 pt-4">
-          <p className="text-sm font-medium text-gray-800">Выбрано</p>
+        <div className="mt-6 rounded-2xl bg-secondary/80 p-4 shadow-card">
+          <p className="font-display text-xl text-text-primary">Выбрано</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {selectedDecorItems.map((item) => (
               <span
                 key={item.id}
-                className="inline-flex min-h-[36px] items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs text-rose-900"
+                className="inline-flex min-h-[38px] animate-[step-enter_220ms_ease-out] items-center gap-2 rounded-full bg-[var(--gradient-primary)] px-3 py-1 text-xs font-semibold text-white shadow-sm"
               >
                 {item.name}
                 <button
@@ -208,7 +217,7 @@ export function StepDecor({ bakerId }: StepDecorProps) {
                     triggerTelegramHaptic('selection');
                     removeDecorItem(item.id);
                   }}
-                  className="rounded-full border border-rose-300 px-2 py-0.5 text-[11px] leading-none text-rose-700 transition hover:bg-rose-100"
+                  className="grid h-5 w-5 place-items-center rounded-full bg-white/85 text-[11px] leading-none text-rose-700 transition duration-200 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                   aria-label={`Удалить ${item.name}`}
                 >
                   ✕
@@ -220,52 +229,86 @@ export function StepDecor({ bakerId }: StepDecorProps) {
       ) : null}
 
       {hasTopperSelected ? (
-        <label className="mt-6 block border-t border-rose-100 pt-4 text-sm text-gray-700">
+        <label className="mt-6 block text-sm text-text-secondary">
           Текст для топпера
           <input
             type="text"
             value={order.topper_text ?? ''}
             onChange={(event) => updateOrder({ topper_text: event.target.value })}
             placeholder="Например: С днём рождения, Маша!"
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+            className="mt-1 min-h-[44px] w-full rounded-xl border border-transparent bg-surface px-3 py-2 text-sm text-text-primary outline-none transition duration-300 focus:ring-2 focus:ring-primary-from/40"
           />
         </label>
       ) : null}
 
-      <div className="mt-6 border-t border-rose-100 pt-4">
-        <p className="text-sm font-medium text-gray-800">Референс-фото</p>
-        <label className="mt-2 block text-sm text-gray-700">
+      <div className="mt-6">
+        <p className="text-sm font-medium text-text-primary">Референс-фото</p>
+        <label
+          className={[
+            'mt-2 flex min-h-[150px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-rose-300 bg-rose-50/50 px-4 py-6 text-center transition duration-300',
+            uploadingPhoto ? 'cursor-wait opacity-80' : 'hover:border-primary-to hover:bg-rose-50',
+          ].join(' ')}
+        >
           <span className="sr-only">Загрузить фото</span>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={handleUploadReferencePhoto}
             disabled={uploadingPhoto}
-            className="block min-h-[44px] w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 file:mr-3 file:rounded-lg file:border-0 file:bg-rose-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-rose-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+            className="sr-only"
           />
-        </label>
-        {uploadingPhoto ? <p className="mt-2 text-sm text-gray-500">Загружаем фото...</p> : null}
-        {uploadError ? <p className="mt-2 text-sm text-amber-700">{uploadError}</p> : null}
-        {order.reference_photo_url ? (
-          <a
-            href={order.reference_photo_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 inline-flex text-sm text-rose-700 underline-offset-2 hover:underline"
+          <span
+            className="grid h-11 w-11 place-items-center rounded-full bg-white text-xl text-rose-500 shadow-card"
+            aria-hidden="true"
           >
-            Открыть загруженное фото
-          </a>
+            📷
+          </span>
+          <span className="mt-3 text-sm font-semibold text-text-primary">Загрузите фото-референс</span>
+          <span className="mt-1 text-xs text-text-secondary">JPG, PNG или WEBP до 5 MB</span>
+        </label>
+        {uploadingPhoto ? <p className="mt-2 text-sm text-text-secondary">Загружаем фото...</p> : null}
+        {uploadError ? <p className="mt-2 text-sm text-rose-700">{uploadError}</p> : null}
+
+        {order.reference_photo_url ? (
+          <div className="mt-3 overflow-hidden rounded-2xl bg-white shadow-card">
+            <img
+              src={order.reference_photo_url}
+              alt="Загруженный референс"
+              className="aspect-video w-full object-cover"
+              loading="lazy"
+            />
+            <div className="flex items-center justify-between gap-2 px-3 py-2">
+              <a
+                href={order.reference_photo_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-medium text-rose-700 underline-offset-2 hover:underline"
+              >
+                Открыть в новой вкладке
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerTelegramHaptic('selection');
+                  removeReferencePhoto();
+                }}
+                className="min-h-[32px] rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+              >
+                Удалить фото
+              </button>
+            </div>
+          </div>
         ) : null}
       </div>
 
-      <label className="mt-6 block border-t border-rose-100 pt-4 text-sm text-gray-700">
+      <label className="mt-6 block text-sm text-text-secondary">
         Комментарий по декору
         <textarea
           value={order.comment ?? ''}
           onChange={(event) => updateOrder({ comment: event.target.value })}
           placeholder="Например: минималистичный стиль, без блёсток"
           rows={3}
-          className="mt-1 w-full rounded-xl border border-rose-100 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-100"
+          className="mt-1 w-full rounded-xl border border-transparent bg-surface px-3 py-2 text-sm text-text-primary outline-none transition duration-300 focus:ring-2 focus:ring-primary-from/40"
         />
       </label>
     </section>

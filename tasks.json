@@ -160,7 +160,7 @@
       "title": "Экран 5 — Декор: редизайн",
       "category": "screens",
       "priority": "high",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         102,
         105
