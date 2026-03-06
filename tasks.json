@@ -43,7 +43,7 @@
       "title": "Схема базы данных — таблица bakers",
       "category": "database",
       "priority": "critical",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         2
       ],
