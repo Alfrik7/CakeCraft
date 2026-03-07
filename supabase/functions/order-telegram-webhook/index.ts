@@ -81,12 +81,21 @@ const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
   : null;
 
 const TELEGRAM_API_BASE = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN ?? ''}`;
+const ADMIN_PANEL_URL = 'https://cake-craft-beta.vercel.app/admin';
 const SERVINGS_TO_WEIGHT_KG: Record<number, number> = {
+  4: 0.4,
   6: 0.6,
   8: 0.8,
   12: 1.2,
   16: 1.6,
   20: 2,
+};
+const OCCASION_LABELS: Record<string, string> = {
+  birthday: 'День рождения',
+  wedding: 'Свадьба',
+  kids: 'Детский праздник',
+  corporate: 'Корпоратив',
+  other: 'Без повода',
 };
 
 function parseOrderWebhook(payload: unknown): OrderRow | null {
@@ -240,13 +249,16 @@ async function buildOrderMessage(order: OrderRow): Promise<string> {
 
   const dateLine = order.order_time ? `${order.order_date} ${order.order_time}` : order.order_date;
   const contactUrl = contactLink(order.client_contact, order.client_contact_type);
+  const occasion = order.occasion
+    ? (OCCASION_LABELS[order.occasion] ?? order.occasion)
+    : 'Не указан';
 
   return [
     '<b>🎂 Новый заказ CakeCraft</b>',
     '',
     `<b>Клиент:</b> ${escapeHtml(order.client_name)}`,
     `<b>Контакт:</b> <a href="${escapeHtml(contactUrl)}">${escapeHtml(order.client_contact)}</a> (${order.client_contact_type})`,
-    `<b>Повод:</b> ${escapeHtml(order.occasion ?? 'Не указан')}`,
+    `<b>Повод:</b> ${escapeHtml(occasion)}`,
     `<b>Форма:</b> ${escapeHtml(order.shape ?? 'Не выбрана')}`,
     `<b>Вес:</b> ${formatWeightKg(order.servings)}`,
     `<b>Начинка:</b> ${escapeHtml(filling)}`,
@@ -257,8 +269,6 @@ async function buildOrderMessage(order: OrderRow): Promise<string> {
     `<b>Получение:</b> ${delivery}`,
     `<b>Дата:</b> ${escapeHtml(dateLine)}`,
     `<b>Стоимость:</b> ${formatPriceRub(order.total_price)}`,
-    '',
-    `<code>order_id: ${escapeHtml(order.id)}</code>`,
   ].join('\n');
 }
 
@@ -279,7 +289,6 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
   }
 
   const text = await buildOrderMessage(order);
-  const callbackPrefix = `ord:${order.id}:`;
 
   const targetChatId = baker.telegram_id ?? OWNER_TELEGRAM_ID;
 
@@ -290,8 +299,7 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
   const replyMarkup = {
     inline_keyboard: [
       [
-        { text: 'Confirm', callback_data: `${callbackPrefix}confirmed` },
-        { text: 'Decline', callback_data: `${callbackPrefix}cancelled` },
+        { text: 'Открыть в админке', url: ADMIN_PANEL_URL },
       ],
     ],
   };
