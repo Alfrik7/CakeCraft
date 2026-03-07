@@ -4,7 +4,7 @@ import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
 import { createOrder, getBlockedDates } from '../lib/api';
-import { getItemPrice } from '../lib/price';
+import { calculateTotal, getItemPrice } from '../lib/price';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { Baker, MenuItem } from '../types';
 
@@ -95,12 +95,17 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
     };
   }, [baker.id]);
 
-  const servings = order.servings ?? 0;
-  const fillingPrice = getItemPrice(servings, order.filling_id ? menuItemsById[order.filling_id] : null);
-  const decorPrice = order.decor_items.reduce((sum, itemId) => sum + getItemPrice(servings, menuItemsById[itemId]), 0);
-  const basePrice = Math.max(0, Math.round(order.total_price - fillingPrice - decorPrice));
+  const guests = order.servings ?? 0;
+  const fillingItem = order.filling_id ? menuItemsById[order.filling_id] : null;
+  const selectedDecorItems = order.decor_items
+    .map((itemId) => menuItemsById[itemId])
+    .filter((item): item is MenuItem => Boolean(item));
+  const fillingPrice = getItemPrice(guests, fillingItem);
+  const decorPrice = selectedDecorItems.reduce((sum, item) => sum + getItemPrice(guests, item), 0);
+  const subtotalPrice = calculateTotal(guests, fillingItem, selectedDecorItems);
+  const basePrice = Math.max(0, Math.round(subtotalPrice - fillingPrice - decorPrice));
   const deliveryPrice = isDeliverySelected && !isCustomDeliveryPrice ? baker.delivery_price : 0;
-  const finalTotalPrice = Math.round(order.total_price + deliveryPrice);
+  const finalTotalPrice = Math.round(subtotalPrice + deliveryPrice);
 
   const validate = useCallback(() => {
     const errors: Record<string, string> = {};

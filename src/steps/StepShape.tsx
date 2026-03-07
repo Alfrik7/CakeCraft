@@ -3,18 +3,8 @@ import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
-import { triggerTelegramHaptic } from '../lib/telegram';
+import { calculateTotal, estimateWeightKg } from '../lib/price';
 import type { MenuItem } from '../types';
-
-const SERVINGS_OPTIONS = [6, 8, 12, 16, 20] as const;
-
-const SERVINGS_LABELS: Record<(typeof SERVINGS_OPTIONS)[number], string> = {
-  6: '6 (600г)',
-  8: '8 (800г)',
-  12: '12 (1.2кг)',
-  16: '16 (1.6кг)',
-  20: '20 (2кг)',
-};
 
 const FALLBACK_SHAPES = [
   { id: 'fallback-round', name: 'Круглая форма', description: 'Классический вариант для любого повода' },
@@ -28,9 +18,59 @@ interface StepShapeProps {
 }
 
 export function StepShape({ bakerId, onBack }: StepShapeProps) {
-  const { order, updateOrder } = useOrderContext();
+  const { order, setOrder, updateOrder } = useOrderContext();
   const { menuData, hasMenuError } = useMenuDataContext();
   const shapeItems = menuData.shape;
+  const fillingById = useMemo(
+    () =>
+      menuData.filling.reduce<Record<string, MenuItem>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {}),
+    [menuData.filling],
+  );
+  const decorById = useMemo(
+    () =>
+      menuData.decor.reduce<Record<string, MenuItem>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {}),
+    [menuData.decor],
+  );
+  const guestsCount = order.servings;
+  const estimatedWeightKg = estimateWeightKg(guestsCount ?? 0);
+  const weightLabel = String(estimatedWeightKg);
+
+  const handleGuestsChange = (rawValue: string) => {
+    if (rawValue === '') {
+      setOrder((prev) => ({
+        ...prev,
+        servings: null,
+        total_price: calculateTotal(
+          0,
+          prev.filling_id ? fillingById[prev.filling_id] : null,
+          prev.decor_items.map((id) => decorById[id]).filter((item): item is MenuItem => Boolean(item)),
+        ),
+      }));
+      return;
+    }
+
+    const parsed = Number(rawValue);
+    if (!Number.isFinite(parsed)) {
+      return;
+    }
+
+    const guests = Math.min(50, Math.max(4, Math.round(parsed)));
+    setOrder((prev) => ({
+      ...prev,
+      servings: guests,
+      total_price: calculateTotal(
+        guests,
+        prev.filling_id ? fillingById[prev.filling_id] : null,
+        prev.decor_items.map((id) => decorById[id]).filter((item): item is MenuItem => Boolean(item)),
+      ),
+    }));
+  };
 
   const fallbackShapeItems = useMemo<MenuItem[]>(
     () =>
@@ -57,7 +97,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
       <StepHeader
         title="Выберите форму"
-        subtitle="Определитесь с формой и количеством порций"
+        subtitle="Определитесь с формой и количеством гостей"
         onBack={onBack}
       />
 
@@ -110,33 +150,19 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
       </div>
 
       <div className="mt-6 rounded-2xl bg-secondary/70 p-4">
-        <p className="text-sm font-semibold text-text-primary">Размер торта (порции)</p>
-        <div className="-mx-1 mt-3 overflow-x-auto px-1 pb-1">
-          <div className="flex min-w-max gap-2">
-            {SERVINGS_OPTIONS.map((servings) => {
-              const isSelected = order.servings === servings;
-
-              return (
-                <button
-                  key={servings}
-                  type="button"
-                  onClick={() => {
-                    triggerTelegramHaptic('selection');
-                    updateOrder({ servings });
-                  }}
-                  className={[
-                    'tap-scale min-h-[44px] min-w-[96px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-out',
-                    isSelected
-                      ? '[background-image:var(--gradient-primary)] text-white shadow-card'
-                      : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
-                  ].join(' ')}
-                  aria-pressed={isSelected}
-                >
-                  {SERVINGS_LABELS[servings]}
-                </button>
-              );
-            })}
-          </div>
+        <p className="text-sm font-semibold text-text-primary">Количество гостей</p>
+        <div className="mt-3 flex items-center gap-3">
+          <input
+            type="number"
+            min={4}
+            max={50}
+            step={1}
+            value={guestsCount ?? ''}
+            onChange={(event) => handleGuestsChange(event.target.value)}
+            placeholder="4"
+            className="min-h-[44px] w-28 rounded-xl border border-primary-from/35 bg-white px-3 py-2 text-sm font-medium text-text-primary outline-none transition focus:ring-2 focus:ring-primary-from/35"
+          />
+          <p className="text-sm text-text-secondary">≈ {weightLabel} кг</p>
         </div>
       </div>
     </section>

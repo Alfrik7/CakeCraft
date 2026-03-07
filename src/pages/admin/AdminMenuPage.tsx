@@ -14,7 +14,6 @@ import type { MenuCategory, MenuItem, MenuTag, PriceType } from '../../types';
 const CATEGORY_TABS: Array<{ value: MenuCategory; label: string }> = [
   { value: 'shape', label: 'Формы' },
   { value: 'filling', label: 'Начинки' },
-  { value: 'coating', label: 'Покрытия' },
   { value: 'decor', label: 'Декор' },
 ];
 
@@ -86,6 +85,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
   const [values, setValues] = useState<MenuItemFormValues>(() => getInitialFormValues(state?.item));
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isShapeCategory = category === 'shape';
 
   useEffect(() => {
     setValues(getInitialFormValues(state?.item));
@@ -110,14 +110,14 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
     setError(null);
 
     const trimmedName = values.name.trim();
-    const parsedPrice = Number(values.price.replace(',', '.'));
+    const parsedPrice = isShapeCategory ? 0 : Number(values.price.replace(',', '.'));
 
     if (!trimmedName) {
       setError('Введите название позиции.');
       return;
     }
 
-    if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    if (!isShapeCategory && (!Number.isFinite(parsedPrice) || parsedPrice < 0)) {
       setError('Укажите корректную цену.');
       return;
     }
@@ -136,7 +136,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
       name: trimmedName,
       description: values.description.trim() ? values.description.trim() : null,
       price: parsedPrice,
-      price_type: values.priceType,
+      price_type: isShapeCategory ? 'fixed' : values.priceType,
       tags: values.tags,
       photoFile: values.photoFile,
     };
@@ -235,37 +235,39 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="block text-sm">
-              <span className="mb-1 block font-medium text-gray-700">Цена</span>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                required
-                value={values.price}
-                onChange={(event) => setValues((prev) => ({ ...prev, price: event.target.value }))}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-              />
-            </label>
+          {!isShapeCategory ? (
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block text-sm">
+                <span className="mb-1 block font-medium text-gray-700">Цена</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  required
+                  value={values.price}
+                  onChange={(event) => setValues((prev) => ({ ...prev, price: event.target.value }))}
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </label>
 
-            <label className="block text-sm">
-              <span className="mb-1 block font-medium text-gray-700">Тип цены</span>
-              <select
-                value={values.priceType}
-                onChange={(event) =>
-                  setValues((prev) => ({
-                    ...prev,
-                    priceType: event.target.value as PriceType,
-                  }))
-                }
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-              >
-                <option value="fixed">Фиксированная</option>
-                <option value="per_kg">За кг</option>
-              </select>
-            </label>
-          </div>
+              <label className="block text-sm">
+                <span className="mb-1 block font-medium text-gray-700">Тип цены</span>
+                <select
+                  value={values.priceType}
+                  onChange={(event) =>
+                    setValues((prev) => ({
+                      ...prev,
+                      priceType: event.target.value as PriceType,
+                    }))
+                  }
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                >
+                  <option value="fixed">Фиксированная</option>
+                  <option value="per_kg">За кг</option>
+                </select>
+              </label>
+            </div>
+          ) : null}
 
           <fieldset>
             <legend className="mb-1 text-sm font-medium text-gray-700">Теги</legend>
@@ -524,7 +526,9 @@ export function AdminMenuPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="truncate text-sm font-semibold text-gray-900">{item.name}</p>
-                        <p className="mt-0.5 text-sm text-gray-600">{formatPrice(item.price, item.price_type)}</p>
+                        {activeCategory !== 'shape' ? (
+                          <p className="mt-0.5 text-sm text-gray-600">{formatPrice(item.price, item.price_type)}</p>
+                        ) : null}
                       </div>
                       <button
                         type="button"

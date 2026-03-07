@@ -3,7 +3,7 @@ import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
-import { getItemPrice } from '../lib/price';
+import { calculateTotal } from '../lib/price';
 import type { MenuItem } from '../types';
 
 interface StepFillingProps {
@@ -14,6 +14,14 @@ export function StepFilling({ onBack }: StepFillingProps) {
   const { order, setOrder } = useOrderContext();
   const { menuData, hasMenuError } = useMenuDataContext();
   const fillingItems = menuData.filling;
+  const decorItemsById = useMemo(
+    () =>
+      menuData.decor.reduce<Record<string, MenuItem>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {}),
+    [menuData.decor],
+  );
 
   const selectedFilling = useMemo(
     () => fillingItems.find((item) => item.id === order.filling_id) ?? null,
@@ -22,11 +30,11 @@ export function StepFilling({ onBack }: StepFillingProps) {
 
   const handleSelectFilling = (nextItem: MenuItem) => {
     setOrder((prev) => {
-      const servings = prev.servings ?? 0;
-      const currentItem = fillingItems.find((item) => item.id === prev.filling_id) ?? null;
-      const currentPrice = getItemPrice(servings, currentItem);
-      const nextPrice = getItemPrice(servings, nextItem);
-      const nextTotalPrice = Math.max(0, Math.round(prev.total_price - currentPrice + nextPrice));
+      const guests = prev.servings ?? 0;
+      const selectedDecorItems = prev.decor_items
+        .map((id) => decorItemsById[id])
+        .filter((item): item is MenuItem => Boolean(item));
+      const nextTotalPrice = calculateTotal(guests, nextItem, selectedDecorItems);
 
       return {
         ...prev,

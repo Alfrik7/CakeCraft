@@ -53,7 +53,12 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     }
 
     if (step === 2) {
-      return Boolean(order.shape) && Boolean(order.servings);
+      return (
+        Boolean(order.shape) &&
+        typeof order.servings === 'number' &&
+        order.servings >= 4 &&
+        order.servings <= 50
+      );
     }
 
     if (step === 3) {

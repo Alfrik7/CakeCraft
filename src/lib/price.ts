@@ -1,31 +1,19 @@
 import type { MenuItem } from '../types';
 
-const SERVINGS_TO_WEIGHT_KG: Record<number, number> = {
-  6: 0.6,
-  8: 0.8,
-  12: 1.2,
-  16: 1.6,
-  20: 2,
-};
-
 function normalizePrice(value: number | string): number {
   const parsed = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export function estimateWeightKg(servings: number): number {
-  if (!Number.isFinite(servings) || servings <= 0) {
+export function estimateWeightKg(guests: number): number {
+  if (!Number.isFinite(guests) || guests <= 0) {
     return 0;
   }
 
-  if (servings in SERVINGS_TO_WEIGHT_KG) {
-    return SERVINGS_TO_WEIGHT_KG[servings];
-  }
-
-  return servings / 10;
+  return Number((guests * 0.15).toFixed(3));
 }
 
-export function getItemPrice(servings: number, item?: Pick<MenuItem, 'price' | 'price_type'> | null): number {
+export function getItemPrice(guests: number, item?: Pick<MenuItem, 'price' | 'price_type'> | null): number {
   if (!item) {
     return 0;
   }
@@ -33,21 +21,21 @@ export function getItemPrice(servings: number, item?: Pick<MenuItem, 'price' | '
   const basePrice = normalizePrice(item.price);
 
   if (item.price_type === 'per_kg') {
-    return basePrice * estimateWeightKg(servings);
+    return basePrice * estimateWeightKg(guests);
   }
 
   return basePrice;
 }
 
 export function calculateTotal(
-  servings: number,
+  guests: number,
   filling?: Pick<MenuItem, 'price' | 'price_type'> | null,
-  coating?: Pick<MenuItem, 'price' | 'price_type'> | null,
   decorItems: Array<Pick<MenuItem, 'price' | 'price_type'>> = [],
+  deliveryPrice = 0,
 ): number {
-  const fillingTotal = getItemPrice(servings, filling);
-  const coatingTotal = getItemPrice(servings, coating);
-  const decorTotal = decorItems.reduce((sum, decorItem) => sum + getItemPrice(servings, decorItem), 0);
+  const fillingTotal = getItemPrice(guests, filling);
+  const decorTotal = decorItems.reduce((sum, decorItem) => sum + getItemPrice(guests, decorItem), 0);
+  const normalizedDeliveryPrice = Number.isFinite(deliveryPrice) ? deliveryPrice : 0;
 
-  return Math.round(fillingTotal + coatingTotal + decorTotal);
+  return Math.round(fillingTotal + decorTotal + normalizedDeliveryPrice);
 }

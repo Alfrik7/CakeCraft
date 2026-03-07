@@ -84,7 +84,7 @@ export function MenuCard({
       aria-pressed={selected}
       aria-label={`${actionLabel}: ${item.name}`}
       className={[
-        'tap-scale group relative overflow-hidden rounded-2xl bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
+        'tap-scale group relative overflow-hidden rounded-2xl border border-[rgba(248,164,184,0.2)] bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35 focus-visible:ring-offset-2',
         selected
           ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-primary-to shadow-card-hover [background-image:var(--gradient-primary)]'
@@ -127,7 +127,7 @@ export function MenuCard({
         ) : null}
       </div>
 
-      <div className="flex min-h-[92px] flex-col p-3">
+      <div className="flex flex-col p-3">
         <p className={['text-sm font-bold', selected ? 'text-white' : 'text-text-primary'].join(' ')}>{item.name}</p>
 
         {item.description ? (

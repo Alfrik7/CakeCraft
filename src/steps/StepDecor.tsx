@@ -3,7 +3,7 @@ import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
-import { getItemPrice } from '../lib/price';
+import { calculateTotal } from '../lib/price';
 import { supabase } from '../lib/supabase';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
@@ -32,6 +32,22 @@ export function StepDecor({ onBack }: StepDecorProps) {
   const { order, setOrder, updateOrder } = useOrderContext();
   const { menuData, hasMenuError } = useMenuDataContext();
   const decorItems = menuData.decor;
+  const fillingById = useMemo(
+    () =>
+      menuData.filling.reduce<Record<string, MenuItem>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {}),
+    [menuData.filling],
+  );
+  const decorById = useMemo(
+    () =>
+      menuData.decor.reduce<Record<string, MenuItem>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {}),
+    [menuData.decor],
+  );
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -53,13 +69,19 @@ export function StepDecor({ onBack }: StepDecorProps) {
 
   const toggleDecorItem = (nextItem: MenuItem) => {
     setOrder((prev) => {
-      const servings = prev.servings ?? 0;
-      const itemPrice = getItemPrice(servings, nextItem);
       const isSelected = prev.decor_items.includes(nextItem.id);
       const nextDecorIds = isSelected
         ? prev.decor_items.filter((decorId) => decorId !== nextItem.id)
         : [...prev.decor_items, nextItem.id];
-      const nextTotalPrice = Math.max(0, Math.round(prev.total_price + (isSelected ? -itemPrice : itemPrice)));
+      const guests = prev.servings ?? 0;
+      const selectedDecorItems = nextDecorIds
+        .map((id) => decorById[id])
+        .filter((item): item is MenuItem => Boolean(item));
+      const nextTotalPrice = calculateTotal(
+        guests,
+        prev.filling_id ? fillingById[prev.filling_id] : null,
+        selectedDecorItems,
+      );
 
       return {
         ...prev,
