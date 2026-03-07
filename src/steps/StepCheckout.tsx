@@ -60,10 +60,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
       setBlockedDatesError(false);
 
       try {
-        const [blockedDates, fillings, coatings, decorItems] = await Promise.all([
+        const [blockedDates, fillings, decorItems] = await Promise.all([
           getBlockedDates(baker.id),
           getMenuItems(baker.id, 'filling'),
-          getMenuItems(baker.id, 'coating'),
           getMenuItems(baker.id, 'decor'),
         ]);
 
@@ -73,7 +72,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
 
         setBlockedDateSet(new Set(blockedDates.map((item) => item.date)));
         setMenuItemsById(
-          [...fillings, ...coatings, ...decorItems].reduce<Record<string, MenuItem>>((acc, item) => {
+          [...fillings, ...decorItems].reduce<Record<string, MenuItem>>((acc, item) => {
             acc[item.id] = item;
             return acc;
           }, {}),
@@ -100,9 +99,8 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
 
   const servings = order.servings ?? 0;
   const fillingPrice = getItemPrice(servings, order.filling_id ? menuItemsById[order.filling_id] : null);
-  const coatingPrice = getItemPrice(servings, order.coating_id ? menuItemsById[order.coating_id] : null);
   const decorPrice = order.decor_items.reduce((sum, itemId) => sum + getItemPrice(servings, menuItemsById[itemId]), 0);
-  const basePrice = Math.max(0, Math.round(order.total_price - fillingPrice - coatingPrice - decorPrice));
+  const basePrice = Math.max(0, Math.round(order.total_price - fillingPrice - decorPrice));
   const deliveryPrice = isDeliverySelected && !isCustomDeliveryPrice ? baker.delivery_price : 0;
   const finalTotalPrice = Math.round(order.total_price + deliveryPrice);
 
@@ -173,7 +171,6 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
         shape: normalizeOptionalText(order.shape),
         servings: order.servings,
         filling_id: order.filling_id,
-        coating_id: order.coating_id,
         decor_items: order.decor_items,
         topper_text: normalizeOptionalText(order.topper_text),
         reference_photo_url: normalizeOptionalText(order.reference_photo_url),
@@ -203,7 +200,6 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
     order.client_contact,
     order.client_contact_type,
     order.client_name,
-    order.coating_id,
     order.comment,
     order.decor_items,
     order.filling_id,
@@ -420,10 +416,6 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
           <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
             <span>Начинка</span>
             <span>{formatPrice(fillingPrice)}</span>
-          </div>
-          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
-            <span>Покрытие</span>
-            <span>{formatPrice(coatingPrice)}</span>
           </div>
           <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
             <span>Декор</span>

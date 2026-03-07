@@ -4,7 +4,6 @@ import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { StepHeader } from '../components/StepHeader';
 import { useOrderContext } from '../context/OrderContext';
 import { getMenuItems } from '../lib/api';
-import { getItemPrice } from '../lib/price';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
@@ -19,9 +18,9 @@ const SERVINGS_LABELS: Record<(typeof SERVINGS_OPTIONS)[number], string> = {
 };
 
 const FALLBACK_SHAPES = [
-  { id: 'fallback-round', name: 'Круглая форма', price: 1800, description: 'Классический вариант для любого повода' },
-  { id: 'fallback-square', name: 'Квадратная форма', price: 1950, description: 'Больше места для декора и надписей' },
-  { id: 'fallback-heart', name: 'Форма сердце', price: 2100, description: 'Романтичная подача для особенного дня' },
+  { id: 'fallback-round', name: 'Круглая форма', description: 'Классический вариант для любого повода' },
+  { id: 'fallback-square', name: 'Квадратная форма', description: 'Больше места для декора и надписей' },
+  { id: 'fallback-heart', name: 'Форма сердце', description: 'Романтичная подача для особенного дня' },
 ] as const;
 
 interface StepShapeProps {
@@ -30,7 +29,7 @@ interface StepShapeProps {
 }
 
 export function StepShape({ bakerId, onBack }: StepShapeProps) {
-  const { order, updateOrder, setOrder } = useOrderContext();
+  const { order, updateOrder } = useOrderContext();
   const [shapeItems, setShapeItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -44,7 +43,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
         name: shape.name,
         description: shape.description,
         photo_url: null,
-        price: shape.price,
+        price: 0,
         price_type: 'fixed',
         is_active: true,
         sort_order: index,
@@ -88,34 +87,6 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
     };
   }, [bakerId]);
 
-  const selectedShapeItem = useMemo(
-    () => shapeItems.find((item) => item.name === order.shape) ?? null,
-    [shapeItems, order.shape],
-  );
-  const selectedFallbackShape = useMemo(
-    () => FALLBACK_SHAPES.find((item) => item.name === order.shape) ?? null,
-    [order.shape],
-  );
-
-  useEffect(() => {
-    const servings = order.servings;
-    let nextTotal = 0;
-
-    if (servings && selectedShapeItem) {
-      nextTotal = Math.round(getItemPrice(servings, selectedShapeItem));
-    } else if (selectedFallbackShape) {
-      nextTotal = selectedFallbackShape.price;
-    }
-
-    setOrder((prev) => {
-      if (prev.total_price === nextTotal) {
-        return prev;
-      }
-
-      return { ...prev, total_price: nextTotal };
-    });
-  }, [order.servings, selectedShapeItem, selectedFallbackShape, setOrder]);
-
   const useFallback = !loading && shapeItems.length === 0;
 
   return (
@@ -153,6 +124,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
                         onSelect={() => updateOrder({ shape: item.name })}
                         mode="single"
                         servings={order.servings}
+                        priceMode="hidden"
                       />
                     </div>
                   ))
@@ -168,6 +140,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
                         onSelect={() => updateOrder({ shape: item.name })}
                         mode="single"
                         servings={order.servings}
+                        priceMode="hidden"
                       />
                     </div>
                   ))}

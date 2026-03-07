@@ -9,7 +9,7 @@ interface MenuCardProps {
   onSelect: () => void;
   mode: 'single' | 'multi';
   servings?: number | null;
-  priceMode?: 'default' | 'per_kg_only';
+  priceMode?: 'default' | 'per_kg_only' | 'hidden';
   descriptionMode?: 'static' | 'toggle';
 }
 
@@ -19,7 +19,11 @@ function formatPrice(value: number): string {
   return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
 }
 
-function formatItemPrice(item: MenuItem, servings: number | null, priceMode: 'default' | 'per_kg_only'): string {
+function formatItemPrice(item: MenuItem, servings: number | null, priceMode: 'default' | 'per_kg_only' | 'hidden'): string {
+  if (priceMode === 'hidden') {
+    return '';
+  }
+
   if (priceMode === 'per_kg_only') {
     return `${formatPrice(item.price)}/кг`;
   }
@@ -149,9 +153,11 @@ export function MenuCard({
           </div>
         ) : null}
 
-        <p className={['mt-auto pt-3 text-right font-display text-xl', selected ? 'text-white' : 'text-primary-to'].join(' ')}>
-          {formatItemPrice(item, servings, priceMode)}
-        </p>
+        {priceMode !== 'hidden' ? (
+          <p className={['mt-auto pt-3 text-right font-display text-xl', selected ? 'text-white' : 'text-primary-to'].join(' ')}>
+            {formatItemPrice(item, servings, priceMode)}
+          </p>
+        ) : null}
       </div>
     </button>
   );

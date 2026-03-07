@@ -81,6 +81,13 @@ const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
   : null;
 
 const TELEGRAM_API_BASE = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN ?? ''}`;
+const SERVINGS_TO_WEIGHT_KG: Record<number, number> = {
+  6: 0.6,
+  8: 0.8,
+  12: 1.2,
+  16: 1.6,
+  20: 2,
+};
 
 function parseOrderWebhook(payload: unknown): OrderRow | null {
   if (!payload || typeof payload !== 'object') {
@@ -117,6 +124,19 @@ function escapeHtml(value: string): string {
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;');
+}
+
+function formatWeightKg(servings: number | null): string {
+  if (!servings || servings <= 0) {
+    return 'Не указан';
+  }
+
+  const mapped = SERVINGS_TO_WEIGHT_KG[servings];
+  const weight = mapped ?? servings / 10;
+  return `${new Intl.NumberFormat('ru-RU', {
+    minimumFractionDigits: Number.isInteger(weight) ? 0 : 1,
+    maximumFractionDigits: 1,
+  }).format(weight)} кг`;
 }
 
 function contactLink(contact: string, type: ContactType): string {
@@ -203,14 +223,13 @@ async function getMenuItemNames(ids: string[]): Promise<Record<string, string>> 
 }
 
 async function buildOrderMessage(order: OrderRow): Promise<string> {
-  const itemIds = [order.filling_id, order.coating_id, ...(order.decor_items ?? [])].filter(
+  const itemIds = [order.filling_id, ...(order.decor_items ?? [])].filter(
     (id): id is string => Boolean(id),
   );
 
   const namesMap = await getMenuItemNames(Array.from(new Set(itemIds)));
 
   const filling = order.filling_id ? (namesMap[order.filling_id] ?? `ID: ${order.filling_id}`) : 'Не выбрана';
-  const coating = order.coating_id ? (namesMap[order.coating_id] ?? `ID: ${order.coating_id}`) : 'Не выбрано';
   const decor = (order.decor_items ?? []).length > 0
     ? order.decor_items.map((id) => namesMap[id] ?? `ID: ${id}`).join(', ')
     : 'Нет';
@@ -229,9 +248,8 @@ async function buildOrderMessage(order: OrderRow): Promise<string> {
     `<b>Контакт:</b> <a href="${escapeHtml(contactUrl)}">${escapeHtml(order.client_contact)}</a> (${order.client_contact_type})`,
     `<b>Повод:</b> ${escapeHtml(order.occasion ?? 'Не указан')}`,
     `<b>Форма:</b> ${escapeHtml(order.shape ?? 'Не выбрана')}`,
-    `<b>Порции:</b> ${order.servings ?? 'Не указано'}`,
+    `<b>Вес:</b> ${formatWeightKg(order.servings)}`,
     `<b>Начинка:</b> ${escapeHtml(filling)}`,
-    `<b>Покрытие:</b> ${escapeHtml(coating)}`,
     `<b>Декор:</b> ${escapeHtml(decor)}`,
     `<b>Топпер:</b> ${escapeHtml(order.topper_text ?? 'Нет')}`,
     `<b>Комментарий:</b> ${escapeHtml(order.comment ?? 'Нет')}`,
@@ -239,7 +257,6 @@ async function buildOrderMessage(order: OrderRow): Promise<string> {
     `<b>Получение:</b> ${delivery}`,
     `<b>Дата:</b> ${escapeHtml(dateLine)}`,
     `<b>Стоимость:</b> ${formatPriceRub(order.total_price)}`,
-    `<b>Статус:</b> ${buildStatusLine(order.status)}`,
     '',
     `<code>order_id: ${escapeHtml(order.id)}</code>`,
   ].join('\n');

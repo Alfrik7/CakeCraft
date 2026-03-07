@@ -9,7 +9,6 @@ export interface OrderDraft {
   shape: string | null;
   servings: number | null;
   filling_id: string | null;
-  coating_id: string | null;
   decor_items: string[];
   topper_text: string | null;
   reference_photo_url: string | null;
@@ -40,7 +39,6 @@ function createInitialOrder(bakerId: string): OrderDraft {
     shape: null,
     servings: null,
     filling_id: null,
-    coating_id: null,
     decor_items: [],
     topper_text: null,
     reference_photo_url: null,

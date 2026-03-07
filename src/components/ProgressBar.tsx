@@ -3,7 +3,7 @@ interface ProgressBarProps {
   totalSteps: number;
 }
 
-const STEP_LABELS = ['Повод', 'Форма', 'Начинка', 'Покрытие', 'Декор', 'Заказ'];
+const STEP_LABELS = ['Повод', 'Форма', 'Начинка', 'Декор', 'Заказ'];
 
 export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   const safeCurrentStep = Math.min(Math.max(currentStep, 1), totalSteps);
@@ -22,7 +22,11 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
           aria-hidden="true"
         />
 
-        <ol className="relative grid grid-cols-6 gap-1" aria-label="Прогресс оформления заказа">
+        <ol
+          className="relative grid gap-1"
+          style={{ gridTemplateColumns: `repeat(${totalSteps}, minmax(0, 1fr))` }}
+          aria-label="Прогресс оформления заказа"
+        >
           {Array.from({ length: totalSteps }, (_, index) => {
             const step = index + 1;
             const label = STEP_LABELS[index] ?? `Шаг ${step}`;

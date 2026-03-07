@@ -17,7 +17,7 @@ interface BakerRow {
 interface MenuItemRow {
   id: string;
   name: string;
-  category: 'shape' | 'filling' | 'coating' | 'decor';
+  category: 'shape' | 'filling' | 'decor';
   price: number | string;
   price_type: 'fixed' | 'per_kg';
 }
@@ -33,7 +33,6 @@ interface OrderRow {
   servings: number | null;
   filling_id: string | null;
   coating_id: string | null;
-  color: string | null;
   decor_items: string[];
   topper_text: string | null;
   delivery_type: 'pickup' | 'delivery';
@@ -55,7 +54,15 @@ function formatPrice(value: number): string {
 }
 
 function estimateWeightKg(servings: number): number {
-  return Math.max(1, servings * 0.15);
+  const mapping: Record<number, number> = {
+    6: 0.6,
+    8: 0.8,
+    12: 1.2,
+    16: 1.6,
+    20: 2,
+  };
+
+  return mapping[servings] ?? servings / 10;
 }
 
 function getItemPrice(servings: number, item: MenuItemRow): number {
@@ -107,7 +114,7 @@ test.describe('Клиентский конструктор торта', () => {
       .select('id,name,category,price,price_type')
       .eq('baker_id', baker!.id)
       .eq('is_active', true)
-      .in('category', ['shape', 'filling', 'coating', 'decor'])
+      .in('category', ['shape', 'filling', 'decor'])
       .returns<MenuItemRow[]>();
 
     expect(menuError).toBeNull();
@@ -125,7 +132,6 @@ test.describe('Клиентский конструктор торта', () => {
 
     const selectedShape = byCategoryAndName('shape', 'Сердце');
     const selectedFilling = byCategoryAndName('filling', 'Шоколад-вишня');
-    const selectedCoating = byCategoryAndName('coating', 'Велюр');
     const selectedDecorBerries = byCategoryAndName('decor', 'Ягоды');
     const selectedDecorTopper = byCategoryAndName('decor', 'Топпер');
 
@@ -140,14 +146,13 @@ test.describe('Клиентский конструктор торта', () => {
     const orderDate = pickAvailableOrderDate(baker!.min_order_days, blockedDateSet);
 
     const servings = 12;
-    const expectedBase = Math.round(getItemPrice(servings, selectedShape));
+    const expectedBase = 0;
     const expectedFilling = Math.round(getItemPrice(servings, selectedFilling));
-    const expectedCoating = Math.round(getItemPrice(servings, selectedCoating));
     const expectedDecor = Math.round(
       getItemPrice(servings, selectedDecorBerries) + getItemPrice(servings, selectedDecorTopper),
     );
     const expectedDelivery = baker!.delivery_enabled ? toNumber(baker!.delivery_price) : 0;
-    const expectedTotal = expectedBase + expectedFilling + expectedCoating + expectedDecor + expectedDelivery;
+    const expectedTotal = expectedBase + expectedFilling + expectedDecor + expectedDelivery;
 
     const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const clientName = `E2E Клиент ${runId}`;
@@ -158,32 +163,27 @@ test.describe('Клиентский конструктор торта', () => {
 
     await page.goto(`/${BAKER_SLUG}`);
 
-    await expect(page.getByRole('heading', { name: 'Шаг 1. Повод' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Какой у вас повод?' })).toBeVisible();
     await page.getByRole('button', { name: /День рождения/ }).click();
     await page.getByRole('button', { name: 'Далее' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Шаг 2. Форма и размер' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Выберите форму' })).toBeVisible();
     await page.getByRole('button', { name: /Сердце/ }).first().click();
-    await page.getByRole('button', { name: '12', exact: true }).click();
+    await page.getByRole('button', { name: /12 \(1\.2кг\)/ }).click();
     await page.getByRole('button', { name: 'Далее' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Шаг 3. Начинка' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Выберите начинку' })).toBeVisible();
     await page.getByRole('button', { name: /Шоколад-вишня/ }).first().click();
     await page.getByRole('button', { name: 'Далее' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Шаг 4. Покрытие и цвет' })).toBeVisible();
-    await page.getByRole('button', { name: /Велюр/ }).first().click();
-    await page.getByRole('button', { name: 'Розовый' }).click();
-    await page.getByRole('button', { name: 'Далее' }).click();
-
-    await expect(page.getByRole('heading', { name: 'Шаг 5. Декор' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Финальный декор' })).toBeVisible();
     await page.getByRole('button', { name: /Ягоды/ }).first().click();
     await page.getByRole('button', { name: /Топпер/ }).first().click();
     await page.getByLabel('Текст для топпера').fill(topperText);
     await page.getByLabel('Комментарий по декору').fill(`Черновой комментарий ${runId}`);
     await page.getByRole('button', { name: 'Далее' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Шаг 6. Оформление заказа' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Оформление заказа' })).toBeVisible();
     await page.getByLabel('Имя клиента *').fill(clientName);
     await page.getByLabel('Контакт *').fill(clientContact);
     await page.getByLabel('Тип контакта').selectOption('telegram');
@@ -199,7 +199,7 @@ test.describe('Клиентский конструктор торта', () => {
     await expect(page.getByText(formatPrice(expectedTotal)).first()).toBeVisible();
 
     await page.getByRole('button', { name: 'Отправить заказ' }).click();
-    await expect(page.getByRole('heading', { name: 'Спасибо!' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Заказ отправлен!' })).toBeVisible();
 
     const { data: insertedOrders, error: insertedOrdersError } = await supabase
       .from('orders')
@@ -222,8 +222,7 @@ test.describe('Клиентский конструктор торта', () => {
     expect(insertedOrder.shape).toBe(selectedShape.name);
     expect(insertedOrder.servings).toBe(servings);
     expect(insertedOrder.filling_id).toBe(selectedFilling.id);
-    expect(insertedOrder.coating_id).toBe(selectedCoating.id);
-    expect(insertedOrder.color).toBe('розовый');
+    expect(insertedOrder.coating_id).toBeNull();
     expect(insertedOrder.decor_items).toEqual([selectedDecorBerries.id, selectedDecorTopper.id]);
     expect(insertedOrder.topper_text).toBe(topperText);
     expect(insertedOrder.delivery_type).toBe(baker!.delivery_enabled ? 'delivery' : 'pickup');

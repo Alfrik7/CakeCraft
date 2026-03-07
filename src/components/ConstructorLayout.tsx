@@ -6,13 +6,12 @@ import { ProgressBar } from './ProgressBar';
 import { StepOccasion } from '../steps/StepOccasion';
 import { StepShape } from '../steps/StepShape';
 import { StepFilling } from '../steps/StepFilling';
-import { StepCoating } from '../steps/StepCoating';
 import { StepDecor } from '../steps/StepDecor';
 import { StepCheckout } from '../steps/StepCheckout';
 import { applyTelegramTheme, getTelegramWebApp, initTelegramWebApp, triggerTelegramHaptic } from '../lib/telegram';
 import { applyBakerTheme } from '../lib/theme';
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 5;
 
 interface ConstructorLayoutProps {
   baker: Baker;
@@ -61,11 +60,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
       return Boolean(order.filling_id);
     }
 
-    if (step === 4) {
-      return Boolean(order.coating_id);
-    }
-
-    if (step === 6) {
+    if (step === 5) {
       return checkoutCanSubmit;
     }
 
@@ -74,7 +69,6 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
     checkoutCanSubmit,
     isSubmitted,
     isSubmitting,
-    order.coating_id,
     order.filling_id,
     order.occasion,
     order.servings,
@@ -201,9 +195,8 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
           {step === 1 ? <StepOccasion /> : null}
           {step === 2 ? <StepShape bakerId={baker.id} onBack={handleBackStep} /> : null}
           {step === 3 ? <StepFilling bakerId={baker.id} onBack={handleBackStep} /> : null}
-          {step === 4 ? <StepCoating bakerId={baker.id} onBack={handleBackStep} /> : null}
-          {step === 5 ? <StepDecor bakerId={baker.id} onBack={handleBackStep} /> : null}
-          {step === 6 && !isSubmitted ? (
+          {step === 4 ? <StepDecor bakerId={baker.id} onBack={handleBackStep} /> : null}
+          {step === 5 && !isSubmitted ? (
             <StepCheckout
               baker={baker}
               onBack={handleBackStep}
@@ -211,7 +204,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
               onCanSubmitChange={setCheckoutCanSubmit}
             />
           ) : null}
-          {step === 6 && isSubmitted ? (
+          {step === 5 && isSubmitted ? (
             <section className="relative overflow-hidden rounded-[2rem] bg-surface p-5 text-center shadow-card sm:p-6">
               <div className="pointer-events-none absolute inset-0" aria-hidden="true">
                 {Array.from({ length: 18 }).map((_, index) => (
