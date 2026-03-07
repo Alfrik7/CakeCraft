@@ -1,9 +1,8 @@
 import { type CSSProperties, type ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
-import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { StepHeader } from '../components/StepHeader';
+import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
-import { getMenuItems } from '../lib/api';
 import { getItemPrice } from '../lib/price';
 import { supabase } from '../lib/supabase';
 import { triggerTelegramHaptic } from '../lib/telegram';
@@ -26,51 +25,15 @@ function buildReferencePhotoPath(bakerId: string, fileName: string): string {
 }
 
 interface StepDecorProps {
-  bakerId: string;
   onBack: () => void;
 }
 
-export function StepDecor({ bakerId, onBack }: StepDecorProps) {
+export function StepDecor({ onBack }: StepDecorProps) {
   const { order, setOrder, updateOrder } = useOrderContext();
-  const [decorItems, setDecorItems] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+  const { menuData, hasMenuError } = useMenuDataContext();
+  const decorItems = menuData.decor;
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadDecorItems() {
-      setLoading(true);
-      setLoadError(false);
-
-      try {
-        const items = await getMenuItems(bakerId, 'decor');
-
-        if (!isActive) {
-          return;
-        }
-
-        setDecorItems(items);
-      } catch {
-        if (isActive) {
-          setDecorItems([]);
-          setLoadError(true);
-        }
-      } finally {
-        if (isActive) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadDecorItems();
-
-    return () => {
-      isActive = false;
-    };
-  }, [bakerId]);
 
   const selectedDecorItems = useMemo(
     () => decorItems.filter((item) => order.decor_items.includes(item.id)),
@@ -175,44 +138,41 @@ export function StepDecor({ bakerId, onBack }: StepDecorProps) {
       />
 
       <div className="mt-5">
-        {loading ? <SkeletonMenuGrid /> : null}
-        {!loading ? (
-          <div className="content-fade-in">
-            {loadError ? (
-              <p className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
-                Не удалось загрузить декор из каталога.
-              </p>
-            ) : null}
+        <div className="content-fade-in">
+          {hasMenuError ? (
+            <p className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
+              Не удалось загрузить декор из каталога.
+            </p>
+          ) : null}
 
-            {decorItems.length === 0 ? (
-              <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных элементов декора.</p>
-            ) : null}
+          {decorItems.length === 0 ? (
+            <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных элементов декора.</p>
+          ) : null}
 
-            {decorItems.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3">
-                {decorItems.map((item, index) => {
-                  const isSelected = order.decor_items.includes(item.id);
+          {decorItems.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3">
+              {decorItems.map((item, index) => {
+                const isSelected = order.decor_items.includes(item.id);
 
-                  return (
-                    <div
-                      key={item.id}
-                      className="stagger-item"
-                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
-                    >
-                      <MenuCard
-                        item={item}
-                        selected={isSelected}
-                        onSelect={() => toggleDecorItem(item)}
-                        mode="multi"
-                        servings={order.servings}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+                return (
+                  <div
+                    key={item.id}
+                    className="stagger-item"
+                    style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                  >
+                    <MenuCard
+                      item={item}
+                      selected={isSelected}
+                      onSelect={() => toggleDecorItem(item)}
+                      mode="multi"
+                      servings={order.servings}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {selectedDecorItems.length > 0 ? (

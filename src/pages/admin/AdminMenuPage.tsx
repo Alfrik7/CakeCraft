@@ -315,6 +315,27 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
   );
 }
 
+function MenuItemPhoto({ src, alt }: { src: string; alt: string }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative h-full w-full overflow-hidden rounded-xl bg-rose-50">
+      {!isLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setIsLoaded(true)}
+        className={`h-full w-full object-cover transition-[filter,transform] duration-500 ${
+          isLoaded ? 'scale-100 blur-0' : 'scale-110 blur-md'
+        }`}
+      />
+    </div>
+  );
+}
+
 export function AdminMenuPage() {
   const { session } = useAuthContext();
   const [activeCategory, setActiveCategory] = useState<MenuCategory>('shape');
@@ -493,7 +514,7 @@ export function AdminMenuPage() {
                 <div className="flex items-start gap-3">
                   <div className="h-16 w-16 overflow-hidden rounded-xl bg-rose-50">
                     {item.photo_url ? (
-                      <img src={item.photo_url} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
+                      <MenuItemPhoto src={item.photo_url} alt={item.name} />
                     ) : (
                       <div className="grid h-full w-full place-items-center text-[11px] text-rose-400">Нет фото</div>
                     )}

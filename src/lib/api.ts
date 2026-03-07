@@ -166,6 +166,22 @@ export async function getMenuItems(bakerId: string, category: MenuCategory): Pro
   return (data ?? []).map(mapMenuItem);
 }
 
+export interface ConstructorMenuData {
+  shape: MenuItem[];
+  filling: MenuItem[];
+  decor: MenuItem[];
+}
+
+export async function getConstructorMenuData(bakerId: string): Promise<ConstructorMenuData> {
+  const [shape, filling, decor] = await Promise.all([
+    getMenuItems(bakerId, 'shape'),
+    getMenuItems(bakerId, 'filling'),
+    getMenuItems(bakerId, 'decor'),
+  ]);
+
+  return { shape, filling, decor };
+}
+
 export async function getAdminMenuItems(bakerId: string, category: MenuCategory): Promise<MenuItem[]> {
   const { data, error } = await supabase
     .from('menu_items')

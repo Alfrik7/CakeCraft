@@ -101,12 +101,13 @@ export function MenuCard({
               src={item.photo_url}
               alt={item.name}
               loading="lazy"
+              decoding="async"
               onLoad={() => setImageLoaded(true)}
               onError={() => setImageLoaded(true)}
               className={[
-                'h-full w-full object-cover transition duration-300',
-                imageLoaded ? 'opacity-100' : 'opacity-0',
-                selected ? 'scale-[1.03]' : 'scale-100 group-hover:scale-[1.03]',
+                'h-full w-full object-cover transition-[filter,transform] duration-500',
+                imageLoaded ? 'blur-0' : 'blur-md',
+                selected ? 'scale-[1.03]' : imageLoaded ? 'scale-100 group-hover:scale-[1.03]' : 'scale-110',
               ].join(' ')}
             />
           </>

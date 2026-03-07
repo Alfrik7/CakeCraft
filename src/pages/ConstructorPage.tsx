@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ConstructorLayout } from '../components/ConstructorLayout';
+import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
+import { SkeletonPriceBar } from '../components/SkeletonPriceBar';
 import { SkeletonProgressBar } from '../components/SkeletonProgressBar';
+import { MenuDataProvider } from '../context/MenuDataContext';
 import { OrderProvider } from '../context/OrderContext';
-import { getBaker } from '../lib/api';
+import { getBaker, getConstructorMenuData, type ConstructorMenuData } from '../lib/api';
 import type { Baker } from '../types';
 import { NotFoundPage } from './NotFoundPage';
 
 export function ConstructorPage() {
   const { slug } = useParams();
   const [baker, setBaker] = useState<Baker | null>(null);
+  const [menuData, setMenuData] = useState<ConstructorMenuData>({ shape: [], filling: [], decor: [] });
+  const [hasMenuError, setHasMenuError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
 
@@ -39,7 +44,22 @@ export function ConstructorPage() {
           return;
         }
 
+        let loadedMenuData: ConstructorMenuData = { shape: [], filling: [], decor: [] };
+        let menuError = false;
+
+        try {
+          loadedMenuData = await getConstructorMenuData(loadedBaker.id);
+        } catch {
+          menuError = true;
+        }
+
+        if (!isActive) {
+          return;
+        }
+
         setBaker(loadedBaker);
+        setMenuData(loadedMenuData);
+        setHasMenuError(menuError);
       } catch {
         if (isActive) {
           setIsNotFound(true);
@@ -75,8 +95,12 @@ export function ConstructorPage() {
             <div className="skeleton-shimmer mt-3 h-6 w-5/6 rounded-full" aria-hidden="true" />
             <div className="skeleton-shimmer mt-5 h-2 w-full rounded-full" aria-hidden="true" />
             <p className="mt-5 text-sm text-text-secondary">Загружаем данные кондитера...</p>
+            <div className="mt-5">
+              <SkeletonMenuGrid />
+            </div>
           </div>
         </div>
+        <SkeletonPriceBar />
       </main>
     );
   }
@@ -87,7 +111,9 @@ export function ConstructorPage() {
 
   return (
     <OrderProvider bakerId={baker.id}>
-      <ConstructorLayout baker={baker} />
+      <MenuDataProvider menuData={menuData} hasMenuError={hasMenuError}>
+        <ConstructorLayout baker={baker} />
+      </MenuDataProvider>
     </OrderProvider>
   );
 }

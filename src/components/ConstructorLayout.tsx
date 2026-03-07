@@ -194,8 +194,8 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         >
           {step === 1 ? <StepOccasion /> : null}
           {step === 2 ? <StepShape bakerId={baker.id} onBack={handleBackStep} /> : null}
-          {step === 3 ? <StepFilling bakerId={baker.id} onBack={handleBackStep} /> : null}
-          {step === 4 ? <StepDecor bakerId={baker.id} onBack={handleBackStep} /> : null}
+          {step === 3 ? <StepFilling onBack={handleBackStep} /> : null}
+          {step === 4 ? <StepDecor onBack={handleBackStep} /> : null}
           {step === 5 && !isSubmitted ? (
             <StepCheckout
               baker={baker}

@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
-import { SkeletonMenuGrid } from '../components/SkeletonMenuGrid';
 import { StepHeader } from '../components/StepHeader';
+import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
-import { getMenuItems } from '../lib/api';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
@@ -30,9 +29,8 @@ interface StepShapeProps {
 
 export function StepShape({ bakerId, onBack }: StepShapeProps) {
   const { order, updateOrder } = useOrderContext();
-  const [shapeItems, setShapeItems] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+  const { menuData, hasMenuError } = useMenuDataContext();
+  const shapeItems = menuData.shape;
 
   const fallbackShapeItems = useMemo<MenuItem[]>(
     () =>
@@ -53,41 +51,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
     [bakerId],
   );
 
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadShapes() {
-      setLoading(true);
-      setLoadError(false);
-
-      try {
-        const items = await getMenuItems(bakerId, 'shape');
-
-        if (!isActive) {
-          return;
-        }
-
-        setShapeItems(items);
-      } catch {
-        if (isActive) {
-          setShapeItems([]);
-          setLoadError(true);
-        }
-      } finally {
-        if (isActive) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadShapes();
-
-    return () => {
-      isActive = false;
-    };
-  }, [bakerId]);
-
-  const useFallback = !loading && shapeItems.length === 0;
+  const useFallback = shapeItems.length === 0;
 
   return (
     <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
@@ -98,55 +62,51 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
       />
 
       <div className="mt-5">
-        {loading ? (
-          <SkeletonMenuGrid />
-        ) : (
-          <div className="content-fade-in">
-            {useFallback || loadError ? (
-              <div className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
-                {useFallback
-                  ? 'Формы из каталога не найдены. Показываем базовые варианты.'
-                  : 'Не удалось загрузить формы из каталога.'}
-              </div>
-            ) : null}
-
-            <div className="grid grid-cols-2 gap-3">
-              {useFallback
-                ? fallbackShapeItems.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="stagger-item"
-                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
-                    >
-                      <MenuCard
-                        item={item}
-                        selected={order.shape === item.name}
-                        onSelect={() => updateOrder({ shape: item.name })}
-                        mode="single"
-                        servings={order.servings}
-                        priceMode="hidden"
-                      />
-                    </div>
-                  ))
-                : shapeItems.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="stagger-item"
-                      style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
-                    >
-                      <MenuCard
-                        item={item}
-                        selected={order.shape === item.name}
-                        onSelect={() => updateOrder({ shape: item.name })}
-                        mode="single"
-                        servings={order.servings}
-                        priceMode="hidden"
-                      />
-                    </div>
-                  ))}
+        <div className="content-fade-in">
+          {useFallback || hasMenuError ? (
+            <div className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
+              {hasMenuError
+                ? 'Не удалось загрузить формы из каталога. Показываем базовые варианты.'
+                : 'Формы из каталога не найдены. Показываем базовые варианты.'}
             </div>
+          ) : null}
+
+          <div className="grid grid-cols-2 gap-3">
+            {useFallback
+              ? fallbackShapeItems.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="stagger-item"
+                    style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                  >
+                    <MenuCard
+                      item={item}
+                      selected={order.shape === item.name}
+                      onSelect={() => updateOrder({ shape: item.name })}
+                      mode="single"
+                      servings={order.servings}
+                      priceMode="hidden"
+                    />
+                  </div>
+                ))
+              : shapeItems.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="stagger-item"
+                    style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                  >
+                    <MenuCard
+                      item={item}
+                      selected={order.shape === item.name}
+                      onSelect={() => updateOrder({ shape: item.name })}
+                      mode="single"
+                      servings={order.servings}
+                      priceMode="hidden"
+                    />
+                  </div>
+                ))}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="mt-6 rounded-2xl bg-secondary/70 p-4">

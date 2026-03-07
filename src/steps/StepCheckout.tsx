@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { SkeletonParagraph } from '../components/SkeletonMenuGrid';
+import { SkeletonCheckoutForm } from '../components/SkeletonCheckoutForm';
 import { StepHeader } from '../components/StepHeader';
+import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
-import { createOrder, getBlockedDates, getMenuItems } from '../lib/api';
+import { createOrder, getBlockedDates } from '../lib/api';
 import { getItemPrice } from '../lib/price';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { Baker, MenuItem } from '../types';
@@ -38,12 +39,20 @@ interface StepCheckoutProps {
 
 export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmitChange }: StepCheckoutProps) {
   const { order, updateOrder } = useOrderContext();
+  const { menuData } = useMenuDataContext();
   const [loadingBlockedDates, setLoadingBlockedDates] = useState(true);
   const [blockedDateSet, setBlockedDateSet] = useState<Set<string>>(new Set());
   const [blockedDatesError, setBlockedDatesError] = useState(false);
-  const [menuItemsById, setMenuItemsById] = useState<Record<string, MenuItem>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const menuItemsById = useMemo(
+    () =>
+      [...menuData.filling, ...menuData.decor].reduce<Record<string, MenuItem>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {}),
+    [menuData.decor, menuData.filling],
+  );
 
   const minOrderDate = useMemo(() => toIsoDate(addDays(new Date(), baker.min_order_days)), [baker.min_order_days]);
   const isDeliveryEnabled = baker.delivery_enabled;
@@ -60,28 +69,17 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
       setBlockedDatesError(false);
 
       try {
-        const [blockedDates, fillings, decorItems] = await Promise.all([
-          getBlockedDates(baker.id),
-          getMenuItems(baker.id, 'filling'),
-          getMenuItems(baker.id, 'decor'),
-        ]);
+        const blockedDates = await getBlockedDates(baker.id);
 
         if (!isActive) {
           return;
         }
 
         setBlockedDateSet(new Set(blockedDates.map((item) => item.date)));
-        setMenuItemsById(
-          [...fillings, ...decorItems].reduce<Record<string, MenuItem>>((acc, item) => {
-            acc[item.id] = item;
-            return acc;
-          }, {}),
-        );
       } catch {
         if (isActive) {
           setBlockedDatesError(true);
           setBlockedDateSet(new Set());
-          setMenuItemsById({});
         }
       } finally {
         if (isActive) {
@@ -235,6 +233,9 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
       />
 
       <div className="mt-5 space-y-4">
+        {loadingBlockedDates ? <SkeletonCheckoutForm /> : null}
+        {!loadingBlockedDates ? (
+          <div className="space-y-4">
         <label className={labelClass}>
           Имя клиента *
           <input
@@ -313,21 +314,18 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
           </label>
         </div>
 
-        {loadingBlockedDates ? <SkeletonParagraph /> : null}
-        {!loadingBlockedDates ? (
-          <div className="content-fade-in">
-            {blockedDatesError ? (
-              <p className="text-xs text-[var(--color-danger)]">
-                Не удалось загрузить заблокированные даты, проверьте дату вручную.
-              </p>
-            ) : null}
-            {blockedDateSet.size > 0 ? (
-              <p className="text-xs text-text-secondary">
-                Недоступные даты: {Array.from(blockedDateSet).sort().join(', ')}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+        <div className="content-fade-in">
+          {blockedDatesError ? (
+            <p className="text-xs text-[var(--color-danger)]">
+              Не удалось загрузить заблокированные даты, проверьте дату вручную.
+            </p>
+          ) : null}
+          {blockedDateSet.size > 0 ? (
+            <p className="text-xs text-text-secondary">
+              Недоступные даты: {Array.from(blockedDateSet).sort().join(', ')}
+            </p>
+          ) : null}
+        </div>
 
         <div className="border-t border-primary-from/15 pt-4">
           <p className={labelClass}>Получение заказа</p>
@@ -404,39 +402,45 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
             className={fieldBaseClass}
           />
         </label>
+          </div>
+        ) : null}
       </div>
 
-      <div className="mt-6 rounded-2xl bg-secondary/95 p-4 shadow-card">
-        <p className="font-display text-xl text-text-primary">Итоговая стоимость</p>
-        <div className="mt-3 space-y-2 text-sm text-text-primary">
-          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
-            <span>База (форма и размер)</span>
-            <span>{formatPrice(basePrice)}</span>
+      {!loadingBlockedDates ? (
+        <div className="mt-6 rounded-2xl bg-secondary/95 p-4 shadow-card">
+          <p className="font-display text-xl text-text-primary">Итоговая стоимость</p>
+          <div className="mt-3 space-y-2 text-sm text-text-primary">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
+              <span>База (форма и размер)</span>
+              <span>{formatPrice(basePrice)}</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
+              <span>Начинка</span>
+              <span>{formatPrice(fillingPrice)}</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
+              <span>Декор</span>
+              <span>{formatPrice(decorPrice)}</span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span>Доставка</span>
+              <span>
+                {isDeliverySelected && isCustomDeliveryPrice ? 'рассчитывается отдельно' : formatPrice(deliveryPrice)}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
-            <span>Начинка</span>
-            <span>{formatPrice(fillingPrice)}</span>
-          </div>
-          <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
-            <span>Декор</span>
-            <span>{formatPrice(decorPrice)}</span>
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <span>Доставка</span>
-            <span>
-              {isDeliverySelected && isCustomDeliveryPrice ? 'рассчитывается отдельно' : formatPrice(deliveryPrice)}
+          <div className="mt-3 flex items-center justify-between border-t border-primary-from/35 pt-3 text-base">
+            <span>Итого</span>
+            <span className="[background-image:var(--gradient-primary)] bg-clip-text font-display text-2xl font-semibold text-transparent">
+              {formatPrice(finalTotalPrice)}
             </span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between border-t border-primary-from/35 pt-3 text-base">
-          <span>Итого</span>
-          <span className="[background-image:var(--gradient-primary)] bg-clip-text font-display text-2xl font-semibold text-transparent">
-            {formatPrice(finalTotalPrice)}
-          </span>
-        </div>
-      </div>
+      ) : null}
 
-      {submitError ? <p className="mt-4 text-sm text-[var(--color-danger)]">{submitError}</p> : null}
+      {!loadingBlockedDates && submitError ? (
+        <p className="mt-4 text-sm text-[var(--color-danger)]">{submitError}</p>
+      ) : null}
     </section>
   );
 }
