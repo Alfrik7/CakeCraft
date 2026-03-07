@@ -317,12 +317,12 @@ text-align:left;
 }
 .demo-steps{
 display:flex;flex-direction:column;gap:8px;
-max-width:320px;flex-shrink:0;position:sticky;top:120px;
+max-width:320px;flex-shrink:0;position:sticky;top:120px;align-self:flex-start;
 }
 .demo-step{
 display:flex;align-items:flex-start;gap:16px;
 padding:16px 20px;border-radius:20px;cursor:pointer;
-transition:all 0.3s ease;background:transparent;
+transition:all 0.5s cubic-bezier(0.16,1,0.3,1);background:transparent;
 }
 .demo-step:hover{background:rgba(248,164,184,0.08)}
 .demo-step.active{background:white;box-shadow:0 4px 24px rgba(232,103,124,0.1)}
@@ -330,13 +330,16 @@ transition:all 0.3s ease;background:transparent;
 width:36px;height:36px;border-radius:50%;flex-shrink:0;
 display:flex;align-items:center;justify-content:center;
 font-family:'Playfair Display',serif;font-size:16px;font-weight:700;
-background:#f5eded;color:var(--text2);transition:all 0.3s ease;
+background:#f5eded;color:var(--text2);transition:all 0.5s cubic-bezier(0.16,1,0.3,1);
 }
 .demo-step.active .demo-step-num{
 background:linear-gradient(135deg,var(--pink),var(--coral));color:white;
+transform:scale(1.1);
 }
-.demo-step-info h4{font-size:15px;margin-bottom:4px;font-family:'Playfair Display',serif}
-.demo-step-info p{font-size:13px;color:var(--text2);line-height:1.4}
+.demo-step-info h4{font-size:15px;margin-bottom:4px;font-family:'Playfair Display',serif;transition:color 0.3s}
+.demo-step.active .demo-step-info h4{color:var(--coral)}
+.demo-step-info p{font-size:13px;color:var(--text2);line-height:1.4;max-height:0;overflow:hidden;opacity:0;transition:all 0.5s ease}
+.demo-step.active .demo-step-info p{max-height:80px;opacity:1;margin-top:4px}
 
 .demo-phone{display:flex;flex-direction:column;align-items:center;gap:16px}
 .demo-phone-frame{
@@ -708,6 +711,47 @@ entry.target.classList.add('visible');
 }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Auto-cycle demo steps
+const demoSteps = document.querySelectorAll('.demo-step');
+let currentDemoStep = 0;
+let demoCycleInterval;
+
+function activateDemoStep(index) {
+  demoSteps.forEach(s => s.classList.remove('active'));
+  demoSteps[index].classList.add('active');
+}
+
+function startDemoCycle() {
+  demoCycleInterval = setInterval(() => {
+    currentDemoStep = (currentDemoStep + 1) % demoSteps.length;
+    activateDemoStep(currentDemoStep);
+  }, 3000);
+}
+
+// Start cycling when demo section is visible
+const demoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      startDemoCycle();
+    } else {
+      clearInterval(demoCycleInterval);
+    }
+  });
+}, { threshold: 0.3 });
+
+const demoSection = document.querySelector('.demo');
+if (demoSection) demoObserver.observe(demoSection);
+
+// Click on step to select it and pause auto-cycle
+demoSteps.forEach((step, i) => {
+  step.addEventListener('click', () => {
+    clearInterval(demoCycleInterval);
+    currentDemoStep = i;
+    activateDemoStep(i);
+    setTimeout(startDemoCycle, 6000);
+  });
+});
 </script>
 </body>
 </html>
