@@ -371,6 +371,40 @@ export async function setOrderStatus(
   return mapOrder(data);
 }
 
+export interface OrderDetailsPatch {
+  shape?: string | null;
+  filling_id?: string | null;
+  servings?: number | null;
+  decor_items?: string[];
+  topper_text?: string | null;
+  delivery_type?: Order['delivery_type'];
+  address?: string | null;
+  order_date?: string;
+  order_time?: string | null;
+  comment?: string | null;
+  total_price?: number;
+}
+
+export async function updateOrderDetails(
+  orderId: string,
+  bakerId: string,
+  patch: OrderDetailsPatch,
+): Promise<Order> {
+  const { data, error } = await supabase
+    .from('orders')
+    .update(patch)
+    .eq('id', orderId)
+    .eq('baker_id', bakerId)
+    .select('*')
+    .single<OrderRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return mapOrder(data);
+}
+
 export async function getMenuItemsByIds(bakerId: string, itemIds: string[]): Promise<MenuItem[]> {
   const uniqueIds = [...new Set(itemIds.filter(Boolean))];
 

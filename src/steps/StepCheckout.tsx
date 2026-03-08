@@ -30,6 +30,128 @@ function addDays(date: Date, days: number): Date {
   return result;
 }
 
+function toIsoDateUtc(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function fromIsoDate(value: string): Date {
+  const [year, month, day] = value.split('-').map((part) => Number(part));
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function getMonthStart(date: Date): Date {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+}
+
+function shiftMonth(date: Date, delta: number): Date {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + delta, 1));
+}
+
+function getCalendarDays(monthDate: Date): Date[] {
+  const monthStart = getMonthStart(monthDate);
+  const weekday = monthStart.getUTCDay();
+  const startOffset = (weekday + 6) % 7;
+  const firstGridDate = new Date(monthStart);
+  firstGridDate.setUTCDate(monthStart.getUTCDate() - startOffset);
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const next = new Date(firstGridDate);
+    next.setUTCDate(firstGridDate.getUTCDate() + index);
+    return next;
+  });
+}
+
+const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+interface BookingCalendarProps {
+  value: string;
+  minDate: string;
+  blockedDateSet: Set<string>;
+  onChange: (value: string) => void;
+}
+
+function BookingCalendar({ value, minDate, blockedDateSet, onChange }: BookingCalendarProps) {
+  const [visibleMonth, setVisibleMonth] = useState<Date>(() =>
+    getMonthStart(value ? fromIsoDate(value) : fromIsoDate(minDate)),
+  );
+
+  useEffect(() => {
+    if (!value) {
+      return;
+    }
+
+    setVisibleMonth(getMonthStart(fromIsoDate(value)));
+  }, [value]);
+
+  const minDateUtc = fromIsoDate(minDate);
+  const monthLabel = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+    visibleMonth,
+  );
+
+  return (
+    <div className="mt-1 rounded-2xl border border-primary-from/20 bg-white p-3">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={() => setVisibleMonth((prev) => shiftMonth(prev, -1))}
+          className="rounded-lg border border-primary-from/30 px-2 py-1 text-xs text-text-primary transition hover:bg-primary-from/10"
+        >
+          ←
+        </button>
+        <p className="text-sm font-semibold capitalize text-text-primary">{monthLabel}</p>
+        <button
+          type="button"
+          onClick={() => setVisibleMonth((prev) => shiftMonth(prev, 1))}
+          className="rounded-lg border border-primary-from/30 px-2 py-1 text-xs text-text-primary transition hover:bg-primary-from/10"
+        >
+          →
+        </button>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1">
+        {WEEKDAY_LABELS.map((label) => (
+          <div key={label} className="py-1 text-center text-[11px] font-semibold text-text-secondary">
+            {label}
+          </div>
+        ))}
+        {getCalendarDays(visibleMonth).map((day) => {
+          const iso = toIsoDateUtc(day);
+          const isCurrentMonth = day.getUTCMonth() === visibleMonth.getUTCMonth();
+          const isBlocked = blockedDateSet.has(iso);
+          const isTooEarly = day.getTime() < minDateUtc.getTime();
+          const isDisabled = isBlocked || isTooEarly;
+          const isSelected = value === iso;
+
+          return (
+            <button
+              key={iso}
+              type="button"
+              disabled={isDisabled}
+              onClick={() => onChange(iso)}
+              className={[
+                'relative min-h-[34px] rounded-lg text-xs transition',
+                isCurrentMonth ? 'text-text-primary' : 'text-text-secondary/50',
+                isSelected ? '[background-image:var(--gradient-primary)] font-semibold text-white' : '',
+                !isSelected && !isDisabled ? 'hover:bg-primary-from/15' : '',
+                isTooEarly ? 'cursor-not-allowed opacity-40' : '',
+                isBlocked
+                  ? 'cursor-not-allowed bg-slate-100 text-slate-500 line-through after:absolute after:left-1 after:right-1 after:top-1/2 after:h-[1.5px] after:-translate-y-1/2 after:rotate-[-15deg] after:bg-red-500/80'
+                  : '',
+              ].join(' ')}
+              aria-label={iso}
+            >
+              {day.getUTCDate()}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface StepCheckoutProps {
   baker: Baker;
   onBack: () => void;
@@ -289,17 +411,14 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className={labelClass}>
             Дата заказа *
-            <div className="relative mt-1">
-              <input
-                type="date"
-                min={minOrderDate}
-                value={order.order_date}
-                onChange={(event) => updateOrder({ order_date: event.target.value })}
-                className={[fieldBaseClass, 'datepicker-input mt-0 pr-10'].join(' ')}
-              />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base text-primary-to">📅</span>
-            </div>
+            <BookingCalendar
+              value={order.order_date}
+              minDate={minOrderDate}
+              blockedDateSet={blockedDateSet}
+              onChange={(date) => updateOrder({ order_date: date })}
+            />
             <p className="mt-1 text-xs text-text-secondary">Минимальная дата заказа: {minOrderDate}</p>
+            <p className="mt-1 text-xs text-text-secondary">Серым отмечены даты, на которые запись закрыта</p>
             {fieldErrors.order_date ? (
               <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.order_date}</p>
             ) : null}
