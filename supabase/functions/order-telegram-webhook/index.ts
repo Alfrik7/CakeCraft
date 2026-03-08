@@ -31,7 +31,7 @@ interface OrderRow {
 interface BakerRow {
   id: string;
   telegram_id: string | number;
-  notification_telegram: string | null;
+  telegram_chat_id: string | number | null;
   name: string;
   slug: string;
 }
@@ -60,10 +60,17 @@ interface TelegramCallbackPayload {
   };
 }
 
+interface TelegramMessagePayload {
+  message?: {
+    text?: string;
+    chat?: { id: number };
+    from?: { id: number };
+  };
+}
+
 const TELEGRAM_BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
 const ORDER_WEBHOOK_SECRET = Deno.env.get('ORDER_WEBHOOK_SECRET');
 const TELEGRAM_WEBHOOK_SECRET = Deno.env.get('TELEGRAM_WEBHOOK_SECRET');
-const OWNER_TELEGRAM_ID = Deno.env.get('OWNER_TELEGRAM_ID');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
@@ -117,6 +124,19 @@ function parseOrderWebhook(payload: unknown): OrderRow | null {
 
 function isTelegramCallback(payload: unknown): payload is TelegramCallbackPayload {
   return Boolean(payload && typeof payload === 'object' && 'callback_query' in payload);
+}
+
+function isTelegramMessage(payload: unknown): payload is TelegramMessagePayload {
+  return Boolean(payload && typeof payload === 'object' && 'message' in payload);
+}
+
+function parseStartBakerId(text: string | undefined): string | null {
+  if (!text) {
+    return null;
+  }
+
+  const match = text.trim().match(/^\/start(?:@\w+)?\s+([0-9a-f-]{36})$/i);
+  return match?.[1] ?? null;
 }
 
 function formatPriceRub(value: number | string): string {
@@ -280,7 +300,7 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
 
   const { data: baker, error: bakerError } = await supabase
     .from('bakers')
-    .select('id, telegram_id, notification_telegram, name, slug')
+    .select('id, telegram_id, telegram_chat_id, name, slug')
     .eq('id', order.baker_id)
     .single<BakerRow>();
 
@@ -291,14 +311,13 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
 
   const text = await buildOrderMessage(order);
 
-  const notificationTelegram = baker.notification_telegram?.trim() ?? '';
-  const normalizedNotificationTelegram = notificationTelegram
-    ? (notificationTelegram.startsWith('@') ? notificationTelegram : `@${notificationTelegram}`)
-    : null;
-  const targetChatId = normalizedNotificationTelegram ?? baker.telegram_id ?? OWNER_TELEGRAM_ID;
+  const targetChatId = baker.telegram_chat_id;
 
   if (!targetChatId) {
-    return new Response('No telegram chat_id configured for baker', { status: 500 });
+    return new Response(JSON.stringify({ ok: true, skipped: 'telegram_not_connected' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   const replyMarkup = {
@@ -344,6 +363,52 @@ function parseCallbackData(data: string): { orderId: string; status: OrderStatus
     orderId: match[1],
     status: match[2].toLowerCase() as OrderStatus,
   };
+}
+
+async function handleTelegramStartCommand(payload: TelegramMessagePayload): Promise<Response> {
+  if (!supabase) {
+    return new Response('Supabase client is not configured', { status: 500 });
+  }
+
+  const message = payload.message;
+  const chatId = message?.chat?.id;
+  const bakerId = parseStartBakerId(message?.text);
+
+  if (typeof chatId !== 'number' || !bakerId) {
+    return new Response(JSON.stringify({ ok: true, ignored: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const { data: updated, error } = await supabase
+    .from('bakers')
+    .update({ telegram_chat_id: chatId })
+    .eq('id', bakerId)
+    .select('id')
+    .maybeSingle<{ id: string }>();
+
+  if (error || !updated) {
+    await callTelegram('sendMessage', {
+      chat_id: chatId,
+      text: 'Не удалось подключить уведомления. Проверьте ссылку и попробуйте снова.',
+    });
+
+    return new Response(JSON.stringify({ ok: false }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  await callTelegram('sendMessage', {
+    chat_id: chatId,
+    text: 'Уведомления подключены! Новые заказы будут приходить сюда 🎂',
+  });
+
+  return new Response(JSON.stringify({ ok: true }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 async function handleTelegramCallback(payload: TelegramCallbackPayload): Promise<Response> {
@@ -412,13 +477,16 @@ async function handleTelegramCallback(payload: TelegramCallbackPayload): Promise
 
   const { data: bakerForCheck, error: bakerCheckError } = await supabase
     .from('bakers')
-    .select('telegram_id')
+    .select('telegram_id, telegram_chat_id')
     .eq('id', orderForCheck.baker_id)
-    .maybeSingle<{ telegram_id: string | number }>();
+    .maybeSingle<{ telegram_id: string | number; telegram_chat_id: string | number | null }>();
 
-  const allowedTelegramId = Number(bakerForCheck?.telegram_id ?? OWNER_TELEGRAM_ID);
+  const allowedTelegramId = Number(bakerForCheck?.telegram_id);
+  const allowedChatId = Number(bakerForCheck?.telegram_chat_id);
+  const isAllowedByUser = Number.isFinite(allowedTelegramId) && callbackUserId === allowedTelegramId;
+  const isAllowedByChat = Number.isFinite(allowedChatId) && query.message.chat.id === allowedChatId;
 
-  if (bakerCheckError || !Number.isFinite(allowedTelegramId) || callbackUserId !== allowedTelegramId) {
+  if (bakerCheckError || (!isAllowedByUser && !isAllowedByChat)) {
     await callTelegram('answerCallbackQuery', {
       callback_query_id: query.id,
       text: 'You are not allowed to update this order',
@@ -509,12 +577,16 @@ Deno.serve(async (req) => {
     return new Response('Invalid JSON', { status: 400 });
   }
 
-  if (isTelegramCallback(payload)) {
+  if (isTelegramCallback(payload) || isTelegramMessage(payload)) {
     if (!isAuthorizedRequest(req, 'telegram')) {
       return new Response('Unauthorized telegram webhook', { status: 401 });
     }
 
-    return handleTelegramCallback(payload);
+    if (isTelegramCallback(payload)) {
+      return handleTelegramCallback(payload);
+    }
+
+    return handleTelegramStartCommand(payload);
   }
 
   const order = parseOrderWebhook(payload);

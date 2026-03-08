@@ -4,10 +4,10 @@
 with upsert_baker as (
   insert into public.bakers (
     telegram_id,
+    telegram_chat_id,
     name,
     slug,
     logo_url,
-    notification_telegram,
     welcome_message,
     min_order_days,
     delivery_enabled,
@@ -19,10 +19,10 @@ with upsert_baker as (
   )
   values (
     612190238,
+    612190238,
     'Демо Кондитерская CakeCraft',
     'demo-baker',
     'https://picsum.photos/seed/cakecraft-logo/400/400',
-    '@cakecraft_demo',
     'Привет! Соберите свой торт, а я приготовлю его с любовью 🎂',
     2,
     true,
@@ -43,9 +43,9 @@ with upsert_baker as (
   on conflict (slug)
   do update set
     telegram_id = excluded.telegram_id,
+    telegram_chat_id = excluded.telegram_chat_id,
     name = excluded.name,
     logo_url = excluded.logo_url,
-    notification_telegram = excluded.notification_telegram,
     welcome_message = excluded.welcome_message,
     min_order_days = excluded.min_order_days,
     delivery_enabled = excluded.delivery_enabled,

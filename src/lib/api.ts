@@ -75,7 +75,6 @@ type MenuItemPatch = Partial<Omit<MenuItemPayload, 'baker_id' | 'category'>>;
 export interface BakerProfilePatch {
   name: string;
   logo_url?: string | null;
-  notification_telegram: string | null;
   welcome_message: string;
   min_order_days: number;
   delivery_enabled: boolean;
@@ -84,6 +83,7 @@ export interface BakerProfilePatch {
   theme: Baker['theme'];
   pickup_address: string | null;
   working_hours: Baker['working_hours'];
+  telegram_chat_id?: number | null;
 }
 
 export async function getBaker(slug: string): Promise<Baker | null> {

@@ -21,7 +21,6 @@ Run from project root:
 ```bash
 supabase secrets set \
   TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN \
-  OWNER_TELEGRAM_ID=612190238 \
   ORDER_WEBHOOK_SECRET=change-me-db-webhook-secret \
   TELEGRAM_WEBHOOK_SECRET=change-me-telegram-webhook-secret
 ```
@@ -55,7 +54,19 @@ curl -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook" \
   }'
 ```
 
-## 6) Smoke test
+## 6) Connect baker chat via /start deep link
+
+Use deep link from admin profile:
+
+`https://t.me/CakeCraftBot?start=<BAKER_ID>`
+
+After pressing `Start`, bot should reply:
+
+`Уведомления подключены! Новые заказы будут приходить сюда 🎂`
+
+and `public.bakers.telegram_chat_id` must be updated.
+
+## 7) Smoke test
 
 1. Insert a new row into `public.orders`.
 2. Verify Telegram receives formatted order message with `Confirm` and `Decline`.

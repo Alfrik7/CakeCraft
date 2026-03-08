@@ -16,7 +16,6 @@ const WEEK_DAYS: Array<{ key: string; label: string }> = [
 
 interface ProfileFormState {
   name: string;
-  notificationTelegram: string;
   welcomeMessage: string;
   minOrderDays: string;
   deliveryEnabled: boolean;
@@ -42,7 +41,6 @@ function getDefaultWorkingHours(): WorkingHours {
 function getInitialFormState(baker: Baker): ProfileFormState {
   return {
     name: baker.name,
-    notificationTelegram: baker.notification_telegram ?? '',
     welcomeMessage: baker.welcome_message,
     minOrderDays: String(baker.min_order_days),
     deliveryEnabled: baker.delivery_enabled,
@@ -53,25 +51,6 @@ function getInitialFormState(baker: Baker): ProfileFormState {
     workingHours: baker.working_hours ?? getDefaultWorkingHours(),
     logoFile: null,
   };
-}
-
-function normalizeTelegramUsername(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return '';
-  }
-
-  const withoutPrefix = trimmed.startsWith('@') ? trimmed.slice(1) : trimmed;
-  return withoutPrefix ? `@${withoutPrefix}` : '';
-}
-
-function isTelegramUsernameValid(value: string): boolean {
-  if (!value.trim()) {
-    return true;
-  }
-
-  const normalized = normalizeTelegramUsername(value);
-  return /^@[a-zA-Z0-9_]{5,32}$/.test(normalized);
 }
 
 export function AdminProfilePage() {
@@ -87,6 +66,14 @@ export function AdminProfilePage() {
   const constructorUrl = useMemo(
     () => (session ? `https://app.cakecraft.ru/${session.bakerSlug}` : ''),
     [session],
+  );
+  const telegramBotUsername = useMemo(() => {
+    const configured = (import.meta.env.VITE_TELEGRAM_BOT_USERNAME as string | undefined)?.trim();
+    return configured || 'CakeCraftBot';
+  }, []);
+  const telegramConnectUrl = useMemo(
+    () => `https://t.me/${telegramBotUsername}?start=${baker?.id ?? ''}`,
+    [telegramBotUsername, baker?.id],
   );
 
   useEffect(() => {
@@ -142,7 +129,6 @@ export function AdminProfilePage() {
 
     const trimmedName = form.name.trim();
     const trimmedWelcome = form.welcomeMessage.trim();
-    const normalizedNotificationTelegram = normalizeTelegramUsername(form.notificationTelegram);
     const trimmedPickupAddress = form.pickupAddress.trim();
     const minOrderDays = Number(form.minOrderDays);
     const deliveryPrice = Number(form.deliveryPrice.replace(',', '.'));
@@ -167,11 +153,6 @@ export function AdminProfilePage() {
       return;
     }
 
-    if (!isTelegramUsernameValid(normalizedNotificationTelegram)) {
-      setError('Укажите корректный Telegram username в формате @username.');
-      return;
-    }
-
     if (form.logoFile && !['image/jpeg', 'image/png', 'image/webp'].includes(form.logoFile.type)) {
       setError('Допустимы только JPG, PNG или WEBP.');
       return;
@@ -193,7 +174,6 @@ export function AdminProfilePage() {
       const updated = await updateBakerProfile(session.bakerId, {
         name: trimmedName,
         ...(logoUrl ? { logo_url: logoUrl } : {}),
-        notification_telegram: normalizedNotificationTelegram || null,
         welcome_message: trimmedWelcome,
         min_order_days: minOrderDays,
         delivery_enabled: form.deliveryEnabled,
@@ -213,6 +193,39 @@ export function AdminProfilePage() {
       setSuccess('Профиль сохранён.');
     } catch {
       setError('Не удалось сохранить профиль. Попробуйте ещё раз.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDisconnectTelegram = async () => {
+    if (!session?.bakerId || !form) {
+      return;
+    }
+
+    setError(null);
+    setSuccess(null);
+
+    try {
+      setIsSaving(true);
+      const updated = await updateBakerProfile(session.bakerId, {
+        name: form.name.trim(),
+        welcome_message: form.welcomeMessage.trim(),
+        min_order_days: Number(form.minOrderDays),
+        delivery_enabled: form.deliveryEnabled,
+        delivery_price_type: form.deliveryPriceType,
+        delivery_price: Number(form.deliveryPrice.replace(',', '.')),
+        theme: form.theme,
+        pickup_address: form.pickupAddress.trim() || null,
+        working_hours: form.workingHours,
+        telegram_chat_id: null,
+      });
+
+      setBaker(updated);
+      setForm(getInitialFormState(updated));
+      setSuccess('Telegram отключён.');
+    } catch {
+      setError('Не удалось отключить Telegram. Попробуйте ещё раз.');
     } finally {
       setIsSaving(false);
     }
@@ -280,18 +293,47 @@ export function AdminProfilePage() {
               />
             </label>
 
-            <label className="block text-sm">
+            <div className="block text-sm">
               <span className="mb-1 block font-medium text-gray-700">Telegram для уведомлений</span>
-              <input
-                type="text"
-                value={form.notificationTelegram}
-                onChange={(event) =>
-                  setForm((prev) => (prev ? { ...prev, notificationTelegram: event.target.value } : prev))
-                }
-                className="h-11 w-full rounded-xl border border-gray-200 px-3 text-sm"
-                placeholder="@username"
-              />
-            </label>
+              <div className="rounded-xl border border-gray-200 p-3">
+                {baker.telegram_chat_id ? (
+                  <div className="space-y-2">
+                    <span className="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                      Telegram подключён ✓
+                    </span>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={handleDisconnectTelegram}
+                        disabled={isSaving}
+                        className="min-h-10 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        Отключить
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                      Telegram не подключён
+                    </span>
+                    <div>
+                      <a
+                        href={telegramConnectUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex min-h-10 items-center rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100"
+                      >
+                        Подключить Telegram
+                      </a>
+                    </div>
+                  </div>
+                )}
+                <p className="mt-2 text-xs text-gray-500">
+                  Нажмите кнопку, перейдите в бот и нажмите Start
+                </p>
+              </div>
+            </div>
 
             <label className="block text-sm sm:col-span-2">
               <span className="mb-1 block font-medium text-gray-700">Приветственное сообщение</span>
