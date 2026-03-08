@@ -58,7 +58,7 @@ curl -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook" \
 
 Use deep link from admin profile:
 
-`https://t.me/CakeCraftBot?start=<BAKER_ID>`
+`https://t.me/photodep_bot?start=<BAKER_ID>`
 
 After pressing `Start`, bot should reply:
 
