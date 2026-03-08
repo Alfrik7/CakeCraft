@@ -143,7 +143,7 @@ font-size:11px;font-weight:700;
 .floating-cake:nth-child(3){bottom:15%;left:15%;animation-delay:4s;font-size:28px}
 
 /* Features */
-.features{padding:120px 24px;max-width:1200px;margin:0 auto}
+.features{padding:80px 24px;max-width:1200px;margin:0 auto}
 .section-label{
 display:inline-block;background:linear-gradient(135deg,rgba(248,164,184,0.15),rgba(232,103,124,0.1));
 color:var(--coral);padding:8px 20px;border-radius:50px;font-size:14px;font-weight:600;
@@ -175,7 +175,7 @@ background:linear-gradient(135deg,rgba(248,164,184,0.15),rgba(232,103,124,0.08))
 
 /* How it works */
 .how{
-padding:120px 24px;
+padding:80px 24px;
 background:linear-gradient(180deg,white 0%,var(--bg) 100%);
 }
 .how-inner{max-width:1200px;margin:0 auto;text-align:center}
@@ -201,7 +201,7 @@ color:var(--pink);font-size:28px;position:absolute;right:-20px;top:30px;
 }
 
 /* Pricing */
-.pricing{padding:120px 24px;max-width:900px;margin:0 auto;text-align:center}
+.pricing{padding:80px 24px;max-width:900px;margin:0 auto;text-align:center}
 .pricing h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
 .pricing>p{color:var(--text2);font-size:18px;margin-bottom:48px}
 
@@ -237,7 +237,7 @@ font-size:12px;font-weight:700;flex-shrink:0;
 
 /* CTA */
 .final-cta{
-padding:120px 24px;text-align:center;
+padding:80px 24px;text-align:center;
 background:linear-gradient(160deg,var(--bg) 0%,#F8D0D8 50%,var(--cream) 100%);
 position:relative;overflow:hidden;
 }
@@ -255,7 +255,7 @@ margin-left:auto;margin-right:auto;position:relative;z-index:2;
 
 /* Telegram Notification */
 .tg-notify{
-padding:120px 24px;
+padding:80px 24px;
 background:linear-gradient(180deg,white 0%,#F0F4FF 50%,var(--cream) 100%);
 }
 .tg-inner{max-width:1200px;margin:0 auto}
@@ -276,6 +276,7 @@ border-bottom:1px solid rgba(0,0,0,0.04);
 display:flex;gap:12px;padding:16px 20px;border-radius:16px;
 background:linear-gradient(135deg,rgba(59,130,246,0.06),rgba(99,102,241,0.04));
 border:1px solid rgba(59,130,246,0.1);font-size:14px;line-height:1.5;color:var(--text2);
+margin-top:8px;
 }
 .tg-highlight span{font-size:20px;flex-shrink:0}
 .tg-highlight strong{color:#3B82F6}
@@ -307,7 +308,7 @@ width:100%;display:block;
 }
 
 /* Admin Showcase */
-.admin-showcase{padding:120px 24px;background:linear-gradient(180deg,var(--bg) 0%,white 30%,var(--cream) 100%)}
+.admin-showcase{padding:80px 24px;background:linear-gradient(180deg,var(--bg) 0%,white 30%,var(--cream) 100%)}
 .admin-inner{max-width:1200px;margin:0 auto;text-align:center}
 .admin-inner h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
 .admin-inner>p{color:var(--text2);font-size:18px;margin-bottom:64px}
@@ -359,7 +360,7 @@ transition:transform 0.4s ease;
 }
 
 /* Demo */
-.demo{padding:120px 24px;background:linear-gradient(180deg,var(--cream) 0%,white 50%,var(--bg) 100%)}
+.demo{padding:80px 24px;background:linear-gradient(180deg,var(--cream) 0%,white 50%,var(--bg) 100%)}
 .demo-inner{max-width:1200px;margin:0 auto;text-align:center}
 .demo-inner h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
 .demo-inner>p{color:var(--text2);font-size:18px;margin-bottom:48px}
@@ -370,7 +371,10 @@ text-align:left;
 }
 .demo-steps{
 display:flex;flex-direction:column;gap:8px;
-max-width:320px;flex-shrink:0;position:sticky;top:120px;align-self:flex-start;
+max-width:320px;flex-shrink:0;align-self:flex-start;
+}
+@media(min-width:769px){
+.demo-steps{position:sticky;top:120px}
 }
 .demo-step{
 display:flex;align-items:flex-start;gap:16px;
@@ -431,7 +435,7 @@ footer a{color:var(--pink);text-decoration:none}
 .step-arrow{display:none}
 .feature-grid{grid-template-columns:1fr}
 .demo-container{flex-direction:column}
-.demo-steps{flex-direction:row;overflow-x:auto;gap:12px;padding-bottom:12px}
+.demo-steps{flex-direction:row;overflow-x:auto;gap:12px;padding-bottom:12px;position:static !important}
 .demo-step{flex-direction:column;text-align:center;min-width:100px;padding:12px}
 .demo-step-info p{display:none}
 .demo-phone-frame{width:320px;height:580px}
@@ -456,7 +460,7 @@ footer a{color:var(--pink);text-decoration:none}
 <p>Интерактивный конструктор тортов, который заменит бесконечные переписки. Клиент выбирает начинку, декор и видит цену — вы получаете готовый заказ в Telegram.</p>
 <div class="cta-group">
 <a href="#pricing" class="btn btn-primary">Попробовать бесплатно →</a>
-<a href="#how" class="btn btn-secondary">Как это работает</a>
+<a href="#demo" class="btn btn-secondary">Как это работает</a>
 </div>
 </div>
 <div class="hero-visual">
@@ -758,7 +762,7 @@ footer a{color:var(--pink);text-decoration:none}
 <p class="reveal reveal-delay-2">Попробуйте 7 дней — если понравится, подключайтесь</p>
 
 <div class="price-card reveal reveal-delay-3">
-<div class="price-amount">490 ₽</div>
+<div class="price-amount">990 ₽</div>
 <div class="price-period">в месяц</div>
 <div class="price-setup">Настройка и загрузка первого меню — <strong>бесплатно</strong></div>
 <ul class="price-features">

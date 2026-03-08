@@ -16,7 +16,7 @@ export interface Baker {
   name: string;
   slug: string;
   logo_url: string | null;
-  email: string | null;
+  notification_telegram: string | null;
   welcome_message: string;
   min_order_days: number;
   delivery_enabled: boolean;

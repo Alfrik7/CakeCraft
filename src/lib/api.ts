@@ -75,7 +75,7 @@ type MenuItemPatch = Partial<Omit<MenuItemPayload, 'baker_id' | 'category'>>;
 export interface BakerProfilePatch {
   name: string;
   logo_url?: string | null;
-  email: string | null;
+  notification_telegram: string | null;
   welcome_message: string;
   min_order_days: number;
   delivery_enabled: boolean;
@@ -405,4 +405,33 @@ export async function getBlockedDates(bakerId: string): Promise<BlockedDate[]> {
   }
 
   return data ?? [];
+}
+
+export async function blockDate(bakerId: string, date: string): Promise<BlockedDate> {
+  const { data, error } = await supabase
+    .from('blocked_dates')
+    .upsert(
+      {
+        baker_id: bakerId,
+        date,
+        reason: null,
+      },
+      { onConflict: 'baker_id,date' },
+    )
+    .select('*')
+    .single<BlockedDate>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function unblockDate(bakerId: string, date: string): Promise<void> {
+  const { error } = await supabase.from('blocked_dates').delete().eq('baker_id', bakerId).eq('date', date);
+
+  if (error) {
+    throw error;
+  }
 }

@@ -534,13 +534,13 @@ export function AdminMenuPage() {
                         type="button"
                         onClick={() => void handleToggleActive(item)}
                         disabled={isBusy}
-                        className={`relative inline-flex min-h-11 w-14 items-center rounded-full border px-1 transition ${
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full border p-0.5 transition ${
                           item.is_active ? 'border-rose-300 bg-rose-100' : 'border-gray-300 bg-gray-100'
                         }`}
                         aria-label={item.is_active ? 'Выключить позицию' : 'Включить позицию'}
                       >
                         <span
-                          className={`h-5 w-5 rounded-full bg-white shadow transition ${item.is_active ? 'translate-x-7' : 'translate-x-0'}`}
+                          className={`h-5 w-5 rounded-full bg-white shadow transition ${item.is_active ? 'translate-x-5' : 'translate-x-0'}`}
                         />
                       </button>
                     </div>

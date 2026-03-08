@@ -16,7 +16,7 @@ const WEEK_DAYS: Array<{ key: string; label: string }> = [
 
 interface ProfileFormState {
   name: string;
-  email: string;
+  notificationTelegram: string;
   welcomeMessage: string;
   minOrderDays: string;
   deliveryEnabled: boolean;
@@ -42,7 +42,7 @@ function getDefaultWorkingHours(): WorkingHours {
 function getInitialFormState(baker: Baker): ProfileFormState {
   return {
     name: baker.name,
-    email: baker.email ?? '',
+    notificationTelegram: baker.notification_telegram ?? '',
     welcomeMessage: baker.welcome_message,
     minOrderDays: String(baker.min_order_days),
     deliveryEnabled: baker.delivery_enabled,
@@ -55,12 +55,23 @@ function getInitialFormState(baker: Baker): ProfileFormState {
   };
 }
 
-function isEmailValid(value: string): boolean {
+function normalizeTelegramUsername(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  const withoutPrefix = trimmed.startsWith('@') ? trimmed.slice(1) : trimmed;
+  return withoutPrefix ? `@${withoutPrefix}` : '';
+}
+
+function isTelegramUsernameValid(value: string): boolean {
   if (!value.trim()) {
     return true;
   }
 
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  const normalized = normalizeTelegramUsername(value);
+  return /^@[a-zA-Z0-9_]{5,32}$/.test(normalized);
 }
 
 export function AdminProfilePage() {
@@ -131,7 +142,7 @@ export function AdminProfilePage() {
 
     const trimmedName = form.name.trim();
     const trimmedWelcome = form.welcomeMessage.trim();
-    const trimmedEmail = form.email.trim();
+    const normalizedNotificationTelegram = normalizeTelegramUsername(form.notificationTelegram);
     const trimmedPickupAddress = form.pickupAddress.trim();
     const minOrderDays = Number(form.minOrderDays);
     const deliveryPrice = Number(form.deliveryPrice.replace(',', '.'));
@@ -156,8 +167,8 @@ export function AdminProfilePage() {
       return;
     }
 
-    if (!isEmailValid(trimmedEmail)) {
-      setError('Укажите корректный email.');
+    if (!isTelegramUsernameValid(normalizedNotificationTelegram)) {
+      setError('Укажите корректный Telegram username в формате @username.');
       return;
     }
 
@@ -182,7 +193,7 @@ export function AdminProfilePage() {
       const updated = await updateBakerProfile(session.bakerId, {
         name: trimmedName,
         ...(logoUrl ? { logo_url: logoUrl } : {}),
-        email: trimmedEmail || null,
+        notification_telegram: normalizedNotificationTelegram || null,
         welcome_message: trimmedWelcome,
         min_order_days: minOrderDays,
         delivery_enabled: form.deliveryEnabled,
@@ -270,13 +281,15 @@ export function AdminProfilePage() {
             </label>
 
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-gray-700">Email для уведомлений</span>
+              <span className="mb-1 block font-medium text-gray-700">Telegram для уведомлений</span>
               <input
-                type="email"
-                value={form.email}
-                onChange={(event) => setForm((prev) => (prev ? { ...prev, email: event.target.value } : prev))}
+                type="text"
+                value={form.notificationTelegram}
+                onChange={(event) =>
+                  setForm((prev) => (prev ? { ...prev, notificationTelegram: event.target.value } : prev))
+                }
                 className="h-11 w-full rounded-xl border border-gray-200 px-3 text-sm"
-                placeholder="example@mail.ru"
+                placeholder="@username"
               />
             </label>
 

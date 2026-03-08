@@ -6,6 +6,7 @@ import { ConstructorPage } from './pages/ConstructorPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AdminIndexRedirect } from './pages/admin/AdminIndexRedirect';
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
+import { AdminCalendarPage } from './pages/admin/AdminCalendarPage';
 import { AdminMenuPage } from './pages/admin/AdminMenuPage';
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 import { AdminProfilePage } from './pages/admin/AdminProfilePage';
@@ -21,6 +22,7 @@ export function App() {
             <Route index element={<AdminIndexRedirect />} />
             <Route path="menu" element={<AdminMenuPage />} />
             <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="calendar" element={<AdminCalendarPage />} />
             <Route path="profile" element={<AdminProfilePage />} />
           </Route>
         </Route>

@@ -31,6 +31,7 @@ interface OrderRow {
 interface BakerRow {
   id: string;
   telegram_id: string | number;
+  notification_telegram: string | null;
   name: string;
   slug: string;
 }
@@ -279,7 +280,7 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
 
   const { data: baker, error: bakerError } = await supabase
     .from('bakers')
-    .select('id, telegram_id, name, slug')
+    .select('id, telegram_id, notification_telegram, name, slug')
     .eq('id', order.baker_id)
     .single<BakerRow>();
 
@@ -290,7 +291,11 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
 
   const text = await buildOrderMessage(order);
 
-  const targetChatId = baker.telegram_id ?? OWNER_TELEGRAM_ID;
+  const notificationTelegram = baker.notification_telegram?.trim() ?? '';
+  const normalizedNotificationTelegram = notificationTelegram
+    ? (notificationTelegram.startsWith('@') ? notificationTelegram : `@${notificationTelegram}`)
+    : null;
+  const targetChatId = normalizedNotificationTelegram ?? baker.telegram_id ?? OWNER_TELEGRAM_ID;
 
   if (!targetChatId) {
     return new Response('No telegram chat_id configured for baker', { status: 500 });

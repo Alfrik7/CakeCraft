@@ -188,6 +188,8 @@ export function StepDecor({ onBack }: StepDecorProps) {
                       onSelect={() => toggleDecorItem(item)}
                       mode="multi"
                       servings={order.servings}
+                      priceMode="single"
+                      priceSize="compact"
                     />
                   </div>
                 );

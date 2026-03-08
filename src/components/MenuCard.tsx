@@ -9,7 +9,8 @@ interface MenuCardProps {
   onSelect: () => void;
   mode: 'single' | 'multi';
   servings?: number | null;
-  priceMode?: 'default' | 'per_kg_only' | 'hidden';
+  priceMode?: 'default' | 'per_kg_only' | 'single' | 'hidden';
+  priceSize?: 'default' | 'compact';
   descriptionMode?: 'static' | 'toggle';
 }
 
@@ -19,13 +20,21 @@ function formatPrice(value: number): string {
   return `${new Intl.NumberFormat('ru-RU').format(Math.round(value))} ₽`;
 }
 
-function formatItemPrice(item: MenuItem, servings: number | null, priceMode: 'default' | 'per_kg_only' | 'hidden'): string {
+function formatItemPrice(
+  item: MenuItem,
+  servings: number | null,
+  priceMode: 'default' | 'per_kg_only' | 'single' | 'hidden',
+): string {
   if (priceMode === 'hidden') {
     return '';
   }
 
   if (priceMode === 'per_kg_only') {
     return `${formatPrice(item.price)}/кг`;
+  }
+
+  if (priceMode === 'single') {
+    return item.price_type === 'per_kg' ? `${formatPrice(item.price)}/кг` : formatPrice(item.price);
   }
 
   if (item.price_type === 'per_kg') {
@@ -46,6 +55,7 @@ export function MenuCard({
   mode,
   servings = null,
   priceMode = 'default',
+  priceSize = 'default',
   descriptionMode = 'static',
 }: MenuCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -155,7 +165,13 @@ export function MenuCard({
         ) : null}
 
         {priceMode !== 'hidden' ? (
-          <p className={['mt-auto pt-3 text-right font-display text-xl', selected ? 'text-white' : 'text-primary-to'].join(' ')}>
+          <p
+            className={[
+              'mt-auto pt-3 text-right font-display',
+              priceSize === 'compact' ? 'text-[15px]' : 'text-xl',
+              selected ? 'text-white' : 'text-primary-to',
+            ].join(' ')}
+          >
             {formatItemPrice(item, servings, priceMode)}
           </p>
         ) : null}

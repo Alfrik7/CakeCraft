@@ -4,6 +4,7 @@ import { useAuthContext } from '../context/AuthContext';
 const NAV_ITEMS = [
   { to: '/admin/menu', label: 'Меню' },
   { to: '/admin/orders', label: 'Заказы' },
+  { to: '/admin/calendar', label: 'Календарь' },
   { to: '/admin/profile', label: 'Профиль' },
 ] as const;
 
@@ -84,7 +85,7 @@ export function AdminLayout() {
           </main>
 
           <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-100 bg-white px-2 pb-[calc(env(safe-area-inset-bottom)+0.4rem)] pt-2 md:hidden">
-            <ul className="grid grid-cols-3 gap-2">
+            <ul className="grid grid-cols-4 gap-2">
               {NAV_ITEMS.map((item) => {
                 const isActive = location.pathname === item.to;
 
