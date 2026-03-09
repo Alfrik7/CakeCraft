@@ -10,21 +10,21 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   const progressRatio = totalSteps > 1 ? (safeCurrentStep - 1) / (totalSteps - 1) : 0;
 
   return (
-    <div className="rounded-3xl bg-surface/80 px-3 pb-2 pt-3 shadow-card backdrop-blur-md">
-      <div className="relative">
-        <div className="absolute left-3 right-3 top-3 h-1 rounded-full bg-primary-from/20" aria-hidden="true" />
+    <div className="backdrop-blur-lg bg-cream/80 py-3 px-4 shadow-sm relative z-30">
+      <div className="relative max-w-[480px] mx-auto">
+        {/* Background track */}
+        <div className="absolute left-[10%] right-[10%] top-3 h-[2px] -translate-y-1/2 bg-[#F4E0E4]" aria-hidden="true" />
+        {/* Active track */}
         <div
-          className="absolute left-3 top-3 h-1 rounded-full transition-all duration-300 ease-out"
+          className="absolute left-[10%] top-3 h-[2px] -translate-y-1/2 transition-all duration-300 ease-out bg-gradient-to-r from-blush to-rose"
           style={{
-            width: `calc((100% - 1.5rem) * ${progressRatio})`,
-            backgroundImage: 'var(--gradient-primary)',
+            width: `calc(80% * ${progressRatio})`,
           }}
           aria-hidden="true"
         />
 
         <ol
-          className="relative grid gap-1"
-          style={{ gridTemplateColumns: `repeat(${totalSteps}, minmax(0, 1fr))` }}
+          className="relative flex justify-between"
           aria-label="Прогресс оформления заказа"
         >
           {Array.from({ length: totalSteps }, (_, index) => {
@@ -34,35 +34,31 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
             const isCompleted = step < safeCurrentStep;
 
             return (
-              <li key={step} className="list-none">
-                <div className="flex flex-col items-center gap-2 text-center">
-                  <span
-                    className={[
-                      'mt-[2px] inline-flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all duration-300 ease-out',
-                      isActive ? 'progress-step-active border-primary-to/30 bg-primary-from/15' : '',
-                      isCompleted ? 'border-primary-to bg-primary-to' : '',
-                      !isActive && !isCompleted ? 'border-primary-from/60 bg-surface/90' : '',
-                    ].join(' ')}
-                    style={isCompleted ? { backgroundImage: 'var(--gradient-primary)' } : undefined}
-                    aria-current={isActive ? 'step' : undefined}
-                  >
-                    {isActive ? (
-                      <span
-                        className="block h-2.5 w-2.5 rounded-full shadow-card-hover"
-                        style={{ backgroundImage: 'var(--gradient-primary)' }}
-                        aria-hidden="true"
-                      />
-                    ) : null}
-                  </span>
-                  <span
-                    className={[
-                      'text-[11px] leading-tight',
-                      isActive || isCompleted ? 'font-semibold text-text-primary' : 'text-text-secondary',
-                    ].join(' ')}
-                  >
-                    {label}
-                  </span>
+              <li key={step} className="flex flex-col items-center gap-1.5 z-10 w-12">
+                <div
+                  className={[
+                    'flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 ease-out bg-cream',
+                    isActive ? 'border-2 border-rose progress-active' : '',
+                    isCompleted ? 'bg-blush border-2 border-blush' : '',
+                    !isActive && !isCompleted ? 'border-2 border-[#F4E0E4]' : '',
+                  ].join(' ')}
+                  aria-current={isActive ? 'step' : undefined}
+                >
+                  {isActive ? (
+                    <div className="h-2 w-2 rounded-full bg-gradient-to-br from-blush to-rose" aria-hidden="true" />
+                  ) : null}
+                  {isCompleted ? (
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  ) : null}
                 </div>
+                <span
+                  className={[
+                    'text-[10px] sm:text-[11px] leading-tight text-center',
+                    isActive ? 'font-bold text-rose' : 'font-medium text-truffle',
+                  ].join(' ')}
+                >
+                  {label}
+                </span>
               </li>
             );
           })}
