@@ -423,15 +423,18 @@ export function AdminProfilePage() {
 
         <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5">
           <h2 className="text-sm font-semibold text-gray-800">Доставка</h2>
-          <label className="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-gray-200 px-3 py-2">
-            <input
-              type="checkbox"
-              checked={form.deliveryEnabled}
-              onChange={(event) =>
-                setForm((prev) => (prev ? { ...prev, deliveryEnabled: event.target.checked } : prev))
-              }
-              className="h-4 w-4 rounded border-gray-300 text-rose-500 focus:ring-rose-300"
-            />
+          <label className="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-gray-200 px-3 py-2 cursor-pointer transition hover:bg-gray-50">
+            <div className="relative inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={form.deliveryEnabled}
+                onChange={(event) =>
+                  setForm((prev) => (prev ? { ...prev, deliveryEnabled: event.target.checked } : prev))
+                }
+                className="sr-only peer"
+              />
+              <div className="w-[44px] h-[24px] bg-gray-200 rounded-full peer peer-checked:after:translate-x-[20px] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[20px] after:w-[20px] after:transition-all peer-checked:bg-rose-500 peer-focus:ring-2 peer-focus:ring-rose-300"></div>
+            </div>
             <span className="text-sm font-medium text-gray-700">Включить доставку</span>
           </label>
 
@@ -494,28 +497,31 @@ export function AdminProfilePage() {
                   key={day.key}
                   className="grid grid-cols-[52px_1fr_1fr] items-center gap-2 rounded-xl border border-gray-200 px-3 py-2"
                 >
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(dayState.enabled)}
-                      onChange={(event) =>
-                        setForm((prev) =>
-                          prev
-                            ? {
-                                ...prev,
-                                workingHours: {
-                                  ...prev.workingHours,
-                                  [day.key]: {
-                                    ...dayState,
-                                    enabled: event.target.checked,
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                    <div className="relative inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(dayState.enabled)}
+                        onChange={(event) =>
+                          setForm((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  workingHours: {
+                                    ...prev.workingHours,
+                                    [day.key]: {
+                                      ...dayState,
+                                      enabled: event.target.checked,
+                                    },
                                   },
-                                },
-                              }
-                            : prev,
-                        )
-                      }
-                      className="h-4 w-4 rounded border-gray-300 text-rose-500 focus:ring-rose-300"
-                    />
+                                }
+                              : prev,
+                          )
+                        }
+                        className="sr-only peer"
+                      />
+                      <div className="w-[44px] h-[24px] bg-gray-200 rounded-full peer peer-checked:after:translate-x-[20px] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[20px] after:w-[20px] after:transition-all peer-checked:bg-rose-500 peer-focus:ring-2 peer-focus:ring-rose-300"></div>
+                    </div>
                     {day.label}
                   </label>
 
