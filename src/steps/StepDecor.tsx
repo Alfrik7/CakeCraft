@@ -1,4 +1,4 @@
-import { type CSSProperties, type ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { type CSSProperties, type ChangeEvent, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
@@ -10,10 +10,6 @@ import type { MenuItem } from '../types';
 
 const MAX_REFERENCE_PHOTO_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_REFERENCE_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-
-function isTopperDecorItem(item: Pick<MenuItem, 'name'>): boolean {
-  return item.name.toLowerCase().includes('топпер');
-}
 
 function buildReferencePhotoPath(bakerId: string, fileName: string): string {
   const safeFileName = fileName
@@ -55,17 +51,6 @@ export function StepDecor({ onBack }: StepDecorProps) {
     () => decorItems.filter((item) => order.decor_items.includes(item.id)),
     [decorItems, order.decor_items],
   );
-
-  const hasTopperSelected = useMemo(
-    () => selectedDecorItems.some((item) => isTopperDecorItem(item)),
-    [selectedDecorItems],
-  );
-
-  useEffect(() => {
-    if (!hasTopperSelected && order.topper_text) {
-      updateOrder({ topper_text: null });
-    }
-  }, [hasTopperSelected, order.topper_text, updateOrder]);
 
   const toggleDecorItem = (nextItem: MenuItem) => {
     setOrder((prev) => {
@@ -224,19 +209,6 @@ export function StepDecor({ onBack }: StepDecorProps) {
             ))}
           </div>
         </div>
-      ) : null}
-
-      {hasTopperSelected ? (
-        <label className="mt-8 block text-[13px] font-bold uppercase tracking-wider text-truffle">
-          Текст для топпера
-          <input
-            type="text"
-            value={order.topper_text ?? ''}
-            onChange={(event) => updateOrder({ topper_text: event.target.value })}
-            placeholder="Например: С днём рождения, Маша!"
-            className="mt-2 min-h-[48px] w-full rounded-xl border border-transparent bg-vanilla shadow-soft px-4 py-3 text-[15px] text-chocolate outline-none transition duration-300 focus:ring-2 focus:ring-rose/40"
-          />
-        </label>
       ) : null}
 
       <div className="mt-8">

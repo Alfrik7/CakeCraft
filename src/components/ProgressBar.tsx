@@ -12,9 +12,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   return (
     <div className="backdrop-blur-lg bg-cream/80 py-3 px-4 shadow-sm relative z-30">
       <div className="relative max-w-[480px] mx-auto">
-        {/* Background track */}
         <div className="absolute left-[10%] right-[10%] top-3 h-[2px] -translate-y-1/2 bg-blush/35" aria-hidden="true" />
-        {/* Active track */}
         <div
           className="absolute left-[10%] top-3 h-[2px] -translate-y-1/2 transition-all duration-300 ease-out bg-gradient-to-r from-blush to-rose"
           style={{

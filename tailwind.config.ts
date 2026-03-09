@@ -11,7 +11,6 @@ export default {
         chocolate: 'rgb(var(--color-text-primary-rgb, 61 44 44) / <alpha-value>)',
         truffle: 'rgb(var(--color-text-secondary-rgb, 139 112 112) / <alpha-value>)',
         vanilla: 'rgb(var(--color-surface-rgb, 255 250 250) / <alpha-value>)',
-        gold: '#C8956C',
         primary: {
           DEFAULT: 'rgb(var(--color-primary-from-rgb, 244 160 176) / <alpha-value>)',
         },
@@ -28,16 +27,12 @@ export default {
       fontFamily: {
         sans: ['Nunito', 'sans-serif'],
         display: ['Playfair Display', 'serif'],
-        mono: ['DM Mono', 'monospace', 'Playfair Display', 'serif']
+        mono: ['DM Mono', 'monospace']
       },
       boxShadow: {
         soft: '0 4px 24px rgb(var(--color-text-primary-rgb, 61 44 44) / 0.08)',
         strong: '0 8px 24px rgb(var(--color-primary-to-rgb, 212 89 108) / 0.25)',
       },
-      backgroundImage: {
-        'gradient-rose': 'linear-gradient(135deg, #F4A0B0, #D4596C)',
-        'gradient-warm': 'linear-gradient(180deg, #FFF8F0 0%, #FFE8EC 50%, #FFF5F0 100%)',
-      }
     }
   },
   plugins: []

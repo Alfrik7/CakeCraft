@@ -1,4 +1,4 @@
-export type { Baker, BakerTheme, WorkingHours } from './baker';
+export type { Baker, BakerTheme } from './baker';
 export type { BlockedDate } from './blocked-date';
 export type { MenuCategory, MenuItem, MenuTag, PriceType } from './menu';
 export type { ContactType, DeliveryType, Order, OrderFormData, OrderStatus } from './order';

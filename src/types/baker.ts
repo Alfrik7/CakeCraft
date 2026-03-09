@@ -1,12 +1,3 @@
-export type WorkingHours = Record<
-  string,
-  {
-    from: string;
-    to: string;
-    enabled?: boolean;
-  }
->;
-
 export type DeliveryPriceType = 'fixed' | 'custom';
 export type BakerTheme = 'pink' | 'chocolate' | 'minimal' | 'lavender' | 'mint';
 
@@ -24,7 +15,6 @@ export interface Baker {
   delivery_price: number;
   theme: BakerTheme;
   pickup_address: string | null;
-  working_hours: WorkingHours | null;
   created_at: string;
   updated_at: string;
 }

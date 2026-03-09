@@ -200,7 +200,6 @@ export function AdminOrdersPage() {
 
       const itemIds = loadedOrders.flatMap((order) => [
         ...(order.filling_id ? [order.filling_id] : []),
-        ...(order.coating_id ? [order.coating_id] : []),
         ...order.decor_items,
       ]);
 

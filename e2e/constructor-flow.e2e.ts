@@ -32,9 +32,7 @@ interface OrderRow {
   shape: string | null;
   servings: number | null;
   filling_id: string | null;
-  coating_id: string | null;
   decor_items: string[];
-  topper_text: string | null;
   delivery_type: 'pickup' | 'delivery';
   address: string | null;
   order_date: string;
@@ -157,7 +155,6 @@ test.describe('Клиентский конструктор торта', () => {
     const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const clientName = `E2E Клиент ${runId}`;
     const clientContact = `@e2e_${runId.replace(/[^a-zA-Z0-9]/g, '')}`;
-    const topperText = `С днем рождения ${runId}`;
     const finalComment = `Проверка E2E ${runId}`;
     const deliveryAddress = 'Москва, ул. Пушкина, д. 10, кв. 15';
 
@@ -169,7 +166,7 @@ test.describe('Клиентский конструктор торта', () => {
 
     await expect(page.getByRole('heading', { name: 'Выберите форму' })).toBeVisible();
     await page.getByRole('button', { name: /Сердце/ }).first().click();
-    await page.getByRole('button', { name: /12 \(1\.2кг\)/ }).click();
+    await page.getByLabel('Количество гостей').fill(String(servings));
     await page.getByRole('button', { name: 'Далее' }).click();
 
     await expect(page.getByRole('heading', { name: 'Выберите начинку' })).toBeVisible();
@@ -179,8 +176,6 @@ test.describe('Клиентский конструктор торта', () => {
     await expect(page.getByRole('heading', { name: 'Финальный декор' })).toBeVisible();
     await page.getByRole('button', { name: /Ягоды/ }).first().click();
     await page.getByRole('button', { name: /Топпер/ }).first().click();
-    await page.getByLabel('Текст для топпера').fill(topperText);
-    await page.getByLabel('Комментарий по декору').fill(`Черновой комментарий ${runId}`);
     await page.getByRole('button', { name: 'Далее' }).click();
 
     await expect(page.getByRole('heading', { name: 'Оформление заказа' })).toBeVisible();
@@ -222,9 +217,7 @@ test.describe('Клиентский конструктор торта', () => {
     expect(insertedOrder.shape).toBe(selectedShape.name);
     expect(insertedOrder.servings).toBe(servings);
     expect(insertedOrder.filling_id).toBe(selectedFilling.id);
-    expect(insertedOrder.coating_id).toBeNull();
     expect(insertedOrder.decor_items).toEqual([selectedDecorBerries.id, selectedDecorTopper.id]);
-    expect(insertedOrder.topper_text).toBe(topperText);
     expect(insertedOrder.delivery_type).toBe(baker!.delivery_enabled ? 'delivery' : 'pickup');
     expect(insertedOrder.address).toBe(baker!.delivery_enabled ? deliveryAddress : null);
     expect(insertedOrder.order_date).toBe(orderDate);

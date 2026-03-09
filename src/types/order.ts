@@ -14,9 +14,7 @@ export interface Order {
   shape: string | null;
   servings: number | null;
   filling_id: string | null;
-  coating_id: string | null;
   decor_items: string[];
-  topper_text: string | null;
   reference_photo_url: string | null;
   delivery_type: DeliveryType;
   address: string | null;
@@ -37,9 +35,7 @@ export interface OrderFormData {
   shape?: string | null;
   servings?: number | null;
   filling_id?: string | null;
-  coating_id?: string | null;
   decor_items?: string[];
-  topper_text?: string | null;
   reference_photo_url?: string | null;
   delivery_type?: DeliveryType;
   address?: string | null;

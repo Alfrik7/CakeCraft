@@ -31,7 +31,6 @@
     background-image: var(--gradient-primary-soft);
   }
 
-  /* Global subtle noise overlay at 0.03 opacity */
   body::before {
     content: '';
     position: fixed;
@@ -68,19 +67,6 @@
     transform: scale(0.97);
   }
   
-  .slide-left {
-    animation: slide-left 300ms ease-out forwards;
-  }
-  
-  .slide-right {
-    animation: slide-right 300ms ease-out forwards;
-  }
-  
-  .fade-up {
-    animation: fade-up 400ms ease-out forwards;
-    opacity: 0;
-  }
-
   .card-selected {
     @apply ring-2 ring-rose scale-[1.02] shadow-lg border-transparent;
     background-color: rgb(var(--color-primary-from-rgb) / 0.16);
@@ -114,21 +100,6 @@
   .admin-toggle[data-active='true']::after {
     transform: translateX(20px);
   }
-}
-
-@keyframes slide-left {
-  from { transform: translateX(20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slide-right {
-  from { transform: translateX(-20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fade-up {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes progress-pulse {

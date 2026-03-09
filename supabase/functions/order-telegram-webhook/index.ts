@@ -14,9 +14,7 @@ interface OrderRow {
   shape: string | null;
   servings: number | null;
   filling_id: string | null;
-  coating_id: string | null;
   decor_items: string[];
-  topper_text: string | null;
   reference_photo_url: string | null;
   delivery_type: DeliveryType;
   address: string | null;
@@ -73,14 +71,6 @@ const ORDER_WEBHOOK_SECRET = Deno.env.get('ORDER_WEBHOOK_SECRET');
 const TELEGRAM_WEBHOOK_SECRET = Deno.env.get('TELEGRAM_WEBHOOK_SECRET');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
-if (!TELEGRAM_BOT_TOKEN) {
-  console.warn('TELEGRAM_BOT_TOKEN is not set. Function cannot send messages.');
-}
-
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn('SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY are required for DB reads/writes.');
-}
 
 const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
   ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -285,7 +275,6 @@ async function buildOrderMessage(order: OrderRow): Promise<string> {
     `<b>Вес:</b> ${formatWeightKg(order.servings)}`,
     `<b>Начинка:</b> ${escapeHtml(filling)}`,
     `<b>Декор:</b> ${escapeHtml(decor)}`,
-    `<b>Топпер:</b> ${escapeHtml(order.topper_text ?? 'Нет')}`,
     `<b>Комментарий:</b> ${escapeHtml(order.comment ?? 'Нет')}`,
     `<b>Референс:</b> ${order.reference_photo_url ? `<a href="${escapeHtml(order.reference_photo_url)}">Открыть фото</a>` : 'Нет'}`,
     `<b>Получение:</b> ${delivery}`,
@@ -306,7 +295,6 @@ async function handleOrderInsertWebhook(order: OrderRow): Promise<Response> {
     .single<BakerRow>();
 
   if (bakerError || !baker) {
-    console.error('Cannot load baker for order notification', bakerError);
     return new Response('Baker not found', { status: 404 });
   }
 
@@ -508,8 +496,6 @@ async function handleTelegramCallback(payload: TelegramCallbackPayload): Promise
     .maybeSingle<OrderRow>();
 
   if (updateError || !updatedOrder) {
-    console.error('Unable to update order status from telegram callback', updateError);
-
     await callTelegram('answerCallbackQuery', {
       callback_query_id: query.id,
       text: 'Не удалось обновить статус',
@@ -573,8 +559,7 @@ Deno.serve(async (req) => {
 
   try {
     payload = await req.json();
-  } catch (error) {
-    console.error('Invalid JSON payload', error);
+  } catch {
     return new Response('Invalid JSON', { status: 400 });
   }
 

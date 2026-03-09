@@ -130,36 +130,17 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
       <div className="mt-8 rounded-[24px] bg-vanilla border border-blush/35 p-5 shadow-soft">
         <p className="text-[15px] font-bold text-chocolate">Количество гостей</p>
         <p className="text-[13px] text-truffle mt-1">От 4 до 300 человек</p>
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center bg-cream rounded-full border border-blush/35 p-1 shadow-inner">
-            <button
-              type="button"
-              onClick={() => handleGuestsChange(guestsCount - 1)}
-              disabled={guestsCount <= 4}
-              className="w-11 h-11 rounded-full btn-gradient flex items-center justify-center text-xl font-medium tap-scale"
-              aria-label="Уменьшить"
-            >
-              −
-            </button>
-            <input
-              type="number"
-              min={4}
-              max={300}
-              step={1}
-              value={guestsCount}
-              onChange={(event) => handleGuestsInputChange(event.target.value)}
-              className="w-14 text-center bg-transparent font-sans text-[18px] font-bold text-chocolate outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => handleGuestsChange(guestsCount + 1)}
-              disabled={guestsCount >= 300}
-              className="w-11 h-11 rounded-full btn-gradient flex items-center justify-center text-xl font-medium tap-scale"
-              aria-label="Увеличить"
-            >
-              +
-            </button>
-          </div>
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <input
+            type="number"
+            min={4}
+            max={300}
+            step={1}
+            value={guestsCount}
+            onChange={(event) => handleGuestsInputChange(event.target.value)}
+            className="min-h-[48px] w-28 rounded-xl border border-blush/35 bg-cream px-3 text-center font-sans text-[18px] font-bold text-chocolate outline-none shadow-inner"
+            aria-label="Количество гостей"
+          />
           <div className="text-right transition-all duration-300">
             <p className="font-display text-[24px] text-rose leading-none font-bold">≈ {weightLabel} кг</p>
           </div>

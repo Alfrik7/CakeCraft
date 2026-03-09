@@ -14,8 +14,7 @@ with upsert_baker as (
     delivery_price_type,
     delivery_price,
     theme,
-    pickup_address,
-    working_hours
+    pickup_address
   )
   values (
     612190238,
@@ -29,16 +28,7 @@ with upsert_baker as (
     'fixed',
     500,
     'pink',
-    'Москва, ул. Пекарская, 12, подъезд 2',
-    '{
-      "monday": {"from": "10:00", "to": "19:00"},
-      "tuesday": {"from": "10:00", "to": "19:00"},
-      "wednesday": {"from": "10:00", "to": "19:00"},
-      "thursday": {"from": "10:00", "to": "19:00"},
-      "friday": {"from": "10:00", "to": "20:00"},
-      "saturday": {"from": "11:00", "to": "18:00"},
-      "sunday": {"from": "11:00", "to": "17:00"}
-    }'::jsonb
+    'Москва, ул. Пекарская, 12, подъезд 2'
   )
   on conflict (slug)
   do update set
@@ -53,7 +43,6 @@ with upsert_baker as (
     delivery_price = excluded.delivery_price,
     theme = excluded.theme,
     pickup_address = excluded.pickup_address,
-    working_hours = excluded.working_hours,
     updated_at = now()
   returning id
 ),
@@ -176,48 +165,6 @@ from (
       'per_kg'::text,
       4,
       '{"Хит"}'::text[]
-    ),
-
-    -- Coatings (4)
-    (
-      'coating'::text,
-      'Крем',
-      'Классическое кремовое покрытие.',
-      'https://picsum.photos/seed/coating-cream/900/700',
-      350::numeric,
-      'fixed'::text,
-      0,
-      '{}'::text[]
-    ),
-    (
-      'coating'::text,
-      'Мастика',
-      'Гладкое покрытие для сложного декора.',
-      'https://picsum.photos/seed/coating-mastic/900/700',
-      700::numeric,
-      'fixed'::text,
-      1,
-      '{}'::text[]
-    ),
-    (
-      'coating'::text,
-      'Велюр',
-      'Бархатистая текстура с премиальной подачей.',
-      'https://picsum.photos/seed/coating-velour/900/700',
-      900::numeric,
-      'fixed'::text,
-      2,
-      '{"Новинка"}'::text[]
-    ),
-    (
-      'coating'::text,
-      'Без покрытия',
-      'Минималистичный вариант без внешнего слоя.',
-      'https://picsum.photos/seed/coating-none/900/700',
-      200::numeric,
-      'fixed'::text,
-      3,
-      '{}'::text[]
     ),
 
     -- Decor (6)

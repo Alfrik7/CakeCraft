@@ -297,7 +297,6 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
         servings: order.servings,
         filling_id: order.filling_id,
         decor_items: order.decor_items,
-        topper_text: normalizeOptionalText(order.topper_text),
         reference_photo_url: normalizeOptionalText(order.reference_photo_url),
         delivery_type: isDeliverySelected ? 'delivery' : 'pickup',
         address: isDeliverySelected ? normalizeOptionalText(order.address) : null,
@@ -334,7 +333,6 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
     order.reference_photo_url,
     order.servings,
     order.shape,
-    order.topper_text,
     updateOrder,
     validate,
   ]);

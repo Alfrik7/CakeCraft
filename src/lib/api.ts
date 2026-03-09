@@ -82,7 +82,6 @@ export interface BakerProfilePatch {
   delivery_price: number;
   theme: Baker['theme'];
   pickup_address: string | null;
-  working_hours?: Baker['working_hours'];
   telegram_chat_id?: number | null;
 }
 
@@ -377,7 +376,6 @@ export interface OrderDetailsPatch {
   filling_id?: string | null;
   servings?: number | null;
   decor_items?: string[];
-  topper_text?: string | null;
   delivery_type?: Order['delivery_type'];
   address?: string | null;
   order_date?: string;
