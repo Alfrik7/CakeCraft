@@ -15,7 +15,7 @@ export function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Navigate to="/demo-baker" replace />} />
+        <Route path="/" element={<Navigate to="/landing.html" replace />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
