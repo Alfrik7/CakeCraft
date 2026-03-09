@@ -44,7 +44,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
 
   const handleGuestsChange = (value: number) => {
     triggerTelegramHaptic('selection');
-    const guests = Math.min(50, Math.max(4, Math.round(value)));
+    const guests = Math.min(300, Math.max(4, Math.round(value)));
     setOrder((prev) => ({
       ...prev,
       servings: guests,
@@ -99,7 +99,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
       <div className="mt-8">
         <div className="content-fade-in">
           {useFallback || hasMenuError ? (
-            <div className="mb-4 rounded-2xl border border-[#F4E0E4] bg-cream p-4 text-[13px] text-truffle shadow-soft">
+            <div className="mb-4 rounded-2xl border border-blush/35 bg-cream p-4 text-[13px] text-truffle shadow-soft">
               {hasMenuError
                 ? 'Не удалось загрузить формы из каталога. Показываем базовые варианты.'
                 : 'Формы из каталога не найдены. Показываем базовые варианты.'}
@@ -127,11 +127,11 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
         </div>
       </div>
 
-      <div className="mt-8 rounded-[24px] bg-vanilla border border-[#F4E0E4] p-5 shadow-soft">
+      <div className="mt-8 rounded-[24px] bg-vanilla border border-blush/35 p-5 shadow-soft">
         <p className="text-[15px] font-bold text-chocolate">Количество гостей</p>
-        <p className="text-[13px] text-truffle mt-1">От 4 до 50 человек</p>
+        <p className="text-[13px] text-truffle mt-1">От 4 до 300 человек</p>
         <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center bg-cream rounded-full border border-[#F4E0E4] p-1 shadow-inner">
+          <div className="flex items-center bg-cream rounded-full border border-blush/35 p-1 shadow-inner">
             <button
               type="button"
               onClick={() => handleGuestsChange(guestsCount - 1)}
@@ -144,7 +144,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
             <input
               type="number"
               min={4}
-              max={50}
+              max={300}
               step={1}
               value={guestsCount}
               onChange={(event) => handleGuestsInputChange(event.target.value)}
@@ -153,7 +153,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
             <button
               type="button"
               onClick={() => handleGuestsChange(guestsCount + 1)}
-              disabled={guestsCount >= 50}
+              disabled={guestsCount >= 300}
               className="w-11 h-11 rounded-full btn-gradient flex items-center justify-center text-xl font-medium tap-scale"
               aria-label="Увеличить"
             >

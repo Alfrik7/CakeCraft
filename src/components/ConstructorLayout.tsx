@@ -57,7 +57,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         Boolean(order.shape) &&
         typeof order.servings === 'number' &&
         order.servings >= 4 &&
-        order.servings <= 50
+        order.servings <= 300
       );
     }
 

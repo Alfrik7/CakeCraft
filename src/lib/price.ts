@@ -10,7 +10,7 @@ export function estimateWeightKg(guests: number): number {
     return 0;
   }
 
-  return Number((guests * 0.15).toFixed(3));
+  return Number((guests * 0.125).toFixed(3));
 }
 
 export function getItemPrice(guests: number, item?: Pick<MenuItem, 'price' | 'price_type'> | null): number {

@@ -19,13 +19,15 @@ const STATUS_TABS: Array<{ value: OrdersTab; label: string }> = [
   { value: 'cancelled', label: 'Отменённые' },
   { value: 'reminders', label: 'Напоминания' },
 ];
+const ACTIVE_CONTROL_CLASS =
+  'border-transparent bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
+const INACTIVE_CONTROL_CLASS = 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50';
 
 interface EditOrderFormState {
   shape: string;
   filling_id: string;
   servings: string;
   decor_items: string[];
-  topper_text: string;
   delivery_type: 'pickup' | 'delivery';
   address: string;
   order_date: string;
@@ -286,7 +288,6 @@ export function AdminOrdersPage() {
       filling_id: order.filling_id ?? '',
       servings: order.servings ? String(order.servings) : '',
       decor_items: order.decor_items,
-      topper_text: order.topper_text ?? '',
       delivery_type: order.delivery_type,
       address: order.address ?? '',
       order_date: order.order_date,
@@ -352,7 +353,6 @@ export function AdminOrdersPage() {
         filling_id: editForm.filling_id || null,
         servings: parsedServings === null ? null : Math.round(parsedServings),
         decor_items: editForm.decor_items,
-        topper_text: toNullableText(editForm.topper_text),
         delivery_type: editForm.delivery_type,
         address: editForm.delivery_type === 'delivery' ? toNullableText(editForm.address) : null,
         order_date: editForm.order_date,
@@ -423,8 +423,8 @@ export function AdminOrdersPage() {
               key={tab.value}
               type="button"
               onClick={() => setActiveStatus(tab.value)}
-              className={`rounded-xl px-3 py-2 text-sm font-medium transition ${
-                isActive ? 'bg-rose-500 text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'
+              className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
+                isActive ? ACTIVE_CONTROL_CLASS : INACTIVE_CONTROL_CLASS
               }`}
             >
               {tab.label} ({countsByStatus[tab.value]})
@@ -569,7 +569,7 @@ export function AdminOrdersPage() {
                         type="button"
                         disabled={isSaving || activeStatus === 'reminders'}
                         onClick={() => void handleStatusChange(order, transition.next)}
-                        className="rounded-lg bg-rose-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        className={`rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
                       >
                         {transition.label}
                       </button>
@@ -655,18 +655,6 @@ export function AdminOrdersPage() {
                   value={editForm.servings}
                   onChange={(event) =>
                     setEditForm((prev) => (prev ? { ...prev, servings: event.target.value } : prev))
-                  }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2"
-                />
-              </label>
-
-              <label>
-                <span className="mb-1 block text-gray-600">Надпись на топпере</span>
-                <input
-                  type="text"
-                  value={editForm.topper_text}
-                  onChange={(event) =>
-                    setEditForm((prev) => (prev ? { ...prev, topper_text: event.target.value } : prev))
                   }
                   className="w-full rounded-lg border border-gray-200 px-3 py-2"
                 />
@@ -788,7 +776,7 @@ export function AdminOrdersPage() {
                 type="button"
                 disabled={isEditSaving}
                 onClick={() => void handleEditSave()}
-                className="rounded-lg bg-rose-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+                className={`rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
               >
                 {isEditSaving ? 'Сохранение...' : 'Сохранить'}
               </button>

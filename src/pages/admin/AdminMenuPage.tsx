@@ -18,6 +18,31 @@ const CATEGORY_TABS: Array<{ value: MenuCategory; label: string }> = [
 ];
 
 const TAG_OPTIONS: MenuTag[] = ['Хит', 'Новинка', 'Сезонное'];
+const ACTIVE_CONTROL_CLASS =
+  'border-transparent bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
+const INACTIVE_CONTROL_CLASS = 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50';
+
+function getTagClass(tag: MenuTag, selected: boolean): string {
+  if (tag === 'Хит') {
+    return selected
+      ? 'border-red-300 bg-gradient-to-r from-pink-500 to-rose-500 text-white'
+      : 'border-red-200 bg-red-50 text-red-700';
+  }
+
+  if (tag === 'Новинка') {
+    return selected
+      ? 'border-green-300 bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+      : 'border-green-200 bg-green-50 text-green-700';
+  }
+
+  return selected
+    ? 'border-orange-300 bg-gradient-to-r from-orange-500 to-amber-500 text-white'
+    : 'border-orange-200 bg-orange-50 text-orange-700';
+}
+
+function asMenuTag(tag: string): MenuTag | null {
+  return TAG_OPTIONS.includes(tag as MenuTag) ? (tag as MenuTag) : null;
+}
 
 interface MenuItemModalState {
   mode: 'create' | 'edit';
@@ -279,11 +304,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
                     key={tag}
                     type="button"
                     onClick={() => handleTagToggle(tag)}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-                      isSelected
-                        ? 'border-rose-300 bg-rose-100 text-rose-700'
-                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                    }`}
+                    className={`rounded-full border px-3 py-1 text-xs font-medium transition ${getTagClass(tag, isSelected)}`}
                   >
                     {tag}
                   </button>
@@ -306,7 +327,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
             <button
               type="submit"
               disabled={isSaving}
-              className="rounded-lg bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-700 disabled:opacity-50"
+              className={`rounded-lg border px-3 py-2 text-sm font-medium transition disabled:opacity-50 ${ACTIVE_CONTROL_CLASS}`}
             >
               {isSaving ? 'Сохраняем...' : isEdit ? 'Сохранить' : 'Добавить'}
             </button>
@@ -466,7 +487,7 @@ export function AdminMenuPage() {
         <button
           type="button"
           onClick={() => setModalState({ mode: 'create' })}
-          className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-rose-700"
+          className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${ACTIVE_CONTROL_CLASS}`}
         >
           Добавить позицию
         </button>
@@ -481,9 +502,7 @@ export function AdminMenuPage() {
               type="button"
               onClick={() => setActiveCategory(tab.value)}
               className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${
-                isActive
-                  ? 'border-rose-300 bg-rose-100 text-rose-700'
-                  : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                isActive ? ACTIVE_CONTROL_CLASS : INACTIVE_CONTROL_CLASS
               }`}
             >
               {tab.label}
@@ -548,12 +567,21 @@ export function AdminMenuPage() {
                     {item.tags.length > 0 ? (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {item.tags.map((tag) => (
-                          <span
-                            key={`${item.id}-${tag}`}
-                            className="rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700"
-                          >
-                            {tag}
-                          </span>
+                          (() => {
+                            const normalizedTag = asMenuTag(tag);
+                            if (!normalizedTag) {
+                              return null;
+                            }
+
+                            return (
+                              <span
+                                key={`${item.id}-${tag}`}
+                                className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${getTagClass(normalizedTag, false)}`}
+                              >
+                                {tag}
+                              </span>
+                            );
+                          })()
                         ))}
                       </div>
                     ) : null}

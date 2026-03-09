@@ -3,6 +3,8 @@ import { useAuthContext } from '../../context/AuthContext';
 import { BAKER_THEMES } from '../../lib/theme';
 import { getBakerById, updateBakerProfile, uploadBakerLogo } from '../../lib/api';
 import type { Baker, WorkingHours } from '../../types';
+const ACTIVE_CONTROL_CLASS =
+  'border-transparent bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
 
 const WEEK_DAYS: Array<{ key: string; label: string }> = [
   { key: 'monday', label: 'Пн' },
@@ -582,7 +584,7 @@ export function AdminProfilePage() {
         <button
           type="submit"
           disabled={isSaving}
-          className="flex min-h-11 w-full items-center justify-center rounded-xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-200"
+          className={`flex min-h-11 w-full items-center justify-center rounded-xl border px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
         >
           {isSaving ? 'Сохраняем...' : 'Сохранить'}
         </button>

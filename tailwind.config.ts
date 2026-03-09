@@ -5,24 +5,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: '#FFF8F0',
-        blush: '#F4A0B0',
-        rose: '#D4596C',
-        chocolate: '#3D2C2C',
-        truffle: '#8B7070',
-        vanilla: '#FFFAFA',
+        cream: 'rgb(var(--color-background-from-rgb, 255 245 240) / <alpha-value>)',
+        blush: 'rgb(var(--color-primary-from-rgb, 244 160 176) / <alpha-value>)',
+        rose: 'rgb(var(--color-primary-to-rgb, 212 89 108) / <alpha-value>)',
+        chocolate: 'rgb(var(--color-text-primary-rgb, 61 44 44) / <alpha-value>)',
+        truffle: 'rgb(var(--color-text-secondary-rgb, 139 112 112) / <alpha-value>)',
+        vanilla: 'rgb(var(--color-surface-rgb, 255 250 250) / <alpha-value>)',
         gold: '#C8956C',
         primary: {
-          DEFAULT: '#F4A0B0',
+          DEFAULT: 'rgb(var(--color-primary-from-rgb, 244 160 176) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#D4596C',
+          DEFAULT: 'rgb(var(--color-primary-to-rgb, 212 89 108) / <alpha-value>)',
         },
-        background: '#FFF8F0',
-        surface: '#FFFAFA',
+        background: 'rgb(var(--color-background-from-rgb, 255 245 240) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface-rgb, 255 250 250) / <alpha-value>)',
         text: {
-          primary: '#3D2C2C',
-          secondary: '#8B7070'
+          primary: 'rgb(var(--color-text-primary-rgb, 61 44 44) / <alpha-value>)',
+          secondary: 'rgb(var(--color-text-secondary-rgb, 139 112 112) / <alpha-value>)'
         }
       },
       fontFamily: {
