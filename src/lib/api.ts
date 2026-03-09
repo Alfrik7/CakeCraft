@@ -372,6 +372,7 @@ export async function setOrderStatus(
 }
 
 export interface OrderDetailsPatch {
+  occasion?: string | null;
   shape?: string | null;
   filling_id?: string | null;
   servings?: number | null;

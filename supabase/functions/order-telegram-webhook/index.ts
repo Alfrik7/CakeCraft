@@ -101,6 +101,7 @@ const SERVINGS_TO_WEIGHT_KG: Record<number, number> = {
 const OCCASION_LABELS: Record<string, string> = {
   birthday: 'День рождения',
   wedding: 'Свадьба',
+  kids_party: 'Детский праздник',
   kids: 'Детский праздник',
   corporate: 'Корпоратив',
   other: 'Без повода',

@@ -24,6 +24,7 @@ const ACTIVE_CONTROL_CLASS =
 const INACTIVE_CONTROL_CLASS = 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50';
 
 interface EditOrderFormState {
+  occasion: string;
   shape: string;
   filling_id: string;
   servings: string;
@@ -136,6 +137,31 @@ function getTransitionAction(status: OrderStatus): { next: OrderStatus; label: s
 function toNullableText(value: string): string | null {
   const nextValue = value.trim();
   return nextValue.length > 0 ? nextValue : null;
+}
+
+const OCCASION_LABELS: Record<string, string> = {
+  birthday: 'День рождения',
+  wedding: 'Свадьба',
+  kids_party: 'Детский праздник',
+  kids: 'Детский праздник',
+  corporate: 'Корпоратив',
+  other: 'Без повода',
+};
+
+const OCCASION_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: 'birthday', label: 'День рождения' },
+  { value: 'wedding', label: 'Свадьба' },
+  { value: 'kids_party', label: 'Детский праздник' },
+  { value: 'corporate', label: 'Корпоратив' },
+  { value: 'other', label: 'Без повода' },
+];
+
+function formatOccasion(occasion: string | null): string {
+  if (!occasion) {
+    return 'Не указан';
+  }
+
+  return OCCASION_LABELS[occasion] ?? occasion;
 }
 
 export function AdminOrdersPage() {
@@ -284,6 +310,7 @@ export function AdminOrdersPage() {
   const openEditModal = (order: Order) => {
     setEditingOrderId(order.id);
     setEditForm({
+      occasion: order.occasion ?? '',
       shape: order.shape ?? '',
       filling_id: order.filling_id ?? '',
       servings: order.servings ? String(order.servings) : '',
@@ -349,6 +376,7 @@ export function AdminOrdersPage() {
 
     try {
       const updated = await updateOrderDetails(editingOrderId, bakerId, {
+        occasion: toNullableText(editForm.occasion),
         shape: toNullableText(editForm.shape),
         filling_id: editForm.filling_id || null,
         servings: parsedServings === null ? null : Math.round(parsedServings),
@@ -454,6 +482,7 @@ export function AdminOrdersPage() {
           const transition = getTransitionAction(order.status);
           const isSaving = Boolean(isStatusSaving[order.id]);
           const reminderDays = reminderMetaById[order.id];
+          const occasionLabel = formatOccasion(order.occasion);
 
           return (
             <article key={order.id} className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
@@ -469,6 +498,7 @@ export function AdminOrdersPage() {
                       {formatDate(order.order_date)} • {order.shape || 'Форма не указана'} +{' '}
                       {fillingName || 'Начинка не выбрана'}
                     </p>
+                    <p className="mt-1 text-sm text-gray-600">Повод: {occasionLabel}</p>
                   </div>
                   <div className="text-right">
                     <span
@@ -478,7 +508,7 @@ export function AdminOrdersPage() {
                     </span>
                     {activeStatus === 'reminders' && reminderDays !== undefined ? (
                       <p className="mt-1 inline-flex rounded-full bg-rose-100 px-2 py-1 text-xs font-medium text-rose-700">
-                        Годовщина через {reminderDays} дн.
+                        {occasionLabel} — годовщина через {reminderDays} дн.
                       </p>
                     ) : null}
                     <p className="mt-1 text-sm font-semibold text-gray-900">{formatPrice(order.total_price)}</p>
@@ -501,7 +531,7 @@ export function AdminOrdersPage() {
                           : 'Телефон'}
                     </p>
                     <p>
-                      <span className="font-medium text-gray-900">Повод:</span> {order.occasion || 'Не указан'}
+                      <span className="font-medium text-gray-900">Повод:</span> {occasionLabel}
                     </p>
                     <p>
                       <span className="font-medium text-gray-900">Порции:</span>{' '}
@@ -520,7 +550,8 @@ export function AdminOrdersPage() {
                     </p>
                     {activeStatus === 'reminders' && reminderDays !== undefined ? (
                       <p>
-                        <span className="font-medium text-gray-900">Годовщина:</span> через {reminderDays} дн.
+                        <span className="font-medium text-gray-900">Годовщина:</span> {occasionLabel} — через{' '}
+                        {reminderDays} дн.
                       </p>
                     ) : null}
                   </div>
@@ -611,6 +642,22 @@ export function AdminOrdersPage() {
             </div>
 
             <div className="grid gap-3 text-sm sm:grid-cols-2">
+              <label>
+                <span className="mb-1 block text-gray-600">Повод</span>
+                <select
+                  value={editForm.occasion}
+                  onChange={(event) => setEditForm((prev) => (prev ? { ...prev, occasion: event.target.value } : prev))}
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                >
+                  <option value="">Не указан</option>
+                  {OCCASION_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <label>
                 <span className="mb-1 block text-gray-600">Форма</span>
                 <input
