@@ -110,7 +110,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
             {(useFallback ? fallbackShapeItems : shapeItems).map((item, index) => (
               <div
                 key={item.id}
-                className="stagger-item"
+                className="stagger-item h-full"
                 style={{ '--stagger-delay': `${index * 60}ms` } as CSSProperties}
               >
                 <MenuCard
@@ -120,6 +120,7 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
                   mode="single"
                   servings={order.servings}
                   priceMode="hidden"
+                  imageRatio="square"
                 />
               </div>
             ))}

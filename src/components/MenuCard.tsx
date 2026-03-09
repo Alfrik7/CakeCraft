@@ -12,6 +12,7 @@ interface MenuCardProps {
   priceMode?: 'default' | 'per_kg_only' | 'single' | 'hidden';
   priceSize?: 'default' | 'compact';
   descriptionMode?: 'static' | 'toggle';
+  imageRatio?: 'square' | 'portrait';
 }
 
 const SUPPORTED_TAGS = new Set(['Хит', 'Новинка', 'Сезонное']);
@@ -57,6 +58,7 @@ export function MenuCard({
   priceMode = 'default',
   priceSize = 'default',
   descriptionMode = 'static',
+  imageRatio = 'portrait',
 }: MenuCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -94,14 +96,19 @@ export function MenuCard({
       aria-pressed={selected}
       aria-label={`${actionLabel}: ${item.name}`}
       className={[
-        'tap-scale group relative overflow-hidden rounded-2xl bg-vanilla text-left transition-all duration-300 ease-out flex flex-col',
+        'tap-scale group relative h-full overflow-hidden rounded-2xl bg-vanilla text-left transition-all duration-300 ease-out flex flex-col',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/35 focus-visible:ring-offset-2',
         selected
           ? 'card-selected'
           : 'border border-blush/35 shadow-soft hover:-translate-y-0.5 hover:shadow-lg',
       ].join(' ')}
     >
-      <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden bg-cream">
+      <div
+        className={[
+          'relative w-full shrink-0 overflow-hidden bg-cream',
+          imageRatio === 'square' ? 'aspect-square' : 'aspect-[4/5]',
+        ].join(' ')}
+      >
         {!item.photo_url ? (
           <div className="grid h-full w-full place-items-center text-xs font-semibold text-truffle">Фото недоступно</div>
         ) : (
