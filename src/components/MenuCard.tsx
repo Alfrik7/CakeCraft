@@ -12,7 +12,6 @@ interface MenuCardProps {
   priceMode?: 'default' | 'per_kg_only' | 'single' | 'hidden';
   priceSize?: 'default' | 'compact';
   descriptionMode?: 'static' | 'toggle';
-  imageRatio?: 'square' | 'portrait';
 }
 
 const SUPPORTED_TAGS = new Set(['Хит', 'Новинка', 'Сезонное']);
@@ -58,7 +57,6 @@ export function MenuCard({
   priceMode = 'default',
   priceSize = 'default',
   descriptionMode = 'static',
-  imageRatio = 'portrait',
 }: MenuCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -103,12 +101,7 @@ export function MenuCard({
           : 'border border-blush/35 shadow-soft hover:-translate-y-0.5 hover:shadow-lg',
       ].join(' ')}
     >
-      <div
-        className={[
-          'relative w-full shrink-0 overflow-hidden bg-cream',
-          imageRatio === 'square' ? 'aspect-square' : 'aspect-[4/5]',
-        ].join(' ')}
-      >
+      <div className="relative w-full shrink-0 overflow-hidden bg-cream aspect-square rounded-2xl">
         {!item.photo_url ? (
           <div className="grid h-full w-full place-items-center text-xs font-semibold text-truffle">Фото недоступно</div>
         ) : (
@@ -121,11 +114,7 @@ export function MenuCard({
               decoding="async"
               onLoad={() => setImageLoaded(true)}
               onError={() => setImageLoaded(true)}
-              className={[
-                'h-full w-full object-cover transition-[filter,transform] duration-500',
-                imageLoaded ? 'blur-0' : 'blur-md',
-                selected ? 'scale-[1.03]' : imageLoaded ? 'scale-100 group-hover:scale-[1.03]' : 'scale-110',
-              ].join(' ')}
+              className="w-full h-full object-cover rounded-2xl"
             />
           </>
         )}

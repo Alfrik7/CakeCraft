@@ -120,7 +120,6 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
                   mode="single"
                   servings={order.servings}
                   priceMode="hidden"
-                  imageRatio="square"
                 />
               </div>
             ))}

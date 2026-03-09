@@ -43,7 +43,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                   aria-current={isActive ? 'step' : undefined}
                 >
                   {isActive ? (
-                    <div className="h-2 w-2 rounded-full bg-gradient-to-br from-blush to-rose" aria-hidden="true" />
+                    <div className="h-2 w-2 aspect-square rounded-full bg-gradient-to-br from-blush to-rose" aria-hidden="true" />
                   ) : null}
                   {isCompleted ? (
                     <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
