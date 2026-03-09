@@ -1,5 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
+import { getOptimizedSupabaseImageUrl } from '../lib/images';
 
 const NAV_ITEMS = [
   { to: '/admin/menu', label: 'Меню' },
@@ -21,6 +23,11 @@ function getAvatarFallback(name: string): string {
 export function AdminLayout() {
   const { session, logout } = useAuthContext();
   const location = useLocation();
+  const [isLogoLoaded, setIsLogoLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLogoLoaded(false);
+  }, [session?.bakerLogoUrl]);
 
   if (!session) {
     return null;
@@ -53,12 +60,20 @@ export function AdminLayout() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {session.bakerLogoUrl ? (
-                  <img
-                    src={session.bakerLogoUrl}
-                    alt={`Логотип ${session.bakerName}`}
-                    className="h-10 w-10 rounded-full border border-rose-100 object-cover"
-                    loading="lazy"
-                  />
+                  <div className="relative h-10 w-10 overflow-hidden rounded-full border border-rose-100">
+                    {!isLogoLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
+                    <img
+                      src={getOptimizedSupabaseImageUrl(session.bakerLogoUrl, { width: 400, quality: 75 })}
+                      alt={`Логотип ${session.bakerName}`}
+                      className="h-10 w-10 rounded-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      width={40}
+                      height={40}
+                      onLoad={() => setIsLogoLoaded(true)}
+                      onError={() => setIsLogoLoaded(true)}
+                    />
+                  </div>
                 ) : (
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-sm font-semibold text-rose-700">
                     {getAvatarFallback(session.bakerName)}

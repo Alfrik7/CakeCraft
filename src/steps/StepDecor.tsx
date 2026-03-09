@@ -1,7 +1,8 @@
-import { type CSSProperties, type ChangeEvent, useMemo, useState } from 'react';
+import { type CSSProperties, type ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
+import { getOptimizedSupabaseImageUrl } from '../lib/images';
 import { useOrderContext } from '../context/OrderContext';
 import { calculateTotal } from '../lib/price';
 import { supabase } from '../lib/supabase';
@@ -46,6 +47,12 @@ export function StepDecor({ onBack }: StepDecorProps) {
   );
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isReferencePhotoLoaded, setIsReferencePhotoLoaded] = useState(false);
+  const optimizedReferencePhotoUrl = getOptimizedSupabaseImageUrl(order.reference_photo_url, { width: 400, quality: 75 });
+
+  useEffect(() => {
+    setIsReferencePhotoLoaded(false);
+  }, [order.reference_photo_url]);
 
   const selectedDecorItems = useMemo(
     () => decorItems.filter((item) => order.decor_items.includes(item.id)),
@@ -241,12 +248,20 @@ export function StepDecor({ onBack }: StepDecorProps) {
 
         {order.reference_photo_url ? (
           <div className="mt-4 overflow-hidden rounded-2xl bg-vanilla shadow-soft border border-blush/35">
-            <img
-              src={order.reference_photo_url}
-              alt="Загруженный референс"
-              className="aspect-video w-full object-cover"
-              loading="lazy"
-            />
+            <div className="relative">
+              {!isReferencePhotoLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
+              <img
+                src={optimizedReferencePhotoUrl}
+                alt="Загруженный референс"
+                className="aspect-video w-full object-cover"
+                loading="lazy"
+                decoding="async"
+                width={1280}
+                height={720}
+                onLoad={() => setIsReferencePhotoLoaded(true)}
+                onError={() => setIsReferencePhotoLoaded(true)}
+              />
+            </div>
             <div className="flex items-center justify-between gap-3 px-4 py-3 bg-cream">
               <a
                 href={order.reference_photo_url}

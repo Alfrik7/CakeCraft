@@ -9,6 +9,7 @@ import {
   updateMenuItem,
   uploadMenuPhoto,
 } from '../../lib/api';
+import { getOptimizedSupabaseImageUrl } from '../../lib/images';
 import type { MenuCategory, MenuItem, MenuTag, PriceType } from '../../types';
 
 const CATEGORY_TABS: Array<{ value: MenuCategory; label: string }> = [
@@ -332,10 +333,12 @@ function MenuItemPhoto({ src, alt }: { src: string; alt: string }) {
     <div className="relative h-full w-full overflow-hidden rounded-xl bg-rose-50">
       {!isLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
       <img
-        src={src}
+        src={getOptimizedSupabaseImageUrl(src, { width: 400, quality: 75 })}
         alt={alt}
         loading="lazy"
         decoding="async"
+        width={64}
+        height={64}
         onLoad={() => setIsLoaded(true)}
         onError={() => setIsLoaded(true)}
         className={`h-full w-full object-cover transition-[filter,transform] duration-500 ${

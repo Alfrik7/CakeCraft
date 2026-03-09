@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { getOptimizedSupabaseImageUrl } from '../lib/images';
 import { getItemPrice } from '../lib/price';
 import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
@@ -65,6 +66,7 @@ export function MenuCard({
   const visibleTags = item.tags.filter((tag) => SUPPORTED_TAGS.has(tag));
   const actionLabel = mode === 'multi' ? (selected ? 'убрать из списка' : 'добавить в список') : 'выбрать';
   const isDescriptionToggleEnabled = descriptionMode === 'toggle';
+  const optimizedPhotoUrl = getOptimizedSupabaseImageUrl(item.photo_url, { width: 400, quality: 75 });
 
   useEffect(() => {
     if (!descriptionRef.current) {
@@ -108,10 +110,12 @@ export function MenuCard({
           <>
             {!imageLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
             <img
-              src={item.photo_url}
+              src={optimizedPhotoUrl}
               alt={item.name}
               loading="lazy"
               decoding="async"
+              width={400}
+              height={400}
               onLoad={() => setImageLoaded(true)}
               onError={() => setImageLoaded(true)}
               className="w-full h-full object-cover rounded-2xl"

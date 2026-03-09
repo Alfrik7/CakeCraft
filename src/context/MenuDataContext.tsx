@@ -1,8 +1,9 @@
-import { createContext, useContext, useMemo } from 'react';
-import type { ConstructorMenuData } from '../lib/api';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { getConstructorMenuData, type ConstructorMenuData } from '../lib/api';
 
 interface MenuDataContextValue {
   menuData: ConstructorMenuData;
+  isMenuLoading: boolean;
   hasMenuError: boolean;
 }
 
@@ -15,18 +16,58 @@ const EMPTY_MENU_DATA: ConstructorMenuData = {
 const MenuDataContext = createContext<MenuDataContextValue | undefined>(undefined);
 
 interface MenuDataProviderProps {
-  menuData?: ConstructorMenuData;
-  hasMenuError?: boolean;
+  bakerId: string;
   children: React.ReactNode;
 }
 
-export function MenuDataProvider({ menuData, hasMenuError = false, children }: MenuDataProviderProps) {
+export function MenuDataProvider({ bakerId, children }: MenuDataProviderProps) {
+  const [menuData, setMenuData] = useState<ConstructorMenuData>(EMPTY_MENU_DATA);
+  const [isMenuLoading, setIsMenuLoading] = useState(true);
+  const [hasMenuError, setHasMenuError] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function prefetchMenuData() {
+      setIsMenuLoading(true);
+      setHasMenuError(false);
+
+      try {
+        const loadedMenuData = await getConstructorMenuData(bakerId);
+
+        if (!isActive) {
+          return;
+        }
+
+        setMenuData(loadedMenuData);
+      } catch {
+        if (!isActive) {
+          return;
+        }
+
+        setHasMenuError(true);
+        setMenuData(EMPTY_MENU_DATA);
+      } finally {
+        if (isActive) {
+          setIsMenuLoading(false);
+        }
+      }
+    }
+
+    void prefetchMenuData();
+
+    return () => {
+      isActive = false;
+    };
+  }, [bakerId]);
+
   const value = useMemo<MenuDataContextValue>(
     () => ({
-      menuData: menuData ?? EMPTY_MENU_DATA,
+      menuData,
+      isMenuLoading,
       hasMenuError,
     }),
-    [hasMenuError, menuData],
+    [hasMenuError, isMenuLoading, menuData],
   );
 
   return <MenuDataContext.Provider value={value}>{children}</MenuDataContext.Provider>;

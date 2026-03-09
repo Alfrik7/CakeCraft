@@ -7,6 +7,7 @@ import {
   setOrderStatus,
   updateOrderDetails,
 } from '../../lib/api';
+import { getOptimizedSupabaseImageUrl } from '../../lib/images';
 import type { MenuItem, Order, OrderStatus } from '../../types';
 
 type OrdersTab = OrderStatus | 'reminders';
@@ -56,6 +57,27 @@ function toIsoDate(date: Date): string {
   const month = String(date.getUTCMonth() + 1).padStart(2, '0');
   const day = String(date.getUTCDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function ReferencePreviewImage({ src }: { src: string }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative h-40 w-40 overflow-hidden rounded-xl border border-gray-200">
+      {!isLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
+      <img
+        src={getOptimizedSupabaseImageUrl(src, { width: 400, quality: 75 })}
+        alt="Референс клиента"
+        className="h-40 w-40 object-cover"
+        loading="lazy"
+        decoding="async"
+        width={160}
+        height={160}
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setIsLoaded(true)}
+      />
+    </div>
+  );
 }
 
 function addUtcDays(date: Date, days: number): Date {
@@ -573,11 +595,7 @@ export function AdminOrdersPage() {
 
                   {order.reference_photo_url ? (
                     <a href={order.reference_photo_url} target="_blank" rel="noreferrer" className="mt-3 inline-block">
-                      <img
-                        src={order.reference_photo_url}
-                        alt="Референс клиента"
-                        className="h-40 w-40 rounded-xl border border-gray-200 object-cover"
-                      />
+                      <ReferencePreviewImage src={order.reference_photo_url} />
                     </a>
                   ) : null}
 

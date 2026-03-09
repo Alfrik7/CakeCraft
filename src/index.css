@@ -120,9 +120,9 @@
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    rgb(var(--color-primary-from-rgb) / 0.12) 25%,
-    rgb(var(--color-primary-from-rgb) / 0.24) 50%,
-    rgb(var(--color-primary-from-rgb) / 0.12) 75%
+    rgb(244 160 176 / 0.04) 25%,
+    rgb(244 160 176 / 0.1) 50%,
+    rgb(244 160 176 / 0.04) 75%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite linear;

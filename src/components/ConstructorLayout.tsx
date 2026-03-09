@@ -10,6 +10,7 @@ import { StepDecor } from '../steps/StepDecor';
 import { StepCheckout } from '../steps/StepCheckout';
 import { applyTelegramTheme, getTelegramWebApp, initTelegramWebApp, triggerTelegramHaptic } from '../lib/telegram';
 import { applyBakerTheme } from '../lib/theme';
+import { getOptimizedSupabaseImageUrl } from '../lib/images';
 
 const TOTAL_STEPS = 5;
 
@@ -24,6 +25,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [checkoutCanSubmit, setCheckoutCanSubmit] = useState(false);
   const [checkoutSubmitHandler, setCheckoutSubmitHandler] = useState<(() => Promise<boolean>) | null>(null);
+  const [isLogoLoaded, setIsLogoLoaded] = useState(false);
   const { order, resetOrder } = useOrderContext();
   const handleBackStep = useCallback(() => {
     setStep((prev) => {
@@ -115,6 +117,10 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   }, [resetOrder]);
 
   useEffect(() => {
+    setIsLogoLoaded(false);
+  }, [baker.logo_url]);
+
+  useEffect(() => {
     applyBakerTheme(baker.theme);
 
     return () => {
@@ -165,12 +171,20 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
         <header className="flex flex-col gap-4 mt-6 mb-2">
           <div className="flex items-center gap-4 px-2">
             {baker.logo_url ? (
-              <img
-                src={baker.logo_url}
-                alt={`Логотип ${baker.name}`}
-                className="h-14 w-14 rounded-full object-cover shadow-soft ring-2 ring-blush"
-                loading="lazy"
-              />
+              <div className="relative h-14 w-14 overflow-hidden rounded-full ring-2 ring-blush">
+                {!isLogoLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
+                <img
+                  src={getOptimizedSupabaseImageUrl(baker.logo_url, { width: 400, quality: 75 })}
+                  alt={`Логотип ${baker.name}`}
+                  className="h-14 w-14 rounded-full object-cover shadow-soft"
+                  loading="lazy"
+                  decoding="async"
+                  width={56}
+                  height={56}
+                  onLoad={() => setIsLogoLoaded(true)}
+                  onError={() => setIsLogoLoaded(true)}
+                />
+              </div>
             ) : (
               <div className="grid h-14 w-14 place-items-center rounded-full font-display text-[22px] text-white shadow-soft ring-2 ring-blush btn-gradient">
                 {bakerInitial}
