@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import imageCompression from 'browser-image-compression';
 import type {
   Baker,
   BlockedDate,
@@ -131,13 +132,20 @@ export async function updateBakerProfile(bakerId: string, patch: BakerProfilePat
 }
 
 export async function uploadBakerLogo(bakerId: string, file: File): Promise<string> {
+  const compressed = await imageCompression(file, {
+    maxSizeMB: 0.3,
+    maxWidthOrHeight: 800,
+    useWebWorker: true,
+  });
+
   const fileExt = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : '';
   const safeExt = fileExt && /^[a-z0-9]+$/.test(fileExt) ? fileExt : 'jpg';
   const filePath = `gallery/${bakerId}/logo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
 
-  const { error } = await supabase.storage.from('photos').upload(filePath, file, {
+  const { error } = await supabase.storage.from('photos').upload(filePath, compressed, {
     cacheControl: '3600',
     upsert: true,
+    contentType: compressed.type,
   });
 
   if (error) {
@@ -280,13 +288,20 @@ export async function reorderMenuItems(
 }
 
 export async function uploadMenuPhoto(bakerId: string, file: File): Promise<string> {
+  const compressed = await imageCompression(file, {
+    maxSizeMB: 0.3,
+    maxWidthOrHeight: 800,
+    useWebWorker: true,
+  });
+
   const fileExt = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : '';
   const safeExt = fileExt && /^[a-z0-9]+$/.test(fileExt) ? fileExt : 'jpg';
   const filePath = `menu/${bakerId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
 
-  const { error } = await supabase.storage.from('photos').upload(filePath, file, {
+  const { error } = await supabase.storage.from('photos').upload(filePath, compressed, {
     cacheControl: '3600',
     upsert: false,
+    contentType: compressed.type,
   });
 
   if (error) {

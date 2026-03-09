@@ -1,4 +1,5 @@
 import { type CSSProperties, type ChangeEvent, useEffect, useMemo, useState } from 'react';
+import imageCompression from 'browser-image-compression';
 import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
@@ -117,11 +118,16 @@ export function StepDecor({ onBack }: StepDecorProps) {
     setUploadingPhoto(true);
 
     try {
+      const compressed = await imageCompression(file, {
+        maxSizeMB: 0.3,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      });
       const path = buildReferencePhotoPath(order.baker_id, file.name);
-      const { error } = await supabase.storage.from('photos').upload(path, file, {
+      const { error } = await supabase.storage.from('photos').upload(path, compressed, {
         cacheControl: '3600',
         upsert: false,
-        contentType: file.type,
+        contentType: compressed.type,
       });
 
       if (error) {
