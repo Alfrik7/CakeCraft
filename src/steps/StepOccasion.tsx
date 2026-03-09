@@ -7,26 +7,36 @@ const OCCASION_OPTIONS = [
     value: 'birthday',
     label: 'День рождения',
     icon: '🎂',
+    gradient: 'linear-gradient(135deg, #FFE8EC, #FFF0F3)',
+    activeGradient: 'linear-gradient(135deg, #FFD1DA, #FFE3E8)',
   },
   {
     value: 'wedding',
     label: 'Свадьба',
     icon: '💒',
+    gradient: 'linear-gradient(135deg, #F0E8FF, #F8F0FF)',
+    activeGradient: 'linear-gradient(135deg, #E3D1FF, #EFE3FF)',
   },
   {
     value: 'kids_party',
     label: 'Детский праздник',
     icon: '🎈',
+    gradient: 'linear-gradient(135deg, #E8FFE8, #F0FFF0)',
+    activeGradient: 'linear-gradient(135deg, #D1FFD1, #E3FFE3)',
   },
   {
     value: 'corporate',
     label: 'Корпоратив',
     icon: '🏢',
+    gradient: 'linear-gradient(135deg, #E8F0FF, #F0F5FF)',
+    activeGradient: 'linear-gradient(135deg, #D1E3FF, #E3EFFF)',
   },
   {
     value: 'other',
     label: 'Без повода',
     icon: '🎁',
+    gradient: 'linear-gradient(135deg, #FFF5E8, #FFFAF0)',
+    activeGradient: 'linear-gradient(135deg, #FFE8D1, #FFF0E3)',
   },
 ] as const;
 
@@ -34,11 +44,11 @@ export function StepOccasion() {
   const { order, updateOrder } = useOrderContext();
 
   return (
-    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
-      <h2 className="text-center font-display text-3xl text-text-primary">Какой у вас повод?</h2>
-      <p className="mt-2 text-center text-sm text-text-secondary">Выберите повод для вашего торта</p>
+    <section className="px-4 py-6 mb-24">
+      <h2 className="text-center font-display text-[28px] font-bold text-chocolate">Какой у вас повод?</h2>
+      <p className="mt-2 text-center text-[15px] text-truffle">Выберите повод для вашего торта</p>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="mt-8 grid grid-cols-2 gap-4">
         {OCCASION_OPTIONS.map((option, index) => {
           const isSelected = order.occasion === option.value;
 
@@ -51,40 +61,30 @@ export function StepOccasion() {
                 updateOrder({ occasion: option.value });
               }}
               className={[
-                'tap-scale stagger-item group relative aspect-square overflow-hidden rounded-2xl border border-white/70 bg-white text-center shadow-card transition duration-300',
-                'flex flex-col items-center justify-center gap-2 px-3',
+                'tap-scale stagger-item group relative aspect-square overflow-hidden rounded-[24px] border border-white text-center transition-all duration-300',
+                'flex flex-col items-center justify-center gap-3 px-3 shadow-soft hover:-translate-y-1 hover:shadow-lg',
                 isSelected
-                  ? 'occasion-selected ring-2 ring-primary-from shadow-card-hover [background-image:var(--gradient-primary)]'
-                  : 'hover:-translate-y-0.5 hover:shadow-card-hover',
+                  ? 'bounce-scale ring-2 ring-rose shadow-lg'
+                  : '',
               ].join(' ')}
               style={
                 {
-                  '--stagger-delay': `${index * 50}ms`,
+                  '--stagger-delay': `${index * 60}ms`,
+                  background: isSelected ? option.activeGradient : option.gradient,
                 } as CSSProperties
               }
               aria-pressed={isSelected}
             >
               <span
                 className={[
-                  'pointer-events-none absolute inset-0 transition-opacity duration-300',
-                  isSelected ? 'opacity-100' : 'opacity-0',
-                ].join(' ')}
-                style={{
-                  backgroundImage:
-                    'linear-gradient(145deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%)',
-                }}
-                aria-hidden="true"
-              />
-              <span
-                className={[
-                  'relative text-4xl leading-none transition-transform duration-300',
-                  isSelected ? 'scale-110 drop-shadow-[0_3px_7px_rgba(91,23,39,0.28)]' : 'group-hover:scale-105',
+                  'relative text-[48px] leading-none transition-transform duration-300',
+                  isSelected ? 'scale-110 drop-shadow-md' : 'group-hover:scale-105',
                 ].join(' ')}
                 aria-hidden="true"
               >
                 {option.icon}
               </span>
-              <span className={['relative text-sm font-semibold', isSelected ? 'text-white' : 'text-text-primary'].join(' ')}>
+              <span className="relative text-[15px] font-bold text-chocolate transition-colors">
                 {option.label}
               </span>
             </button>
