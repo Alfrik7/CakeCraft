@@ -1,22 +1,21 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "/landing.html"
+      "src": "^/$",
+      "dest": "/landing.html"
     },
     {
-      "source": "/admin",
-      "destination": "/index.html"
+      "src": "^/admin(/.*)?$",
+      "dest": "/index.html"
     },
     {
-      "source": "/admin/(.*)",
-      "destination": "/index.html"
+      "handle": "filesystem"
     },
     {
-      "source": "/:slug",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
