@@ -4,774 +4,843 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CakeCraft — Конструктор тортов для кондитеров</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --cream: #FFF8F0;
-  --blush: #F4A0B0;
-  --rose: #D4596C;
-  --chocolate: #3D2C2C;
-  --truffle: #8B7070;
-  --vanilla: #FFFAFA;
-  --gold: #C8956C;
-  --shadow-warm: 0 4px 24px rgba(61,44,44,0.06);
-  --shadow-hover: 0 12px 40px rgba(212,89,108,0.15);
-  --shadow-btn: 0 8px 24px rgba(212,89,108,0.25);
-  --gradient-btn: linear-gradient(135deg, var(--blush), var(--rose));
-  --gradient-gold: linear-gradient(135deg, #E0B089, var(--gold));
-  --gradient-bg: linear-gradient(180deg, var(--cream) 0%, #FFE8EC 50%, #FFF5F0 100%);
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--pink:#F8A4B8;--coral:#E8677C;--cream:#FFF5F0;--bg:#FFF0F3;
+--surface:#FFFAFA;--text:#3D2C2C;--text2:#9B8A8A;--white:#fff;
 }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Nunito', sans-serif;
-  color: var(--chocolate);
-  background: var(--gradient-bg);
-  overflow-x: hidden;
-}
-h1, h2, h3, h4, .brand, .price-amount {
-  font-family: 'Playfair Display', serif;
-}
-.noise-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 9999; opacity: 0.03;
-  background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)"/%3E%3C/svg%3E');
-}
-section { padding: 80px 24px; }
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 8px; padding: 16px 36px; border-radius: 9999px;
-  font-size: 16px; font-weight: 600; cursor: pointer;
-  text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border: none;
-}
-.btn-primary {
-  background: var(--gradient-btn); color: white; box-shadow: var(--shadow-btn);
-}
-.btn-primary:hover { transform: scale(1.02); box-shadow: 0 12px 32px rgba(212,89,108,0.35); }
-.btn-primary:active { transform: scale(0.97); }
-.btn-secondary {
-  background: var(--vanilla); color: var(--rose);
-  border: 1px solid var(--blush); box-shadow: var(--shadow-warm);
-}
-.btn-secondary:hover { transform: scale(1.02); background: var(--cream); }
-.btn-secondary:active { transform: scale(0.97); }
-.section-label {
-  display: inline-block; background: var(--vanilla); color: var(--gold);
-  padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 600;
-  margin-bottom: 16px; box-shadow: var(--shadow-warm); border: 1px solid rgba(200,149,108,0.2);
-}
-h2 { font-size: clamp(28px, 4vw, 48px); margin-bottom: 16px; color: var(--chocolate); }
-.subtitle { color: var(--truffle); font-size: 18px; margin-bottom: 48px; max-width: 600px; }
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--cream);overflow-x:hidden}
+h1,h2,h3,.brand{font-family:'Playfair Display',serif}
+
+/* Animations */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(248,164,184,0.4)}50%{box-shadow:0 0 0 20px rgba(248,164,184,0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes bounceIn{0%{transform:scale(0)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(-400px) rotate(720deg);opacity:0}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.15s}
+.reveal-delay-2{transition-delay:0.3s}
+.reveal-delay-3{transition-delay:0.45s}
+.reveal-delay-4{transition-delay:0.6s}
 
 /* Hero */
-.hero {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden; padding-top: 120px;
+.hero{
+min-height:100vh;display:flex;align-items:center;justify-content:center;
+background:linear-gradient(160deg,#FFF5F0 0%,#FFE8EC 40%,#F8D0D8 100%);
+position:relative;overflow:hidden;
 }
-.hero-content {
-  max-width: 1200px; width: 100%; display: flex; align-items: center; gap: 60px;
-  position: relative; z-index: 2; flex-wrap: wrap; justify-content: center;
+.hero::before{
+content:'';position:absolute;width:600px;height:600px;border-radius:50%;
+background:radial-gradient(circle,rgba(248,164,184,0.15) 0%,transparent 70%);
+top:-100px;right:-200px;animation:float 8s ease-in-out infinite;
 }
-.hero-text { max-width: 540px; }
-.hero-badge {
-  display: inline-block; background: var(--gradient-btn); color: white;
-  padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 600;
-  margin-bottom: 24px; letter-spacing: 0.5px; box-shadow: var(--shadow-btn);
+.hero::after{
+content:'';position:absolute;width:400px;height:400px;border-radius:50%;
+background:radial-gradient(circle,rgba(232,103,124,0.08) 0%,transparent 70%);
+bottom:-50px;left:-100px;animation:float 10s ease-in-out infinite 2s;
 }
-.hero h1 {
-  font-size: clamp(36px, 5vw, 64px); line-height: 1.1; margin-bottom: 20px;
-  background: linear-gradient(135deg, var(--chocolate) 0%, var(--rose) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+.hero-content{
+max-width:1200px;padding:40px 24px;display:flex;align-items:center;gap:60px;
+position:relative;z-index:2;flex-wrap:wrap;justify-content:center;
 }
-.hero p { font-size: 18px; color: var(--truffle); line-height: 1.6; margin-bottom: 36px; }
-.cta-group { display: flex; gap: 16px; flex-wrap: wrap; }
-.floating-elements {
-  position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 1;
+.hero-text{max-width:540px;animation:fadeUp 1s ease-out}
+.hero-badge{
+display:inline-block;background:linear-gradient(135deg,var(--pink),var(--coral));
+color:white;padding:8px 20px;border-radius:50px;font-size:14px;font-weight:600;
+margin-bottom:24px;letter-spacing:0.5px;
 }
-.floating-emoji {
-  position: absolute; font-size: 40px; opacity: 0.7; filter: drop-shadow(0 4px 12px rgba(61,44,44,0.1));
+.hero h1{
+font-size:clamp(36px,5vw,64px);line-height:1.1;margin-bottom:20px;
+background:linear-gradient(135deg,var(--text) 0%,var(--coral) 100%);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
-.hero-visual { position: relative; }
-.phone-mockup {
-  width: 280px; height: 560px; background: var(--vanilla); border-radius: 40px;
-  box-shadow: 0 40px 80px rgba(61,44,44,0.15), 0 0 0 8px #FFF0F3;
-  overflow: hidden; position: relative;
+.hero p{font-size:18px;color:var(--text2);line-height:1.6;margin-bottom:36px}
+.cta-group{display:flex;gap:16px;flex-wrap:wrap}
+.btn{
+display:inline-flex;align-items:center;gap:8px;padding:16px 36px;border-radius:50px;
+font-size:16px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;
+text-decoration:none;transition:all 0.3s ease;border:none;
 }
-.phone-screen {
-  width: 100%; height: 100%; background: var(--cream);
-  padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+.btn-primary{
+background:linear-gradient(135deg,var(--pink),var(--coral));color:white;
+box-shadow:0 8px 32px rgba(232,103,124,0.3);
 }
-.phone-header { text-align: center; padding-top: 16px; }
-.phone-header .emoji { font-size: 28px; }
-.phone-header h3 { font-size: 16px; margin-top: 4px; color: var(--chocolate); }
-.phone-header p { font-size: 11px; color: var(--truffle); }
-.phone-progress { display: flex; align-items: center; gap: 4px; justify-content: center; padding: 8px 0; }
-.phone-dot { width: 10px; height: 10px; border-radius: 50%; background: #F4E0E4; }
-.phone-dot.active { background: var(--gradient-btn); width: 12px; height: 12px; }
-.phone-cards { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.phone-card {
-  background: var(--vanilla); border-radius: 16px; padding: 10px; display: flex; gap: 10px;
-  align-items: center; box-shadow: var(--shadow-warm); border: 1px solid #FFF0F3;
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(232,103,124,0.4)}
+.btn-secondary{
+background:white;color:var(--coral);border:2px solid var(--pink);
 }
-.phone-card-img {
-  width: 48px; height: 48px; border-radius: 12px;
-  background: #FFF0F3; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 24px;
+.btn-secondary:hover{background:var(--bg);transform:translateY(-2px)}
+
+.hero-visual{
+position:relative;animation:fadeIn 1.2s ease-out 0.3s both;
 }
-.phone-card-text h4 { font-size: 12px; color: var(--chocolate); }
-.phone-card-text p { font-size: 10px; color: var(--truffle); }
-.phone-card-price { margin-left: auto; font-family: 'Playfair Display', serif; font-size: 13px; color: var(--rose); font-weight: 700; white-space: nowrap; }
-.phone-bottom {
-  background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-  border-radius: 20px; padding: 10px 16px; display: flex; align-items: center;
-  justify-content: space-between; margin-top: auto; border: 1px solid #FFF0F3;
+.phone-mockup{
+width:280px;height:560px;background:var(--white);border-radius:40px;
+box-shadow:0 40px 80px rgba(61,44,44,0.15),0 0 0 8px #f0e0e4;
+overflow:hidden;position:relative;
 }
-.phone-bottom span { font-size: 10px; color: var(--truffle); }
-.phone-bottom strong { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--chocolate); }
-.phone-bottom-btn {
-  background: var(--gradient-btn); color: white; border: none; padding: 8px 20px; border-radius: 50px;
-  font-size: 11px; font-weight: 700;
+.phone-screen{
+width:100%;height:100%;background:linear-gradient(180deg,var(--bg) 0%,var(--cream) 100%);
+padding:20px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;
+}
+.phone-header{text-align:center;padding-top:16px}
+.phone-header .emoji{font-size:28px}
+.phone-header h3{font-size:16px;margin-top:4px}
+.phone-header p{font-size:11px;color:var(--text2)}
+.phone-progress{
+display:flex;align-items:center;gap:4px;justify-content:center;padding:8px 0;
+}
+.phone-dot{width:10px;height:10px;border-radius:50%;background:#f0d0d8}
+.phone-dot.active{background:linear-gradient(135deg,var(--pink),var(--coral));width:12px;height:12px}
+.phone-cards{display:flex;flex-direction:column;gap:8px;flex:1}
+.phone-card{
+background:white;border-radius:16px;padding:10px;display:flex;gap:10px;
+align-items:center;box-shadow:0 2px 12px rgba(0,0,0,0.04);
+animation:slideLeft 0.6s ease-out both;
+}
+.phone-card:nth-child(1){animation-delay:0.8s}
+.phone-card:nth-child(2){animation-delay:1s}
+.phone-card:nth-child(3){animation-delay:1.2s}
+.phone-card-img{
+width:48px;height:48px;border-radius:12px;
+background:linear-gradient(135deg,#f8d0d8,#ffe0c8);flex-shrink:0;
+display:flex;align-items:center;justify-content:center;font-size:24px;
+}
+.phone-card-text h4{font-size:12px;font-family:'Playfair Display',serif}
+.phone-card-text p{font-size:10px;color:var(--text2)}
+.phone-card-price{
+margin-left:auto;font-family:'Playfair Display',serif;
+font-size:13px;color:var(--coral);font-weight:700;white-space:nowrap;
+}
+.phone-bottom{
+background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);
+border-radius:20px;padding:10px 16px;display:flex;align-items:center;
+justify-content:space-between;margin-top:auto;
+}
+.phone-bottom span{font-size:10px;color:var(--text2)}
+.phone-bottom strong{font-family:'Playfair Display',serif;font-size:16px}
+.phone-bottom-btn{
+background:linear-gradient(135deg,var(--pink),var(--coral));
+color:white;border:none;padding:8px 20px;border-radius:50px;
+font-size:11px;font-weight:700;
+}
+
+.floating-elements{position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:1}
+.floating-cake{position:absolute;font-size:40px;animation:float 6s ease-in-out infinite;opacity:0.6}
+.floating-cake:nth-child(1){top:10%;left:5%;animation-delay:0s}
+.floating-cake:nth-child(2){top:60%;right:8%;animation-delay:2s;font-size:32px}
+.floating-cake:nth-child(3){bottom:15%;left:15%;animation-delay:4s;font-size:28px}
+
+/* Features */
+.features{padding:80px 24px;max-width:1200px;margin:0 auto}
+.section-label{
+display:inline-block;background:linear-gradient(135deg,rgba(248,164,184,0.15),rgba(232,103,124,0.1));
+color:var(--coral);padding:8px 20px;border-radius:50px;font-size:14px;font-weight:600;
+margin-bottom:16px;
+}
+.features h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
+.features>p{color:var(--text2);font-size:18px;margin-bottom:64px;max-width:600px}
+
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.feature-card{
+background:white;border-radius:24px;padding:36px;
+box-shadow:0 4px 24px rgba(61,44,44,0.04);
+transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;
+}
+.feature-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(232,103,124,0.1)}
+.feature-card::after{
+content:'';position:absolute;top:0;left:0;right:0;height:4px;
+background:linear-gradient(90deg,var(--pink),var(--coral));
+transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease;
+}
+.feature-card:hover::after{transform:scaleX(1)}
+.feature-icon{
+width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+font-size:28px;margin-bottom:20px;
+background:linear-gradient(135deg,rgba(248,164,184,0.15),rgba(232,103,124,0.08));
+}
+.feature-card h3{font-size:20px;margin-bottom:10px}
+.feature-card p{color:var(--text2);font-size:15px;line-height:1.6}
+
+/* How it works */
+.how{
+padding:80px 24px;
+background:linear-gradient(180deg,white 0%,var(--bg) 100%);
+}
+.how-inner{max-width:1200px;margin:0 auto;text-align:center}
+.how h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
+.how>p,.how-inner>p{color:var(--text2);font-size:18px;margin-bottom:64px}
+
+.steps-grid{
+display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px;
+text-align:center;position:relative;
+}
+.step-card{position:relative}
+.step-number{
+width:64px;height:64px;border-radius:50%;
+background:linear-gradient(135deg,var(--pink),var(--coral));
+color:white;font-family:'Playfair Display',serif;font-size:24px;font-weight:700;
+display:flex;align-items:center;justify-content:center;
+margin:0 auto 20px;box-shadow:0 8px 24px rgba(232,103,124,0.25);
+}
+.step-card h3{font-size:18px;margin-bottom:8px}
+.step-card p{color:var(--text2);font-size:14px;line-height:1.5}
+.step-arrow{
+color:var(--pink);font-size:28px;position:absolute;right:-20px;top:30px;
+}
+
+/* Pricing */
+.pricing{padding:80px 24px;max-width:900px;margin:0 auto;text-align:center}
+.pricing h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
+.pricing>p{color:var(--text2);font-size:18px;margin-bottom:48px}
+
+.price-card{
+background:white;border-radius:32px;padding:48px;
+box-shadow:0 8px 40px rgba(61,44,44,0.06);
+position:relative;overflow:hidden;max-width:480px;margin:0 auto;
+}
+.price-card::before{
+content:'';position:absolute;top:0;left:0;right:0;height:6px;
+background:linear-gradient(90deg,var(--pink),var(--coral));
+}
+.price-amount{
+font-family:'Playfair Display',serif;font-size:56px;font-weight:800;
+background:linear-gradient(135deg,var(--coral),var(--pink));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+margin-bottom:4px;
+}
+.price-period{color:var(--text2);font-size:16px;margin-bottom:32px}
+.price-setup{font-size:14px;color:var(--text2);margin-bottom:32px}
+.price-setup strong{color:var(--text)}
+.price-features{list-style:none;text-align:left;margin-bottom:36px}
+.price-features li{
+padding:12px 0;border-bottom:1px solid #f5eded;font-size:15px;
+display:flex;align-items:center;gap:12px;
+}
+.price-features li::before{
+content:'✓';width:24px;height:24px;border-radius:50%;
+background:linear-gradient(135deg,rgba(248,164,184,0.2),rgba(232,103,124,0.1));
+color:var(--coral);display:flex;align-items:center;justify-content:center;
+font-size:12px;font-weight:700;flex-shrink:0;
+}
+
+/* CTA */
+.final-cta{
+padding:80px 24px;text-align:center;
+background:linear-gradient(160deg,var(--bg) 0%,#F8D0D8 50%,var(--cream) 100%);
+position:relative;overflow:hidden;
+}
+.final-cta::before{
+content:'';position:absolute;width:500px;height:500px;border-radius:50%;
+background:radial-gradient(circle,rgba(248,164,184,0.2) 0%,transparent 70%);
+top:-200px;left:50%;transform:translateX(-50%);
+}
+.final-cta h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px;position:relative;z-index:2}
+.final-cta p{
+color:var(--text2);font-size:18px;margin-bottom:36px;max-width:500px;
+margin-left:auto;margin-right:auto;position:relative;z-index:2;
+}
+.final-cta .btn{position:relative;z-index:2;animation:pulse 2s ease-in-out infinite}
+
+/* Telegram Notification */
+.tg-notify{
+padding:80px 24px;
+background:linear-gradient(180deg,white 0%,#F0F4FF 50%,var(--cream) 100%);
+}
+.tg-inner{max-width:1200px;margin:0 auto}
+.tg-content{
+display:flex;gap:64px;align-items:center;
+}
+.tg-content>div:first-child{flex:1;max-width:520px}
+.tg-content h2{font-size:clamp(28px,4vw,44px);margin-bottom:20px;font-family:'Playfair Display',serif;line-height:1.2}
+.tg-content>div:first-child>p{color:var(--text2);font-size:16px;line-height:1.6;margin-bottom:24px}
+.tg-list{list-style:none;margin-bottom:24px}
+.tg-list li{
+padding:10px 0;font-size:15px;display:flex;align-items:flex-start;gap:8px;
+border-bottom:1px solid rgba(0,0,0,0.04);
+}
+.tg-list li::before{content:'→';color:var(--coral);font-weight:700;flex-shrink:0}
+.tg-list li strong{color:var(--text)}
+.tg-highlight{
+display:flex;gap:12px;padding:16px 20px;border-radius:16px;
+background:linear-gradient(135deg,rgba(59,130,246,0.06),rgba(99,102,241,0.04));
+border:1px solid rgba(59,130,246,0.1);font-size:14px;line-height:1.5;color:var(--text2);
+margin-top:8px;
+}
+.tg-highlight span{font-size:20px;flex-shrink:0}
+.tg-highlight strong{color:#3B82F6}
+
+.tg-visual{flex:1;display:flex;justify-content:center}
+.tg-phone{
+background:#1E2C3A;border-radius:24px;overflow:hidden;
+max-width:380px;box-shadow:0 40px 80px rgba(0,0,0,0.2);
+}
+.tg-phone-header{
+display:flex;align-items:center;gap:12px;padding:16px 20px;
+background:#17212B;
+}
+.tg-phone-avatar{
+width:40px;height:40px;border-radius:50%;
+background:linear-gradient(135deg,var(--pink),var(--coral));
+display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.tg-phone-name{color:white;font-weight:700;font-size:15px}
+.tg-phone-status{color:rgba(255,255,255,0.5);font-size:12px}
+.tg-screenshot{
+width:100%;display:block;
+}
+
+@media(max-width:768px){
+.tg-content{flex-direction:column}
+.tg-content>div:first-child{max-width:100%}
+.tg-phone{max-width:320px}
+}
+
+/* Admin Showcase */
+.admin-showcase{padding:80px 24px;background:linear-gradient(180deg,var(--bg) 0%,white 30%,var(--cream) 100%)}
+.admin-inner{max-width:1200px;margin:0 auto;text-align:center}
+.admin-inner h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
+.admin-inner>p{color:var(--text2);font-size:18px;margin-bottom:64px}
+
+.admin-features{display:flex;flex-direction:column;gap:80px}
+.admin-feature{
+display:flex;gap:48px;align-items:center;text-align:left;
+}
+.admin-feature.reverse{flex-direction:row-reverse}
+.admin-feature-text{flex:1;max-width:480px}
+.admin-feature-badge{
+display:inline-block;background:linear-gradient(135deg,rgba(248,164,184,0.15),rgba(232,103,124,0.1));
+color:var(--coral);padding:6px 16px;border-radius:50px;font-size:13px;font-weight:700;
+margin-bottom:16px;
+}
+.admin-feature-text h3{font-size:clamp(22px,3vw,32px);margin-bottom:12px;font-family:'Playfair Display',serif}
+.admin-feature-text>p{color:var(--text2);font-size:15px;line-height:1.6;margin-bottom:20px}
+.admin-feature-list{list-style:none;margin-bottom:20px}
+.admin-feature-list li{
+padding:8px 0;font-size:14px;color:var(--text);
+display:flex;align-items:flex-start;gap:10px;
+}
+.admin-feature-list li::before{
+content:'✓';color:var(--coral);font-weight:700;flex-shrink:0;margin-top:1px;
+}
+.admin-tip{
+display:flex;gap:12px;padding:16px 20px;border-radius:16px;
+background:linear-gradient(135deg,rgba(248,164,184,0.08),rgba(232,103,124,0.04));
+border:1px solid rgba(248,164,184,0.15);font-size:13px;line-height:1.5;
+}
+.admin-tip span{font-size:20px;flex-shrink:0}
+.admin-tip strong{color:var(--coral);display:block;margin-bottom:4px}
+.admin-tip div{color:var(--text2)}
+
+.admin-feature-img{
+flex:1;max-width:560px;
+}
+.admin-feature-img img{
+width:100%;border-radius:20px;
+box-shadow:0 20px 60px rgba(61,44,44,0.1),0 0 0 1px rgba(0,0,0,0.04);
+transition:transform 0.4s ease;
+}
+.admin-feature-img:hover img{transform:scale(1.02)}
+
+@media(max-width:768px){
+.admin-feature,.admin-feature.reverse{flex-direction:column}
+.admin-feature-text{max-width:100%}
+.admin-feature-img{max-width:100%}
 }
 
 /* Demo */
-.demo-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
-.demo-inner .subtitle { margin-left: auto; margin-right: auto; }
-.demo-container { display: flex; gap: 48px; align-items: flex-start; justify-content: center; text-align: left; }
-.demo-steps {
-  display: flex; flex-direction: column; gap: 12px;
-  max-width: 320px; flex-shrink: 0; align-self: flex-start;
-}
-@media (min-width: 769px) { .demo-steps { position: sticky; top: 120px; z-index: 10; } }
-.demo-step {
-  display: flex; align-items: flex-start; gap: 16px;
-  padding: 16px 20px; border-radius: 24px; cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); background: transparent; border: 1px solid transparent;
-}
-.demo-step:hover { background: rgba(255,255,255,0.5); }
-.demo-step.active { background: var(--vanilla); box-shadow: var(--shadow-warm); border: 1px solid #FFF0F3; transform: scale(1.02); }
-.demo-step-num {
-  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700;
-  background: var(--cream); color: var(--truffle); transition: all 0.4s ease;
-}
-.demo-step.active .demo-step-num { background: var(--gradient-btn); color: white; }
-.demo-step-info h4 { font-size: 16px; margin-bottom: 4px; color: var(--chocolate); transition: color 0.3s; }
-.demo-step.active .demo-step-info h4 { color: var(--rose); }
-.demo-step-info p { font-size: 14px; color: var(--truffle); line-height: 1.5; max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; }
-.demo-step.active .demo-step-info p { max-height: 100px; opacity: 1; margin-top: 8px; }
+.demo{padding:80px 24px;background:linear-gradient(180deg,var(--cream) 0%,white 50%,var(--bg) 100%)}
+.demo-inner{max-width:1200px;margin:0 auto;text-align:center}
+.demo-inner h2{font-size:clamp(28px,4vw,48px);margin-bottom:16px}
+.demo-inner>p{color:var(--text2);font-size:18px;margin-bottom:48px}
 
-.demo-phone { display: flex; flex-direction: column; align-items: center; gap: 16px; position: relative; z-index: 5; }
-.demo-phone-frame {
-  width: 375px; height: 680px; background: #221a1a; border-radius: 44px;
-  padding: 12px; position: relative;
-  box-shadow: 0 40px 80px rgba(61,44,44,0.2), 0 0 0 2px #3D2C2C, inset 0 0 0 2px #4a3636;
+.demo-container{
+display:flex;gap:48px;align-items:flex-start;justify-content:center;
+text-align:left;
 }
-.demo-phone-notch {
-  width: 120px; height: 28px; background: #221a1a; border-radius: 0 0 16px 16px;
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 10;
+.demo-steps{
+display:flex;flex-direction:column;gap:8px;
+max-width:320px;flex-shrink:0;align-self:flex-start;
 }
-.demo-phone-frame iframe {
-  width: 100%; height: 100%; border: none; border-radius: 32px; background: var(--cream);
+@media(min-width:769px){
+.demo-steps{position:sticky;top:120px}
 }
-.demo-phone-hint {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--vanilla); padding: 12px 24px; border-radius: 50px;
-  box-shadow: var(--shadow-warm); font-size: 14px; color: var(--chocolate);
+.demo-step{
+display:flex;align-items:flex-start;gap:16px;
+padding:16px 20px;border-radius:20px;cursor:pointer;
+transition:all 0.5s cubic-bezier(0.16,1,0.3,1);background:transparent;
 }
+.demo-step:hover{background:rgba(248,164,184,0.08)}
+.demo-step.active{background:white;box-shadow:0 4px 24px rgba(232,103,124,0.1)}
+.demo-step-num{
+width:36px;height:36px;border-radius:50%;flex-shrink:0;
+display:flex;align-items:center;justify-content:center;
+font-family:'Playfair Display',serif;font-size:16px;font-weight:700;
+background:#f5eded;color:var(--text2);transition:all 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.demo-step.active .demo-step-num{
+background:linear-gradient(135deg,var(--pink),var(--coral));color:white;
+transform:scale(1.1);
+}
+.demo-step-info h4{font-size:15px;margin-bottom:4px;font-family:'Playfair Display',serif;transition:color 0.3s}
+.demo-step.active .demo-step-info h4{color:var(--coral)}
+.demo-step-info p{font-size:13px;color:var(--text2);line-height:1.4;max-height:0;overflow:hidden;opacity:0;transition:all 0.5s ease}
+.demo-step.active .demo-step-info p{max-height:80px;opacity:1;margin-top:4px}
 
-/* Features */
-.features { max-width: 1200px; margin: 0 auto; text-align: center; }
-.features .subtitle { margin-left: auto; margin-right: auto; }
-.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; text-align: left; }
-.feature-card {
-  background: var(--vanilla); border-radius: 24px; padding: 36px;
-  box-shadow: var(--shadow-warm); transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative; overflow: hidden; border: 1px solid #FFF0F3;
+.demo-phone{display:flex;flex-direction:column;align-items:center;gap:16px}
+.demo-phone-frame{
+width:375px;height:680px;background:#1a1a1a;border-radius:44px;
+padding:12px;position:relative;
+box-shadow:0 40px 80px rgba(61,44,44,0.2),0 0 0 2px #333,inset 0 0 0 2px #444;
 }
-.feature-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: var(--gradient-gold); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+.demo-phone-notch{
+width:120px;height:28px;background:#1a1a1a;border-radius:0 0 16px 16px;
+position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10;
 }
-.feature-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow-hover); }
-.feature-card:hover::before { transform: scaleX(1); }
-.feature-icon {
-  width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 24px; margin-bottom: 24px; background: var(--gradient-gold); color: white;
-  box-shadow: 0 4px 16px rgba(200,149,108,0.3);
+.demo-phone-frame iframe{
+width:100%;height:100%;border:none;border-radius:32px;
+background:var(--cream);
 }
-.feature-card h3 { font-size: 20px; margin-bottom: 12px; color: var(--chocolate); }
-.feature-card p { color: var(--truffle); font-size: 15px; line-height: 1.6; }
-
-/* How it works */
-.how { background: rgba(255,255,255,0.4); }
-.how-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
-.how-inner .subtitle { margin-left: auto; margin-right: auto; }
-.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; position: relative; text-align: center; }
-.step-card { position: relative; background: var(--vanilla); padding: 32px; border-radius: 24px; box-shadow: var(--shadow-warm); border: 1px solid #FFF0F3; }
-.step-number {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: var(--gradient-btn); color: white; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: var(--shadow-btn);
+.demo-phone-hint{
+display:flex;align-items:center;gap:8px;
+background:white;padding:10px 20px;border-radius:50px;
+box-shadow:0 4px 16px rgba(0,0,0,0.06);
+font-size:14px;color:var(--text2);
+animation:pulse 2s ease-in-out infinite;
 }
-.step-card h3 { font-size: 20px; margin-bottom: 12px; color: var(--chocolate); }
-.step-card p { color: var(--truffle); font-size: 15px; line-height: 1.6; }
-.step-arrow { color: var(--rose); font-size: 28px; position: absolute; right: -24px; top: 50px; opacity: 0.5; }
-
-/* Telegram */
-.tg-notify { background: linear-gradient(180deg, var(--cream) 0%, #FFF5E8 100%); }
-.tg-inner { max-width: 1200px; margin: 0 auto; }
-.tg-content { display: flex; gap: 64px; align-items: center; }
-.tg-text { flex: 1; max-width: 520px; }
-.tg-text p { color: var(--truffle); font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
-.tg-list { list-style: none; margin-bottom: 32px; }
-.tg-list li { padding: 12px 0; font-size: 15px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid rgba(139,112,112,0.1); color: var(--chocolate); }
-.tg-list li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; background: rgba(200,149,108,0.15); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-.tg-list li strong { color: var(--chocolate); }
-.tg-highlight {
-  display: flex; gap: 12px; padding: 20px; border-radius: 20px;
-  background: var(--vanilla); border: 1px solid rgba(200,149,108,0.3); box-shadow: var(--shadow-warm);
-  font-size: 15px; line-height: 1.5; color: var(--truffle);
-}
-.tg-highlight span { font-size: 24px; flex-shrink: 0; }
-.tg-highlight strong { color: var(--chocolate); }
-.tg-visual { flex: 1; display: flex; justify-content: center; position: relative; }
-.tg-glow {
-  position: absolute; width: 300px; height: 500px; background: var(--rose);
-  filter: blur(100px); opacity: 0.15; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;
-}
-.tg-phone {
-  background: #1C242D; border-radius: 32px; overflow: hidden;
-  max-width: 380px; box-shadow: 0 40px 80px rgba(61,44,44,0.2); position: relative; z-index: 2; border: 4px solid #11171D;
-}
-.tg-phone-header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: #232E3A; }
-.tg-phone-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-btn); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
-.tg-phone-name { color: white; font-weight: 600; font-size: 16px; }
-.tg-phone-status { color: rgba(255,255,255,0.5); font-size: 13px; }
-.tg-screenshot { width: 100%; display: block; }
-
-/* Admin Showcase */
-.admin-showcase { background: var(--cream); }
-.admin-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
-.admin-inner .subtitle { margin-left: auto; margin-right: auto; }
-.admin-features { display: flex; flex-direction: column; gap: 100px; text-align: left; margin-top: 64px; }
-.admin-feature { display: flex; gap: 64px; align-items: center; }
-.admin-feature.reverse { flex-direction: row-reverse; }
-.admin-feature-text { flex: 1; max-width: 480px; }
-.admin-feature-text h3 { font-size: clamp(24px, 3vw, 36px); margin-bottom: 16px; color: var(--chocolate); }
-.admin-feature-text > p { color: var(--truffle); font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
-.admin-feature-list { list-style: none; margin-bottom: 24px; }
-.admin-feature-list li { padding: 8px 0; font-size: 15px; color: var(--chocolate); display: flex; align-items: flex-start; gap: 12px; }
-.admin-feature-list li::before { content: '✓'; color: var(--rose); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
-.admin-tip {
-  display: flex; gap: 16px; padding: 20px; border-radius: 20px;
-  background: var(--vanilla); border: 1px solid #FFF0F3; font-size: 14px; line-height: 1.5; box-shadow: var(--shadow-warm);
-}
-.admin-tip span { font-size: 24px; flex-shrink: 0; }
-.admin-tip strong { color: var(--rose); display: block; margin-bottom: 4px; font-weight: 700; }
-.admin-tip div { color: var(--truffle); }
-.admin-feature-img { flex: 1; max-width: 600px; position: relative; }
-.admin-feature-img img { width: 100%; border-radius: 24px; box-shadow: var(--shadow-warm), 0 20px 60px rgba(61,44,44,0.08); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); border: 4px solid var(--vanilla); }
-.admin-feature-img:hover img { transform: scale(1.02); box-shadow: var(--shadow-hover); }
-
-/* Pricing */
-.pricing { max-width: 900px; margin: 0 auto; text-align: center; }
-.pricing .subtitle { margin-left: auto; margin-right: auto; }
-.price-card {
-  background: var(--vanilla); border-radius: 32px; padding: 56px 48px;
-  box-shadow: var(--shadow-warm); position: relative; overflow: hidden; max-width: 480px; margin: 0 auto; border: 1px solid #FFF0F3;
-}
-.price-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px;
-  background: var(--gradient-gold);
-}
-.price-amount {
-  font-size: 64px; font-weight: 800; color: var(--chocolate); margin-bottom: 8px; line-height: 1;
-}
-.price-period { color: var(--truffle); font-size: 18px; margin-bottom: 32px; }
-.price-setup { font-size: 15px; color: var(--truffle); margin-bottom: 32px; padding: 16px; background: rgba(200,149,108,0.1); border-radius: 16px; }
-.price-setup strong { color: var(--chocolate); }
-.price-features { list-style: none; text-align: left; margin-bottom: 48px; }
-.price-features li { padding: 14px 0; border-bottom: 1px solid rgba(139,112,112,0.1); font-size: 16px; display: flex; align-items: center; gap: 16px; color: var(--chocolate); }
-.price-features li::before {
-  content: '✓'; width: 28px; height: 28px; border-radius: 50%;
-  background: rgba(200,149,108,0.15); color: var(--gold); display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; flex-shrink: 0;
-}
-
-/* Final CTA */
-.final-cta { text-align: center; position: relative; overflow: hidden; background: transparent; padding-top: 40px; padding-bottom: 120px; }
-.final-cta .subtitle { margin-left: auto; margin-right: auto; }
-.final-cta .btn { animation: cta-pulse 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite; }
-@keyframes cta-pulse { 0%, 100% { box-shadow: var(--shadow-btn); } 50% { box-shadow: 0 12px 32px rgba(212,89,108,0.4), 0 0 0 12px rgba(212,89,108,0.1); } }
 
 /* Footer */
-footer { padding: 40px 24px; text-align: center; background: var(--chocolate); color: rgba(255,255,255,0.6); font-size: 15px; }
-footer a { color: var(--blush); text-decoration: none; transition: color 0.3s; }
-footer a:hover { color: var(--vanilla); }
+footer{
+padding:40px 24px;text-align:center;
+background:var(--text);color:rgba(255,255,255,0.5);font-size:14px;
+}
+footer a{color:var(--pink);text-decoration:none}
 
-@media(max-width: 768px) {
-  section { padding: 60px 20px; }
-  .hero-content { flex-direction: column; text-align: center; gap: 40px; }
-  .cta-group { justify-content: center; }
-  .phone-mockup { width: 240px; height: 480px; }
-  .demo-container { flex-direction: column; }
-  .demo-steps { flex-direction: row; overflow-x: auto; gap: 16px; padding-bottom: 16px; max-width: 100%; position: static !important; }
-  .demo-step { flex-direction: column; text-align: center; min-width: 140px; padding: 16px; align-items: center; }
-  .demo-step-info p { display: none; }
-  .demo-phone-frame { width: 320px; height: 580px; }
-  .step-arrow { display: none; }
-  .tg-content { flex-direction: column; text-align: left; }
-  .tg-phone { max-width: 320px; }
-  .admin-feature, .admin-feature.reverse { flex-direction: column; text-align: left; gap: 32px; }
-  .admin-feature-text { max-width: 100%; }
+/* Mobile */
+@media(max-width:768px){
+.hero-content{flex-direction:column;text-align:center;gap:40px}
+.cta-group{justify-content:center}
+.phone-mockup{width:240px;height:480px}
+.step-arrow{display:none}
+.feature-grid{grid-template-columns:1fr}
+.demo-container{flex-direction:column}
+.demo-steps{flex-direction:row;overflow-x:auto;gap:12px;padding-bottom:12px;position:static !important}
+.demo-step{flex-direction:column;text-align:center;min-width:100px;padding:12px}
+.demo-step-info p{display:none}
+.demo-phone-frame{width:320px;height:580px}
 }
 </style>
 </head>
 <body>
 
-<div class="noise-overlay"></div>
-
 <!-- Floating elements -->
-<div class="floating-elements gsap-parallax">
-  <span class="floating-emoji" style="top:15%; left:8%;">🎂</span>
-  <span class="floating-emoji" style="top:60%; right:10%; font-size: 32px;">🧁</span>
-  <span class="floating-emoji" style="bottom:15%; left:15%; font-size: 28px;">🍰</span>
+<div class="floating-elements">
+<span class="floating-cake">🎂</span>
+<span class="floating-cake">🧁</span>
+<span class="floating-cake">🍰</span>
 </div>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-content">
-    <div class="hero-text gsap-reveal">
-      <div class="hero-badge">🎂 Для кондитеров</div>
-      <h1>Ваши клиенты сами собирают торт мечты</h1>
-      <p>Интерактивный конструктор тортов, который заменит бесконечные переписки. Клиент выбирает начинку, декор и видит цену — вы получаете готовый заказ в Telegram.</p>
-      <div class="cta-group">
-        <a href="#pricing" class="btn btn-primary">Попробовать бесплатно →</a>
-        <a href="#demo" class="btn btn-secondary">Как это работает</a>
-      </div>
-    </div>
-    <div class="hero-visual gsap-reveal">
-      <div class="phone-mockup">
-        <div class="phone-screen">
-          <div class="phone-header">
-            <span class="emoji">🎂</span>
-            <h3>Демо Кондитерская</h3>
-            <p>Соберите свой торт</p>
-          </div>
-          <div class="phone-progress">
-            <span class="phone-dot active"></span>
-            <span class="phone-dot active"></span>
-            <span class="phone-dot active"></span>
-            <span class="phone-dot"></span>
-            <span class="phone-dot"></span>
-          </div>
-          <div class="phone-cards">
-            <div class="phone-card">
-              <div class="phone-card-img">🍫</div>
-              <div class="phone-card-text"><h4>Шоколад-вишня</h4><p>Насыщенный бисквит</p></div>
-              <span class="phone-card-price">1 400 ₽/кг</span>
-            </div>
-            <div class="phone-card">
-              <div class="phone-card-img">🥕</div>
-              <div class="phone-card-text"><h4>Морковный</h4><p>С крем-чиз</p></div>
-              <span class="phone-card-price">1 200 ₽/кг</span>
-            </div>
-            <div class="phone-card">
-              <div class="phone-card-img">🍯</div>
-              <div class="phone-card-text"><h4>Медовик</h4><p>Классический рецепт</p></div>
-              <span class="phone-card-price">1 100 ₽/кг</span>
-            </div>
-          </div>
-          <div class="phone-bottom">
-            <div><span>Текущая стоимость</span><br><strong>3 680 ₽</strong></div>
-            <button class="phone-bottom-btn">Далее →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="hero-content">
+<div class="hero-text">
+<div class="hero-badge">🎂 Для кондитеров</div>
+<h1>Ваши клиенты сами собирают торт мечты</h1>
+<p>Интерактивный конструктор тортов, который заменит бесконечные переписки. Клиент выбирает начинку, декор и видит цену — вы получаете готовый заказ в Telegram.</p>
+<div class="cta-group">
+<a href="#pricing" class="btn btn-primary">Попробовать бесплатно →</a>
+<a href="#demo" class="btn btn-secondary">Как это работает</a>
+</div>
+</div>
+<div class="hero-visual">
+<div class="phone-mockup">
+<div class="phone-screen">
+<div class="phone-header">
+<span class="emoji">🎂</span>
+<h3>Демо Кондитерская</h3>
+<p>Соберите свой торт</p>
+</div>
+<div class="phone-progress">
+<span class="phone-dot active"></span>
+<span class="phone-dot active"></span>
+<span class="phone-dot active"></span>
+<span class="phone-dot"></span>
+<span class="phone-dot"></span>
+</div>
+<div class="phone-cards">
+<div class="phone-card">
+<div class="phone-card-img">🍫</div>
+<div class="phone-card-text"><h4>Шоколад-вишня</h4><p>Насыщенный бисквит</p></div>
+<span class="phone-card-price">1 400 ₽/кг</span>
+</div>
+<div class="phone-card">
+<div class="phone-card-img">🥕</div>
+<div class="phone-card-text"><h4>Морковный</h4><p>С крем-чиз</p></div>
+<span class="phone-card-price">1 200 ₽/кг</span>
+</div>
+<div class="phone-card">
+<div class="phone-card-img">🍯</div>
+<div class="phone-card-text"><h4>Медовик</h4><p>Классический рецепт</p></div>
+<span class="phone-card-price">1 100 ₽/кг</span>
+</div>
+</div>
+<div class="phone-bottom">
+<div><span>Текущая стоимость</span><br><strong>3 680 ₽</strong></div>
+<button class="phone-bottom-btn">Далее →</button>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- LIVE DEMO -->
 <section class="demo" id="demo">
-  <div class="demo-inner">
-    <span class="section-label gsap-reveal">Живой пример</span>
-    <h2 class="gsap-reveal">Попробуйте прямо сейчас</h2>
-    <p class="subtitle gsap-reveal">Это реальный конструктор. Потыкайте — именно так ваши клиенты будут собирать торт</p>
+<div class="demo-inner">
+<span class="section-label reveal">Живой пример</span>
+<h2 class="reveal reveal-delay-1">Попробуйте прямо сейчас</h2>
+<p class="reveal reveal-delay-2">Это реальный конструктор. Потыкайте — именно так ваши клиенты будут собирать торт</p>
 
-    <div class="demo-container">
-      <div class="demo-steps gsap-stagger-container">
-        <div class="demo-step active gsap-stagger-item" data-step="1">
-          <div class="demo-step-num">1</div>
-          <div class="demo-step-info">
-            <h4>Повод</h4>
-            <p>Клиент выбирает повод: день рождения, свадьба, детский праздник</p>
-          </div>
-        </div>
-        <div class="demo-step gsap-stagger-item" data-step="2">
-          <div class="demo-step-num">2</div>
-          <div class="demo-step-info">
-            <h4>Форма торта</h4>
-            <p>Круг, сердце, квадрат — по вашим фото с реальными работами</p>
-          </div>
-        </div>
-        <div class="demo-step gsap-stagger-item" data-step="3">
-          <div class="demo-step-num">3</div>
-          <div class="demo-step-info">
-            <h4>Начинка</h4>
-            <p>Карточки с фото и ценой за кг. Стоимость считается автоматически</p>
-          </div>
-        </div>
-        <div class="demo-step gsap-stagger-item" data-step="4">
-          <div class="demo-step-num">4</div>
-          <div class="demo-step-info">
-            <h4>Декор</h4>
-            <p>Мультивыбор: ягоды, цветы, фигурки. Плюс фото-референс от клиента</p>
-          </div>
-        </div>
-        <div class="demo-step gsap-stagger-item" data-step="5">
-          <div class="demo-step-num">5</div>
-          <div class="demo-step-info">
-            <h4>Оформление</h4>
-            <p>Контакты, дата, доставка или самовывоз. Заказ летит вам в Telegram</p>
-          </div>
-        </div>
-      </div>
+<div class="demo-container reveal reveal-delay-3">
+<div class="demo-steps">
+<div class="demo-step active" data-step="1">
+<div class="demo-step-num">1</div>
+<div class="demo-step-info">
+<h4>Повод</h4>
+<p>Клиент выбирает повод: день рождения, свадьба, детский праздник</p>
+</div>
+</div>
+<div class="demo-step" data-step="2">
+<div class="demo-step-num">2</div>
+<div class="demo-step-info">
+<h4>Форма торта</h4>
+<p>Круг, сердце, квадрат — по вашим фото с реальными работами</p>
+</div>
+</div>
+<div class="demo-step" data-step="3">
+<div class="demo-step-num">3</div>
+<div class="demo-step-info">
+<h4>Начинка</h4>
+<p>Карточки с фото и ценой за кг. Стоимость считается автоматически</p>
+</div>
+</div>
+<div class="demo-step" data-step="4">
+<div class="demo-step-num">4</div>
+<div class="demo-step-info">
+<h4>Декор</h4>
+<p>Мультивыбор: ягоды, цветы, фигурки. Плюс фото-референс от клиента</p>
+</div>
+</div>
+<div class="demo-step" data-step="5">
+<div class="demo-step-num">5</div>
+<div class="demo-step-info">
+<h4>Оформление</h4>
+<p>Контакты, дата, доставка или самовывоз. Заказ летит вам в Telegram</p>
+</div>
+</div>
+</div>
 
-      <div class="demo-phone gsap-reveal">
-        <div class="demo-phone-frame">
-          <div class="demo-phone-notch"></div>
-          <iframe src="https://cake-craft-beta.vercel.app/demo-baker" title="CakeCraft Demo"></iframe>
-        </div>
-        <div class="demo-phone-hint">
-          <span>👆</span> Листайте и тыкайте — это живой конструктор
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="demo-phone">
+<div class="demo-phone-frame">
+<div class="demo-phone-notch"></div>
+<iframe src="https://cake-craft-beta.vercel.app/demo-baker" title="CakeCraft Demo"></iframe>
+</div>
+<div class="demo-phone-hint">
+<span>👆</span> Листайте и тыкайте — это живой конструктор
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- FEATURES -->
 <section class="features" id="features">
-  <span class="section-label gsap-reveal">Возможности</span>
-  <h2 class="gsap-reveal">Всё что нужно кондитеру</h2>
-  <p class="subtitle gsap-reveal">Один инструмент вместо десятков переписок</p>
+<span class="section-label reveal">Возможности</span>
+<h2 class="reveal reveal-delay-1">Всё что нужно кондитеру</h2>
+<p class="reveal reveal-delay-2">Один инструмент вместо десятков переписок</p>
 
-  <div class="feature-grid gsap-stagger-container">
-    <div class="feature-card gsap-stagger-item">
-      <div class="feature-icon">🎨</div>
-      <h3>Визуальный конструктор</h3>
-      <p>Клиент выбирает форму, начинку и декор по красивым карточкам с фото. Цена считается автоматически.</p>
-    </div>
-    <div class="feature-card gsap-stagger-item">
-      <div class="feature-icon">📱</div>
-      <h3>Уведомления в Telegram</h3>
-      <p>Новый заказ — мгновенное сообщение с полной карточкой: клиент, параметры торта, цена, контакт для связи.</p>
-    </div>
-    <div class="feature-card gsap-stagger-item">
-      <div class="feature-icon">⚙️</div>
-      <h3>Своя админка</h3>
-      <p>Добавляйте начинки, загружайте фото, меняйте цены. Без программистов и звонков в поддержку.</p>
-    </div>
-    <div class="feature-card gsap-stagger-item">
-      <div class="feature-icon">📷</div>
-      <h3>Фото-референсы</h3>
-      <p>Клиент прикрепляет фото «хочу такой» прямо в заказе. Вы видите референс сразу вместе с деталями.</p>
-    </div>
-    <div class="feature-card gsap-stagger-item">
-      <div class="feature-icon">📅</div>
-      <h3>Календарь загрузки</h3>
-      <p>Закрывайте даты когда загрузка полная. Клиент видит только доступные дни.</p>
-    </div>
-    <div class="feature-card gsap-stagger-item">
-      <div class="feature-icon">🎭</div>
-      <h3>Персонализация</h3>
-      <p>Выберите тему оформления, загрузите логотип. Конструктор выглядит как ваш собственный сайт.</p>
-    </div>
-  </div>
+<div class="feature-grid">
+<div class="feature-card reveal">
+<div class="feature-icon">🎨</div>
+<h3>Визуальный конструктор</h3>
+<p>Клиент выбирает форму, начинку и декор по красивым карточкам с фото. Цена считается автоматически.</p>
+</div>
+<div class="feature-card reveal reveal-delay-1">
+<div class="feature-icon">📱</div>
+<h3>Уведомления в Telegram</h3>
+<p>Новый заказ — мгновенное сообщение с полной карточкой: клиент, параметры торта, цена, контакт для связи.</p>
+</div>
+<div class="feature-card reveal reveal-delay-2">
+<div class="feature-icon">⚙️</div>
+<h3>Своя админка</h3>
+<p>Добавляйте начинки, загружайте фото, меняйте цены. Без программистов и звонков в поддержку.</p>
+</div>
+<div class="feature-card reveal reveal-delay-3">
+<div class="feature-icon">📷</div>
+<h3>Фото-референсы</h3>
+<p>Клиент прикрепляет фото «хочу такой» прямо в заказе. Вы видите референс сразу вместе с деталями.</p>
+</div>
+<div class="feature-card reveal reveal-delay-4">
+<div class="feature-icon">📅</div>
+<h3>Календарь загрузки</h3>
+<p>Закрывайте даты когда загрузка полная. Клиент видит только доступные дни.</p>
+</div>
+<div class="feature-card reveal reveal-delay-3">
+<div class="feature-icon">🎭</div>
+<h3>Персонализация</h3>
+<p>Выберите тему оформления, загрузите логотип. Конструктор выглядит как ваш собственный сайт.</p>
+</div>
+</div>
 </section>
 
 <!-- HOW IT WORKS -->
 <section class="how" id="how">
-  <div class="how-inner">
-    <span class="section-label gsap-reveal">Как это работает</span>
-    <h2 class="gsap-reveal">Три шага — и заказы идут</h2>
-    <p class="subtitle gsap-reveal">Никакого кода, настройки или технических знаний</p>
+<div class="how-inner">
+<span class="section-label reveal">Как это работает</span>
+<h2 class="reveal reveal-delay-1">Три шага — и заказы идут</h2>
+<p class="reveal reveal-delay-2">Никакого кода, настройки или технических знаний</p>
 
-    <div class="steps-grid gsap-stagger-container">
-      <div class="step-card gsap-stagger-item">
-        <div class="step-number">1</div>
-        <h3>Загрузите меню</h3>
-        <p>Добавьте начинки, декор, загрузите фото и поставьте цены через простую админку.</p>
-        <span class="step-arrow">→</span>
-      </div>
-      <div class="step-card gsap-stagger-item">
-        <div class="step-number">2</div>
-        <h3>Скиньте ссылку</h3>
-        <p>Отправьте клиенту ссылку на ваш конструктор в Instagram, WhatsApp или Telegram.</p>
-        <span class="step-arrow">→</span>
-      </div>
-      <div class="step-card gsap-stagger-item">
-        <div class="step-number">3</div>
-        <h3>Получите заказ</h3>
-        <p>Готовый заказ с деталями и ценой придёт в Telegram. Свяжитесь с клиентом и обсудите предоплату.</p>
-      </div>
-    </div>
-  </div>
+<div class="steps-grid">
+<div class="step-card reveal">
+<div class="step-number">1</div>
+<h3>Загрузите меню</h3>
+<p>Добавьте начинки, декор, загрузите фото и поставьте цены через простую админку.</p>
+<span class="step-arrow">→</span>
+</div>
+<div class="step-card reveal reveal-delay-1">
+<div class="step-number">2</div>
+<h3>Скиньте ссылку</h3>
+<p>Отправьте клиенту ссылку на ваш конструктор в Instagram, WhatsApp или Telegram.</p>
+<span class="step-arrow">→</span>
+</div>
+<div class="step-card reveal reveal-delay-2">
+<div class="step-number">3</div>
+<h3>Получите заказ</h3>
+<p>Готовый заказ с деталями и ценой придёт в Telegram. Свяжитесь с клиентом и обсудите предоплату.</p>
+</div>
+</div>
+</div>
 </section>
 
 <!-- TELEGRAM NOTIFICATION -->
 <section class="tg-notify" id="telegram">
-  <div class="tg-inner">
-    <div class="tg-content">
-      <div class="tg-text gsap-reveal">
-        <span class="section-label">📲 Уведомления</span>
-        <h2>Заказ прилетает<br>прямо в Telegram</h2>
-        <p>Не нужно проверять почту или заходить в приложение. Новый заказ — мгновенное сообщение с полной карточкой:</p>
-        <ul class="tg-list">
-          <li><strong>Клиент и контакт</strong> — кликабельная ссылка, сразу написать</li>
-          <li><strong>Все параметры торта</strong> — форма, вес, начинка, декор</li>
-          <li><strong>Фото-референс</strong> — если клиент прикрепил</li>
-          <li><strong>Стоимость</strong> — уже посчитана автоматически</li>
-          <li><strong>Кнопка «Открыть в админке»</strong> — перейти к заказу в один тап</li>
-        </ul>
-        <div class="tg-highlight">
-          <span>⚡</span>
-          <div>Среднее время от отправки заказа клиентом до получения уведомления — <strong>менее 3 секунд</strong></div>
-        </div>
-      </div>
-      <div class="tg-visual gsap-reveal">
-        <div class="tg-glow"></div>
-        <div class="tg-phone">
-          <div class="tg-phone-header">
-            <div class="tg-phone-avatar">🎂</div>
-            <div>
-              <div class="tg-phone-name">CakeCraft</div>
-              <div class="tg-phone-status">bot</div>
-            </div>
-          </div>
-          <img src="/telegram-notification.png" alt="Уведомление о заказе в Telegram" class="tg-screenshot">
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="tg-inner">
+<div class="tg-content reveal">
+<span class="section-label">📲 Уведомления</span>
+<h2>Заказ прилетает<br>прямо в Telegram</h2>
+<p>Не нужно проверять почту или заходить в приложение. Новый заказ — мгновенное сообщение с полной карточкой:</p>
+<ul class="tg-list">
+<li><strong>Клиент и контакт</strong> — кликабельная ссылка, сразу написать</li>
+<li><strong>Все параметры торта</strong> — форма, вес, начинка, декор</li>
+<li><strong>Фото-референс</strong> — если клиент прикрепил</li>
+<li><strong>Стоимость</strong> — уже посчитана автоматически</li>
+<li><strong>Кнопка «Открыть в админке»</strong> — перейти к заказу в один тап</li>
+</ul>
+<div class="tg-highlight">
+<span>⚡</span>
+<div>Среднее время от отправки заказа клиентом до получения уведомления — <strong>менее 3 секунд</strong></div>
+</div>
+</div>
+<div class="tg-visual reveal reveal-delay-2">
+<div class="tg-phone">
+<div class="tg-phone-header">
+<div class="tg-phone-avatar">🎂</div>
+<div>
+<div class="tg-phone-name">CakeCraft</div>
+<div class="tg-phone-status">bot</div>
+</div>
+</div>
+<img src="/telegram-notification.png" alt="Уведомление о заказе в Telegram" class="tg-screenshot">
+</div>
+</div>
+</div>
 </section>
 
 <!-- ADMIN SHOWCASE -->
 <section class="admin-showcase" id="admin">
-  <div class="admin-inner">
-    <span class="section-label gsap-reveal">Админ-панель</span>
-    <h2 class="gsap-reveal">Всё под вашим контролем</h2>
-    <p class="subtitle gsap-reveal">Управляйте меню, заказами и профилем из удобной панели. Без программистов.</p>
+<div class="admin-inner">
+<span class="section-label reveal">Админ-панель</span>
+<h2 class="reveal reveal-delay-1">Всё под вашим контролем</h2>
+<p class="reveal reveal-delay-2">Управляйте меню, заказами и профилем из удобной панели. Без программистов.</p>
 
-    <div class="admin-features gsap-stagger-container">
-      <div class="admin-feature gsap-stagger-item">
-        <div class="admin-feature-text">
-          <div class="section-label">🎨 Меню</div>
-          <h3>Настройте всё сами</h3>
-          <p>Добавляйте начинки, формы и декор с фото и ценами. Включайте и выключайте позиции одним тапом. Перетаскивайте карточки для сортировки — клиент увидит их в том же порядке.</p>
-          <ul class="admin-feature-list">
-            <li>Загрузка фото для каждой позиции</li>
-            <li>Цена за кг или фиксированная</li>
-            <li>Теги: Хит, Новинка, Сезонное</li>
-            <li>Вкл/выкл позиции без удаления</li>
-          </ul>
-        </div>
-        <div class="admin-feature-img">
-          <img src="/admin-menu.png" alt="Админка — редактор меню" loading="lazy">
-        </div>
-      </div>
+<div class="admin-features">
 
-      <div class="admin-feature reverse gsap-stagger-item">
-        <div class="admin-feature-text">
-          <div class="section-label">📋 Заказы</div>
-          <h3>База клиентов и заказов</h3>
-          <p>Все заказы в одном месте с фильтрами по статусу и дате. Вы видите что в работе, что выполнено, а что отменено. Никакие заказы не потеряются.</p>
-          <ul class="admin-feature-list">
-            <li>Статусы: Новые → Подтверждённые → В работе → Выполненные</li>
-            <li>Фильтр по дате</li>
-            <li>Полная карточка заказа с деталями</li>
-            <li>Контакт клиента — в один клик</li>
-          </ul>
-          <div class="admin-tip">
-            <span>💡</span>
-            <div>
-              <strong>Идея для роста:</strong> Используйте базу клиентов для напоминаний! Через год отправьте вежливое сообщение: «У вашего близкого скоро день рождения — мы готовы приготовить тортик 🎂»
-            </div>
-          </div>
-        </div>
-        <div class="admin-feature-img">
-          <img src="/admin-orders.png" alt="Админка — заказы" loading="lazy">
-        </div>
-      </div>
+<div class="admin-feature reveal">
+<div class="admin-feature-text">
+<div class="admin-feature-badge">🎨 Меню</div>
+<h3>Настройте всё сами</h3>
+<p>Добавляйте начинки, формы и декор с фото и ценами. Включайте и выключайте позиции одним тапом. Перетаскивайте карточки для сортировки — клиент увидит их в том же порядке.</p>
+<ul class="admin-feature-list">
+<li>Загрузка фото для каждой позиции</li>
+<li>Цена за кг или фиксированная</li>
+<li>Теги: Хит, Новинка, Сезонное</li>
+<li>Вкл/выкл позиции без удаления</li>
+</ul>
+</div>
+<div class="admin-feature-img">
+<img src="/admin-menu.png" alt="Админка — редактор меню" loading="lazy">
+</div>
+</div>
 
-      <div class="admin-feature gsap-stagger-item">
-        <div class="admin-feature-text">
-          <div class="section-label">⚙️ Профиль</div>
-          <h3>Персонализируйте конструктор</h3>
-          <p>Ваше имя, логотип, приветственное сообщение — клиент видит ваш бренд, а не наш. Укажите адрес самовывоза, минимальный срок заказа и настройте доставку.</p>
-          <ul class="admin-feature-list">
-            <li>Логотип и название кондитерской</li>
-            <li>Адрес самовывоза для клиентов</li>
-            <li>Доставка: фиксированная цена или «рассчитывается отдельно»</li>
-            <li>Персональная ссылка на ваш конструктор</li>
-          </ul>
-        </div>
-        <div class="admin-feature-img">
-          <img src="/admin-profile.png" alt="Админка — профиль" loading="lazy">
-        </div>
-      </div>
+<div class="admin-feature reverse reveal">
+<div class="admin-feature-text">
+<div class="admin-feature-badge">📋 Заказы</div>
+<h3>База клиентов и заказов</h3>
+<p>Все заказы в одном месте с фильтрами по статусу и дате. Вы видите что в работе, что выполнено, а что отменено. Никакие заказы не потеряются.</p>
+<ul class="admin-feature-list">
+<li>Статусы: Новые → Подтверждённые → В работе → Выполненные</li>
+<li>Фильтр по дате</li>
+<li>Полная карточка заказа с деталями</li>
+<li>Контакт клиента — в один клик</li>
+</ul>
+<div class="admin-tip">
+<span>💡</span>
+<div>
+<strong>Идея для роста:</strong> Используйте базу клиентов для напоминаний! Через год отправьте вежливое сообщение: «У вашего близкого скоро день рождения — мы готовы приготовить тортик 🎂»
+</div>
+</div>
+</div>
+<div class="admin-feature-img">
+<img src="/admin-orders.png" alt="Админка — заказы" loading="lazy">
+</div>
+</div>
 
-      <div class="admin-feature reverse gsap-stagger-item">
-        <div class="admin-feature-text">
-          <div class="section-label">🎭 Темы</div>
-          <h3>5 тем оформления</h3>
-          <p>Выберите тему, которая подходит вашему стилю. Розовая нежность, шоколадная, минимализм, лаванда или мятная свежесть — конструктор мгновенно преображается.</p>
-          <ul class="admin-feature-list">
-            <li>Розовая нежность — для классических кондитерских</li>
-            <li>Шоколадная — тёплые коричневые тона</li>
-            <li>Минимализм — чёрно-белая элегантность</li>
-            <li>Лаванда — нежные фиолетовые оттенки</li>
-            <li>Мятная свежесть — свежие зелёные тона</li>
-          </ul>
-        </div>
-        <div class="admin-feature-img">
-          <img src="/admin-themes.png" alt="Админка — темы" loading="lazy">
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="admin-feature reveal">
+<div class="admin-feature-text">
+<div class="admin-feature-badge">⚙️ Профиль</div>
+<h3>Персонализируйте конструктор</h3>
+<p>Ваше имя, логотип, приветственное сообщение — клиент видит ваш бренд, а не наш. Укажите адрес самовывоза, минимальный срок заказа и настройте доставку.</p>
+<ul class="admin-feature-list">
+<li>Логотип и название кондитерской</li>
+<li>Адрес самовывоза для клиентов</li>
+<li>Доставка: фиксированная цена или «рассчитывается отдельно»</li>
+<li>Персональная ссылка на ваш конструктор</li>
+</ul>
+</div>
+<div class="admin-feature-img">
+<img src="/admin-profile.png" alt="Админка — профиль" loading="lazy">
+</div>
+</div>
+
+<div class="admin-feature reverse reveal">
+<div class="admin-feature-text">
+<div class="admin-feature-badge">🎭 Темы</div>
+<h3>5 тем оформления</h3>
+<p>Выберите тему, которая подходит вашему стилю. Розовая нежность, шоколадная, минимализм, лаванда или мятная свежесть — конструктор мгновенно преображается.</p>
+<ul class="admin-feature-list">
+<li>Розовая нежность — для классических кондитерских</li>
+<li>Шоколадная — тёплые коричневые тона</li>
+<li>Минимализм — чёрно-белая элегантность</li>
+<li>Лаванда — нежные фиолетовые оттенки</li>
+<li>Мятная свежесть — свежие зелёные тона</li>
+</ul>
+</div>
+<div class="admin-feature-img">
+<img src="/admin-themes.png" alt="Админка — темы" loading="lazy">
+</div>
+</div>
+
+</div>
+</div>
 </section>
 
 <!-- PRICING -->
 <section class="pricing" id="pricing">
-  <span class="section-label gsap-reveal">Стоимость</span>
-  <h2 class="gsap-reveal">Начните бесплатно</h2>
-  <p class="subtitle gsap-reveal">Попробуйте 7 дней — если понравится, подключайтесь</p>
+<span class="section-label reveal">Стоимость</span>
+<h2 class="reveal reveal-delay-1">Начните бесплатно</h2>
+<p class="reveal reveal-delay-2">Попробуйте 7 дней — если понравится, подключайтесь</p>
 
-  <div class="price-card gsap-reveal">
-    <div class="price-amount">990 ₽</div>
-    <div class="price-period">в месяц</div>
-    <div class="price-setup">Настройка и загрузка первого меню — <strong>бесплатно</strong></div>
-    <ul class="price-features">
-      <li>Визуальный конструктор тортов</li>
-      <li>Уведомления о заказах в Telegram</li>
-      <li>Своя админка с редактором меню</li>
-      <li>Загрузка фото начинок и декора</li>
-      <li>Календарь загрузки</li>
-      <li>Персональная ссылка: cakecraft.ru/ваше-имя</li>
-      <li>Email-дубль заказов</li>
-      <li>Темы оформления</li>
-    </ul>
-    <a href="https://t.me/slava_philatov" class="btn btn-primary" style="width:100%;justify-content:center">Попробовать 7 дней бесплатно →</a>
-  </div>
+<div class="price-card reveal reveal-delay-3">
+<div class="price-amount">990 ₽</div>
+<div class="price-period">в месяц</div>
+<div class="price-setup">Настройка и загрузка первого меню — <strong>бесплатно</strong></div>
+<ul class="price-features">
+<li>Визуальный конструктор тортов</li>
+<li>Уведомления о заказах в Telegram</li>
+<li>Своя админка с редактором меню</li>
+<li>Загрузка фото начинок и декора</li>
+<li>Календарь загрузки</li>
+<li>Персональная ссылка: cakecraft.ru/ваше-имя</li>
+<li>Email-дубль заказов</li>
+<li>Темы оформления</li>
+</ul>
+<a href="https://t.me/slava_philatov" class="btn btn-primary" style="width:100%;justify-content:center">Попробовать 7 дней бесплатно →</a>
+</div>
 </section>
 
 <!-- FINAL CTA -->
 <section class="final-cta">
-  <h2 class="gsap-reveal">Перестаньте тратить время<br>на одинаковые переписки</h2>
-  <p class="subtitle gsap-reveal">Подключитесь за 10 минут и начните получать готовые заказы с ценами</p>
-  <a href="https://t.me/slava_philatov" class="btn btn-primary gsap-reveal">Написать в Telegram →</a>
+<h2 class="reveal">Перестаньте тратить время<br>на одинаковые переписки</h2>
+<p class="reveal reveal-delay-1">Подключитесь за 10 минут и начните получать готовые заказы с ценами</p>
+<a href="https://t.me/slava_philatov" class="btn btn-primary reveal reveal-delay-2">Написать в Telegram →</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2026 CakeCraft · Сделано с 🎂 для кондитеров · <a href="https://t.me/slava_philatov">Связаться</a></p>
+<p>© 2026 CakeCraft · Сделано с 🎂 для кондитеров · <a href="https://t.me/slava_philatov">Связаться</a></p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", (event) => {
-  gsap.registerPlugin(ScrollTrigger);
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+entry.target.classList.add('visible');
+}
+});
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  // Fade-up reveals
-  gsap.utils.toArray('.gsap-reveal').forEach(elem => {
-    gsap.fromTo(elem, 
-      { y: 40, opacity: 0 },
-      {
-        y: 0, opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: elem,
-          start: "top 85%",
-        }
-      }
-    );
-  });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Staggered reveals
-  gsap.utils.toArray('.gsap-stagger-container').forEach(container => {
-    const items = container.querySelectorAll('.gsap-stagger-item');
-    gsap.fromTo(items,
-      { y: 40, opacity: 0 },
-      {
-        y: 0, opacity: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: container,
-          start: "top 80%",
-        }
-      }
-    );
-  });
+// Auto-cycle demo steps
+const demoSteps = document.querySelectorAll('.demo-step');
+let currentDemoStep = 0;
+let demoCycleInterval;
 
-  // Parallax background elements
-  gsap.to('.gsap-parallax', {
-    yPercent: -40,
-    ease: "none",
-    scrollTrigger: {
-      trigger: ".hero",
-      start: "top top",
-      end: "bottom top",
-      scrub: true
-    }
-  });
+function activateDemoStep(index) {
+  demoSteps.forEach(s => s.classList.remove('active'));
+  demoSteps[index].classList.add('active');
+}
 
-  // Auto-cycle demo steps
-  const demoSteps = document.querySelectorAll('.demo-step');
-  let currentDemoStep = 0;
-  let demoCycleInterval;
+function startDemoCycle() {
+  demoCycleInterval = setInterval(() => {
+    currentDemoStep = (currentDemoStep + 1) % demoSteps.length;
+    activateDemoStep(currentDemoStep);
+  }, 3000);
+}
 
-  function activateDemoStep(index) {
-    demoSteps.forEach(s => s.classList.remove('active'));
-    demoSteps[index].classList.add('active');
-    
-    if (window.innerWidth <= 768) {
-      demoSteps[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-  }
-
-  function startDemoCycle() {
-    if (demoCycleInterval) clearInterval(demoCycleInterval);
-    demoCycleInterval = setInterval(() => {
-      currentDemoStep = (currentDemoStep + 1) % demoSteps.length;
-      activateDemoStep(currentDemoStep);
-    }, 3000);
-  }
-
-  const demoObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) startDemoCycle();
-      else clearInterval(demoCycleInterval);
-    });
-  }, { threshold: 0.3 });
-
-  const demoSection = document.querySelector('.demo');
-  if (demoSection) demoObserver.observe(demoSection);
-
-  demoSteps.forEach((step, i) => {
-    step.addEventListener('click', () => {
+// Start cycling when demo section is visible
+const demoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      startDemoCycle();
+    } else {
       clearInterval(demoCycleInterval);
-      currentDemoStep = i;
-      activateDemoStep(i);
-      setTimeout(startDemoCycle, 6000);
-    });
+    }
+  });
+}, { threshold: 0.3 });
+
+const demoSection = document.querySelector('.demo');
+if (demoSection) demoObserver.observe(demoSection);
+
+// Click on step to select it and pause auto-cycle
+demoSteps.forEach((step, i) => {
+  step.addEventListener('click', () => {
+    clearInterval(demoCycleInterval);
+    currentDemoStep = i;
+    activateDemoStep(i);
+    setTimeout(startDemoCycle, 6000);
   });
 });
 </script>
