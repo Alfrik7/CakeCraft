@@ -48,7 +48,7 @@ export function AdminProfilePage() {
   );
   const telegramBotUsername = useMemo(() => {
     const configured = (import.meta.env.VITE_TELEGRAM_BOT_USERNAME as string | undefined)?.trim();
-    return configured || 'photodep_bot';
+    return configured || 'CakeCraftbot';
   }, []);
   const telegramConnectUrl = useMemo(
     () => `https://t.me/${telegramBotUsername}?start=${baker?.id ?? ''}`,
