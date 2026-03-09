@@ -5,30 +5,38 @@ export default {
   theme: {
     extend: {
       colors: {
+        cream: '#FFF8F0',
+        blush: '#F4A0B0',
+        rose: '#D4596C',
+        chocolate: '#3D2C2C',
+        truffle: '#8B7070',
+        vanilla: '#FFFAFA',
+        gold: '#C8956C',
         primary: {
-          from: 'rgb(var(--color-primary-from-rgb) / <alpha-value>)',
-          to: 'rgb(var(--color-primary-to-rgb) / <alpha-value>)'
+          DEFAULT: '#F4A0B0',
         },
-        secondary: 'rgb(var(--color-background-from-rgb) / <alpha-value>)',
-        background: 'rgb(var(--color-background-from-rgb) / <alpha-value>)',
-        surface: 'rgb(var(--color-surface-rgb) / <alpha-value>)',
-        accent: 'rgb(var(--color-accent-rgb) / <alpha-value>)',
+        accent: {
+          DEFAULT: '#D4596C',
+        },
+        background: '#FFF8F0',
+        surface: '#FFFAFA',
         text: {
-          primary: 'rgb(var(--color-text-primary-rgb) / <alpha-value>)',
-          secondary: 'rgb(var(--color-text-secondary-rgb) / <alpha-value>)'
+          primary: '#3D2C2C',
+          secondary: '#8B7070'
         }
       },
       fontFamily: {
         sans: ['Nunito', 'sans-serif'],
-        display: ['Playfair Display', 'serif']
+        display: ['Playfair Display', 'serif'],
+        mono: ['DM Mono', 'monospace', 'Playfair Display', 'serif']
       },
       boxShadow: {
-        card: '0 8px 32px rgba(var(--color-primary-to-rgb), 0.14)',
-        'card-hover': '0 12px 40px rgba(var(--color-primary-to-rgb), 0.2)',
-        float: '0 20px 60px rgba(var(--color-text-primary-rgb), 0.16)'
+        soft: '0 4px 24px rgba(61, 44, 44, 0.06)',
+        strong: '0 8px 24px rgba(212, 89, 108, 0.25)',
       },
-      borderRadius: {
-        card: '1rem'
+      backgroundImage: {
+        'gradient-rose': 'linear-gradient(135deg, #F4A0B0, #D4596C)',
+        'gradient-warm': 'linear-gradient(180deg, #FFF8F0 0%, #FFE8EC 50%, #FFF5F0 100%)',
       }
     }
   },
