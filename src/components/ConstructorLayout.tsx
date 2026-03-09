@@ -156,41 +156,36 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   }, [handleBackStep, isSubmitted, step]);
 
   return (
-    <main className="relative min-h-screen overflow-x-clip bg-[var(--gradient-primary-soft)] pb-[calc(132px+env(safe-area-inset-bottom))]">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <span className="absolute -left-16 top-10 h-48 w-48 rounded-full bg-primary-from/10 blur-3xl" />
-        <span className="absolute -right-12 top-56 h-56 w-56 rounded-full bg-primary-to/10 blur-3xl" />
-        <span className="absolute bottom-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto flex w-full max-w-[480px] flex-col gap-4 px-3 pb-2 pt-3 sm:px-4 sm:pt-4">
-        <div className="sticky top-0 z-30 -mx-3 border-b border-primary-from/20 bg-surface/55 px-3 pb-3 pt-[max(env(safe-area-inset-top),0.5rem)] backdrop-blur-xl sm:-mx-4 sm:px-4 sm:pt-4">
+    <main className="relative min-h-screen overflow-x-clip pb-[calc(132px+env(safe-area-inset-bottom))]">
+      <div className="relative mx-auto flex w-full max-w-[480px] flex-col px-3 sm:px-4">
+        <div className="sticky top-0 z-50 -mx-3 border-b border-[#F4E0E4]/60 bg-cream/80 px-3 pt-[max(env(safe-area-inset-top),0.5rem)] backdrop-blur-xl sm:-mx-4 sm:px-4 sm:pt-4">
           <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
         </div>
 
-        <header className="rounded-[2rem] bg-surface/90 p-4 shadow-card backdrop-blur-sm">
-          <div className="flex items-center gap-3">
+        <header className="flex flex-col gap-4 mt-6 mb-2">
+          <div className="flex items-center gap-4 px-2">
             {baker.logo_url ? (
               <img
                 src={baker.logo_url}
                 alt={`Логотип ${baker.name}`}
-                className="h-14 w-14 rounded-full object-cover shadow-card"
+                className="h-14 w-14 rounded-full object-cover shadow-soft ring-2 ring-blush"
                 loading="lazy"
               />
             ) : (
-              <div
-                className="grid h-14 w-14 place-items-center rounded-full font-display text-xl text-white shadow-card"
-                style={{ backgroundImage: 'var(--gradient-primary)' }}
-              >
+              <div className="grid h-14 w-14 place-items-center rounded-full font-display text-[22px] text-white shadow-soft ring-2 ring-blush btn-gradient">
                 {bakerInitial}
               </div>
             )}
             <div>
-              <p className="font-display text-2xl leading-tight text-text-primary">{baker.name}</p>
-              <p className="text-sm text-text-secondary">Кондитерская студия</p>
+              <p className="font-display text-[20px] font-bold leading-tight text-chocolate">{baker.name}</p>
+              <p className="text-[13px] font-medium text-truffle">Кондитерская студия</p>
             </div>
           </div>
-          <h1 className="mt-3 text-base font-medium text-text-primary">{baker.welcome_message}</h1>
+          {baker.welcome_message ? (
+            <div className="rounded-2xl bg-vanilla p-4 shadow-soft border border-[#F4E0E4]">
+              <h1 className="text-[14px] text-chocolate leading-relaxed">{baker.welcome_message}</h1>
+            </div>
+          ) : null}
         </header>
 
         <div
@@ -210,9 +205,9 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
             />
           ) : null}
           {step === 5 && isSubmitted ? (
-            <section className="relative overflow-hidden rounded-[2rem] bg-surface p-5 text-center shadow-card sm:p-6">
+            <section className="relative overflow-hidden rounded-[24px] bg-vanilla px-6 py-10 text-center shadow-soft border border-[#F4E0E4] mt-8 mb-24">
               <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-                {Array.from({ length: 18 }).map((_, index) => (
+                {Array.from({ length: 24 }).map((_, index) => (
                   <span
                     key={`confetti-${index}`}
                     className="confetti-piece"
@@ -224,10 +219,10 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
                         '--confetti-rotate': `${index % 2 === 0 ? 1 : -1}turn`,
                         '--confetti-color':
                           index % 3 === 0
-                            ? 'var(--color-primary-from)'
+                            ? '#F4A0B0'
                             : index % 3 === 1
-                              ? 'var(--color-accent)'
-                              : 'var(--color-background-from)',
+                              ? '#C8956C'
+                              : '#D4596C',
                       } as CSSProperties
                     }
                   />
@@ -235,15 +230,15 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
               </div>
 
               <div className="relative z-10">
-                <p className="success-cake-emoji mx-auto mt-3 grid h-24 w-24 place-items-center rounded-full bg-primary-from/12 text-6xl shadow-card">
+                <p className="success-cake-emoji mx-auto grid h-24 w-24 place-items-center rounded-full bg-cream text-[56px] shadow-soft border border-[#F4E0E4]">
                   🎂
                 </p>
-                <h2 className="mt-5 font-display text-4xl text-text-primary">Заказ отправлен!</h2>
-                <p className="mt-3 text-base text-text-secondary">{baker.name} свяжется с вами в ближайшее время</p>
+                <h2 className="mt-6 font-display text-[32px] font-bold bg-gradient-to-br from-blush to-rose bg-clip-text text-transparent leading-tight pb-1">Заказ отправлен!</h2>
+                <p className="mt-2 text-[15px] font-medium text-truffle">{baker.name} свяжется с вами в ближайшее время</p>
                 <button
                   type="button"
                   onClick={handleRestart}
-                  className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full border border-primary-from/40 bg-white/70 px-6 py-2.5 text-sm font-semibold text-text-primary shadow-sm transition duration-200 hover:border-primary-from/60 hover:bg-white active:scale-[0.98]"
+                  className="tap-scale mt-8 inline-flex min-h-[44px] items-center justify-center rounded-full border-2 border-[#F4E0E4] bg-white px-6 py-2 text-[14px] font-bold text-chocolate shadow-sm transition-all duration-300 hover:border-rose hover:text-rose active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/40"
                 >
                   Собрать ещё один торт
                 </button>

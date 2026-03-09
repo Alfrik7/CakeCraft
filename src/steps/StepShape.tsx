@@ -4,6 +4,7 @@ import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
 import { useOrderContext } from '../context/OrderContext';
 import { calculateTotal, estimateWeightKg } from '../lib/price';
+import { triggerTelegramHaptic } from '../lib/telegram';
 import type { MenuItem } from '../types';
 
 const FALLBACK_SHAPES = [
@@ -37,30 +38,13 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
       }, {}),
     [menuData.decor],
   );
-  const guestsCount = order.servings;
-  const estimatedWeightKg = estimateWeightKg(guestsCount ?? 0);
+  const guestsCount = order.servings ?? 4;
+  const estimatedWeightKg = estimateWeightKg(guestsCount);
   const weightLabel = String(estimatedWeightKg);
 
-  const handleGuestsChange = (rawValue: string) => {
-    if (rawValue === '') {
-      setOrder((prev) => ({
-        ...prev,
-        servings: null,
-        total_price: calculateTotal(
-          0,
-          prev.filling_id ? fillingById[prev.filling_id] : null,
-          prev.decor_items.map((id) => decorById[id]).filter((item): item is MenuItem => Boolean(item)),
-        ),
-      }));
-      return;
-    }
-
-    const parsed = Number(rawValue);
-    if (!Number.isFinite(parsed)) {
-      return;
-    }
-
-    const guests = Math.min(50, Math.max(4, Math.round(parsed)));
+  const handleGuestsChange = (value: number) => {
+    triggerTelegramHaptic('selection');
+    const guests = Math.min(50, Math.max(4, Math.round(value)));
     setOrder((prev) => ({
       ...prev,
       servings: guests,
@@ -70,6 +54,17 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
         prev.decor_items.map((id) => decorById[id]).filter((item): item is MenuItem => Boolean(item)),
       ),
     }));
+  };
+
+  const handleGuestsInputChange = (rawValue: string) => {
+    if (rawValue === '') {
+      return;
+    }
+    const parsed = Number(rawValue);
+    if (!Number.isFinite(parsed)) {
+      return;
+    }
+    handleGuestsChange(parsed);
   };
 
   const fallbackShapeItems = useMemo<MenuItem[]>(
@@ -94,17 +89,17 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
   const useFallback = shapeItems.length === 0;
 
   return (
-    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+    <section className="px-4 py-6 mb-24">
       <StepHeader
         title="Выберите форму"
         subtitle="Определитесь с формой и количеством гостей"
         onBack={onBack}
       />
 
-      <div className="mt-5">
+      <div className="mt-8">
         <div className="content-fade-in">
           {useFallback || hasMenuError ? (
-            <div className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
+            <div className="mb-4 rounded-2xl border border-[#F4E0E4] bg-cream p-4 text-[13px] text-truffle shadow-soft">
               {hasMenuError
                 ? 'Не удалось загрузить формы из каталога. Показываем базовые варианты.'
                 : 'Формы из каталога не найдены. Показываем базовые варианты.'}
@@ -112,57 +107,62 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
           ) : null}
 
           <div className="grid grid-cols-2 gap-3">
-            {useFallback
-              ? fallbackShapeItems.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="stagger-item"
-                    style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
-                  >
-                    <MenuCard
-                      item={item}
-                      selected={order.shape === item.name}
-                      onSelect={() => updateOrder({ shape: item.name })}
-                      mode="single"
-                      servings={order.servings}
-                      priceMode="hidden"
-                    />
-                  </div>
-                ))
-              : shapeItems.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="stagger-item"
-                    style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
-                  >
-                    <MenuCard
-                      item={item}
-                      selected={order.shape === item.name}
-                      onSelect={() => updateOrder({ shape: item.name })}
-                      mode="single"
-                      servings={order.servings}
-                      priceMode="hidden"
-                    />
-                  </div>
-                ))}
+            {(useFallback ? fallbackShapeItems : shapeItems).map((item, index) => (
+              <div
+                key={item.id}
+                className="stagger-item"
+                style={{ '--stagger-delay': `${index * 60}ms` } as CSSProperties}
+              >
+                <MenuCard
+                  item={item}
+                  selected={order.shape === item.name}
+                  onSelect={() => updateOrder({ shape: item.name })}
+                  mode="single"
+                  servings={order.servings}
+                  priceMode="hidden"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl bg-secondary/70 p-4">
-        <p className="text-sm font-semibold text-text-primary">Количество гостей</p>
-        <div className="mt-3 flex items-center gap-3">
-          <input
-            type="number"
-            min={4}
-            max={50}
-            step={1}
-            value={guestsCount ?? ''}
-            onChange={(event) => handleGuestsChange(event.target.value)}
-            placeholder="4"
-            className="min-h-[44px] w-28 rounded-xl border border-primary-from/35 bg-white px-3 py-2 text-sm font-medium text-text-primary outline-none transition focus:ring-2 focus:ring-primary-from/35"
-          />
-          <p className="text-sm text-text-secondary">≈ {weightLabel} кг</p>
+      <div className="mt-8 rounded-[24px] bg-vanilla border border-[#F4E0E4] p-5 shadow-soft">
+        <p className="text-[15px] font-bold text-chocolate">Количество гостей</p>
+        <p className="text-[13px] text-truffle mt-1">От 4 до 50 человек</p>
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center bg-cream rounded-full border border-[#F4E0E4] p-1 shadow-inner">
+            <button
+              type="button"
+              onClick={() => handleGuestsChange(guestsCount - 1)}
+              disabled={guestsCount <= 4}
+              className="w-11 h-11 rounded-full btn-gradient flex items-center justify-center text-xl font-medium tap-scale"
+              aria-label="Уменьшить"
+            >
+              −
+            </button>
+            <input
+              type="number"
+              min={4}
+              max={50}
+              step={1}
+              value={guestsCount}
+              onChange={(event) => handleGuestsInputChange(event.target.value)}
+              className="w-14 text-center bg-transparent font-sans text-[18px] font-bold text-chocolate outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => handleGuestsChange(guestsCount + 1)}
+              disabled={guestsCount >= 50}
+              className="w-11 h-11 rounded-full btn-gradient flex items-center justify-center text-xl font-medium tap-scale"
+              aria-label="Увеличить"
+            >
+              +
+            </button>
+          </div>
+          <div className="text-right transition-all duration-300">
+            <p className="font-display text-[24px] text-rose leading-none font-bold">≈ {weightLabel} кг</p>
+          </div>
         </div>
       </div>
     </section>

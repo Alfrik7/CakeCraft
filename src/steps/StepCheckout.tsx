@@ -92,20 +92,20 @@ function BookingCalendar({ value, minDate, blockedDateSet, onChange }: BookingCa
   );
 
   return (
-    <div className="mt-1 rounded-2xl border border-primary-from/20 bg-white p-3">
-      <div className="mb-2 flex items-center justify-between gap-2">
+    <div className="mt-2 rounded-2xl border border-transparent bg-vanilla p-4 shadow-soft">
+      <div className="mb-3 flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={() => setVisibleMonth((prev) => shiftMonth(prev, -1))}
-          className="rounded-lg border border-primary-from/30 px-2 py-1 text-xs text-text-primary transition hover:bg-primary-from/10"
+          className="tap-scale rounded-full border border-[#F4E0E4] bg-white w-8 h-8 flex items-center justify-center text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
         >
           ←
         </button>
-        <p className="text-sm font-semibold capitalize text-text-primary">{monthLabel}</p>
+        <p className="text-[15px] font-bold capitalize text-chocolate">{monthLabel}</p>
         <button
           type="button"
           onClick={() => setVisibleMonth((prev) => shiftMonth(prev, 1))}
-          className="rounded-lg border border-primary-from/30 px-2 py-1 text-xs text-text-primary transition hover:bg-primary-from/10"
+          className="tap-scale rounded-full border border-[#F4E0E4] bg-white w-8 h-8 flex items-center justify-center text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
         >
           →
         </button>
@@ -113,7 +113,7 @@ function BookingCalendar({ value, minDate, blockedDateSet, onChange }: BookingCa
 
       <div className="grid grid-cols-7 gap-1">
         {WEEKDAY_LABELS.map((label) => (
-          <div key={label} className="py-1 text-center text-[11px] font-semibold text-text-secondary">
+          <div key={label} className="py-1 text-center text-[11px] font-bold uppercase tracking-wider text-truffle">
             {label}
           </div>
         ))}
@@ -132,13 +132,13 @@ function BookingCalendar({ value, minDate, blockedDateSet, onChange }: BookingCa
               disabled={isDisabled}
               onClick={() => onChange(iso)}
               className={[
-                'relative min-h-[34px] rounded-lg text-xs transition',
-                isCurrentMonth ? 'text-text-primary' : 'text-text-secondary/50',
-                isSelected ? '[background-image:var(--gradient-primary)] font-semibold text-white' : '',
-                !isSelected && !isDisabled ? 'hover:bg-primary-from/15' : '',
-                isTooEarly ? 'cursor-not-allowed opacity-40' : '',
+                'tap-scale relative min-h-[36px] rounded-xl text-[13px] transition-all duration-300',
+                isCurrentMonth ? 'text-chocolate' : 'text-truffle/40',
+                isSelected ? 'btn-gradient font-bold text-white shadow-md' : '',
+                !isSelected && !isDisabled ? 'hover:bg-rose/10 hover:text-rose' : '',
+                isTooEarly ? 'cursor-not-allowed opacity-30' : '',
                 isBlocked
-                  ? 'cursor-not-allowed bg-slate-100 text-slate-500 line-through after:absolute after:left-1 after:right-1 after:top-1/2 after:h-[1.5px] after:-translate-y-1/2 after:rotate-[-15deg] after:bg-red-500/80'
+                  ? 'cursor-not-allowed bg-cream text-truffle line-through after:absolute after:left-1 after:right-1 after:top-1/2 after:h-[1.5px] after:-translate-y-1/2 after:rotate-[-15deg] after:bg-rose/60'
                   : '',
               ].join(' ')}
               aria-label={iso}
@@ -348,214 +348,208 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
   }, [registerSubmitHandler, submitOrder]);
 
   const fieldBaseClass =
-    'mt-1 min-h-[44px] w-full rounded-xl border border-transparent bg-surface px-3 py-2 text-sm text-text-primary outline-none transition duration-300 focus:ring-2 focus:ring-primary-from/40';
-  const labelClass = 'block text-xs font-semibold uppercase tracking-[0.04em] text-text-secondary';
+    'mt-2 min-h-[48px] w-full rounded-xl border border-transparent bg-vanilla shadow-soft px-4 py-3 text-[15px] text-chocolate outline-none transition duration-300 focus:ring-2 focus:ring-rose/40 placeholder:text-truffle/50';
+  const labelClass = 'block text-[12px] font-bold uppercase tracking-wider text-truffle';
 
   return (
-    <section className="rounded-3xl bg-white/85 p-5 shadow-card backdrop-blur-sm sm:p-6">
+    <section className="px-4 py-6 mb-24">
       <StepHeader
         title="Оформление заказа"
         subtitle="Заполните контакты и выберите удобный формат получения"
         onBack={onBack}
       />
 
-      <div className="mt-5 space-y-4">
+      <div className="mt-8 space-y-6">
         {loadingBlockedDates ? <SkeletonCheckoutForm /> : null}
         {!loadingBlockedDates ? (
-          <div className="space-y-4">
-        <label className={labelClass}>
-          Имя клиента *
-          <input
-            type="text"
-            value={order.client_name}
-            onChange={(event) => updateOrder({ client_name: event.target.value })}
-            placeholder="Например: Анна"
-            className={fieldBaseClass}
-          />
-          {fieldErrors.client_name ? (
-            <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.client_name}</p>
-          ) : null}
-        </label>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_170px]">
-          <label className={labelClass}>
-            Контакт *
-            <input
-              type="text"
-              value={order.client_contact}
-              onChange={(event) => updateOrder({ client_contact: event.target.value })}
-              placeholder="@username / +7..."
-              className={fieldBaseClass}
-            />
-            {fieldErrors.client_contact ? (
-              <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.client_contact}</p>
-            ) : null}
-          </label>
-
-          <label className={labelClass}>
-            Тип контакта
-            <select
-              value={order.client_contact_type}
-              onChange={(event) =>
-                updateOrder({ client_contact_type: event.target.value as 'telegram' | 'whatsapp' | 'phone' })
-              }
-              className={[fieldBaseClass, 'appearance-none bg-[image:var(--select-chevron)] bg-[position:right_0.7rem_center] bg-[length:0.75rem] bg-no-repeat pr-9'].join(' ')}
-            >
-              <option value="telegram">Telegram</option>
-              <option value="whatsapp">WhatsApp</option>
-              <option value="phone">Телефон</option>
-            </select>
-          </label>
-        </div>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className={labelClass}>
-            Дата заказа *
-            <BookingCalendar
-              value={order.order_date}
-              minDate={minOrderDate}
-              blockedDateSet={blockedDateSet}
-              onChange={(date) => updateOrder({ order_date: date })}
-            />
-            <p className="mt-1 text-xs text-text-secondary">Минимальная дата заказа: {minOrderDate}</p>
-            <p className="mt-1 text-xs text-text-secondary">Серым отмечены даты, на которые запись закрыта</p>
-            {fieldErrors.order_date ? (
-              <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.order_date}</p>
-            ) : null}
-          </label>
-
-          <label className={labelClass}>
-            Время (опционально)
-            <div className="relative mt-1">
+          <div className="space-y-6">
+            <label className={labelClass}>
+              Имя клиента *
               <input
-                type="time"
-                value={order.order_time ?? ''}
-                onChange={(event) => updateOrder({ order_time: event.target.value || null })}
-                className={[fieldBaseClass, 'datepicker-input mt-0 pr-10'].join(' ')}
-              />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base text-primary-to">🕒</span>
-            </div>
-          </label>
-        </div>
-
-        <div className="content-fade-in">
-          {blockedDatesError ? (
-            <p className="text-xs text-[var(--color-danger)]">
-              Не удалось загрузить заблокированные даты, проверьте дату вручную.
-            </p>
-          ) : null}
-          {blockedDateSet.size > 0 ? (
-            <p className="text-xs text-text-secondary">
-              Недоступные даты: {Array.from(blockedDateSet).sort().join(', ')}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="border-t border-primary-from/15 pt-4">
-          <p className={labelClass}>Получение заказа</p>
-          {isDeliveryEnabled ? (
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  triggerTelegramHaptic('selection');
-                  updateOrder({ delivery_type: 'pickup', address: null });
-                }}
-                className={[
-                  'tap-scale min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300',
-                  order.delivery_type === 'pickup'
-                    ? '[background-image:var(--gradient-primary)] text-white shadow-card'
-                    : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
-                ].join(' ')}
-                aria-pressed={order.delivery_type === 'pickup'}
-              >
-                Самовывоз
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  triggerTelegramHaptic('selection');
-                  updateOrder({ delivery_type: 'delivery' });
-                }}
-                className={[
-                  'tap-scale min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition duration-300',
-                  order.delivery_type === 'delivery'
-                    ? '[background-image:var(--gradient-primary)] text-white shadow-card'
-                    : 'border border-primary-from/35 bg-white text-text-primary hover:border-primary-to',
-                ].join(' ')}
-                aria-pressed={order.delivery_type === 'delivery'}
-              >
-                {isCustomDeliveryPrice ? 'Доставка (рассч. отдельно)' : `Доставка (+${formatPrice(baker.delivery_price)})`}
-              </button>
-            </div>
-          ) : (
-            <p className="mt-2 text-sm text-text-secondary">Доступен только самовывоз.</p>
-          )}
-
-          {isDeliverySelected ? (
-            <label className={[labelClass, 'mt-4'].join(' ')}>
-              Адрес доставки *
-              <textarea
-                value={order.address ?? ''}
-                onChange={(event) => updateOrder({ address: event.target.value })}
-                rows={2}
-                placeholder="Город, улица, дом, подъезд"
+                type="text"
+                value={order.client_name}
+                onChange={(event) => updateOrder({ client_name: event.target.value })}
+                placeholder="Например: Анна"
                 className={fieldBaseClass}
               />
-              {fieldErrors.address ? (
-                <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.address}</p>
+              {fieldErrors.client_name ? (
+                <p className="mt-2 text-[12px] text-[#D4596C] font-semibold">{fieldErrors.client_name}</p>
               ) : null}
             </label>
-          ) : null}
 
-          {showPickupAddress ? (
-            <div className="mt-3 rounded-2xl border border-primary-from/30 bg-primary-from/10 px-3 py-2 text-sm text-text-primary">
-              <p className="font-semibold">📍 Адрес самовывоза</p>
-              <p className="mt-1">{pickupAddress}</p>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-[minmax(0,1fr)_170px]">
+              <label className={labelClass}>
+                Контакт *
+                <input
+                  type="text"
+                  value={order.client_contact}
+                  onChange={(event) => updateOrder({ client_contact: event.target.value })}
+                  placeholder="@username / +7..."
+                  className={fieldBaseClass}
+                />
+                {fieldErrors.client_contact ? (
+                  <p className="mt-2 text-[12px] text-[#D4596C] font-semibold">{fieldErrors.client_contact}</p>
+                ) : null}
+              </label>
+
+              <label className={labelClass}>
+                Тип контакта
+                <select
+                  value={order.client_contact_type}
+                  onChange={(event) =>
+                    updateOrder({ client_contact_type: event.target.value as 'telegram' | 'whatsapp' | 'phone' })
+                  }
+                  className={[fieldBaseClass, 'appearance-none bg-[image:var(--select-chevron)] bg-[position:right_1rem_center] bg-[length:0.75rem] bg-no-repeat pr-10'].join(' ')}
+                >
+                  <option value="telegram">Telegram</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="phone">Телефон</option>
+                </select>
+              </label>
             </div>
-          ) : null}
-        </div>
 
-        <label className={[labelClass, 'block border-t border-primary-from/15 pt-4'].join(' ')}>
-          Комментарий
-          <textarea
-            value={order.comment ?? ''}
-            onChange={(event) => updateOrder({ comment: event.target.value })}
-            rows={3}
-            placeholder="Дополнительные пожелания по заказу"
-            className={fieldBaseClass}
-          />
-        </label>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <label className={labelClass}>
+                Дата заказа *
+                <BookingCalendar
+                  value={order.order_date}
+                  minDate={minOrderDate}
+                  blockedDateSet={blockedDateSet}
+                  onChange={(date) => updateOrder({ order_date: date })}
+                />
+                <p className="mt-2 text-[12px] text-truffle normal-case tracking-normal font-normal">Минимальная дата заказа: {minOrderDate}</p>
+                {fieldErrors.order_date ? (
+                  <p className="mt-2 text-[12px] text-[#D4596C] font-semibold normal-case tracking-normal">{fieldErrors.order_date}</p>
+                ) : null}
+              </label>
+
+              <label className={labelClass}>
+                Время (опционально)
+                <div className="relative mt-2">
+                  <input
+                    type="time"
+                    value={order.order_time ?? ''}
+                    onChange={(event) => updateOrder({ order_time: event.target.value || null })}
+                    className={[fieldBaseClass, 'mt-0 pr-12'].join(' ')}
+                  />
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xl">🕒</span>
+                </div>
+              </label>
+            </div>
+
+            <div className="content-fade-in">
+              {blockedDatesError ? (
+                <p className="text-[12px] text-[#D4596C]">
+                  Не удалось загрузить заблокированные даты, проверьте дату вручную.
+                </p>
+              ) : null}
+            </div>
+
+            <div className="border-t border-[#F4E0E4] pt-6">
+              <p className={labelClass}>Получение заказа</p>
+              {isDeliveryEnabled ? (
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerTelegramHaptic('selection');
+                      updateOrder({ delivery_type: 'pickup', address: null });
+                    }}
+                    className={[
+                      'tap-scale min-h-[44px] rounded-full px-5 py-2 text-[14px] font-bold transition-all duration-300',
+                      order.delivery_type === 'pickup'
+                        ? 'btn-gradient text-white shadow-md'
+                        : 'bg-vanilla text-truffle border border-[#F4E0E4] hover:text-chocolate hover:border-rose',
+                    ].join(' ')}
+                    aria-pressed={order.delivery_type === 'pickup'}
+                  >
+                    Самовывоз
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerTelegramHaptic('selection');
+                      updateOrder({ delivery_type: 'delivery' });
+                    }}
+                    className={[
+                      'tap-scale min-h-[44px] rounded-full px-5 py-2 text-[14px] font-bold transition-all duration-300',
+                      order.delivery_type === 'delivery'
+                        ? 'btn-gradient text-white shadow-md'
+                        : 'bg-vanilla text-truffle border border-[#F4E0E4] hover:text-chocolate hover:border-rose',
+                    ].join(' ')}
+                    aria-pressed={order.delivery_type === 'delivery'}
+                  >
+                    {isCustomDeliveryPrice ? 'Доставка (рассч. отдельно)' : `Доставка (+${formatPrice(baker.delivery_price)})`}
+                  </button>
+                </div>
+              ) : (
+                <p className="mt-3 text-[14px] text-truffle">Доступен только самовывоз.</p>
+              )}
+
+              {isDeliverySelected ? (
+                <label className={[labelClass, 'mt-6'].join(' ')}>
+                  Адрес доставки *
+                  <textarea
+                    value={order.address ?? ''}
+                    onChange={(event) => updateOrder({ address: event.target.value })}
+                    rows={2}
+                    placeholder="Город, улица, дом, подъезд"
+                    className={fieldBaseClass}
+                  />
+                  {fieldErrors.address ? (
+                    <p className="mt-2 text-[12px] text-[#D4596C] font-semibold normal-case tracking-normal">{fieldErrors.address}</p>
+                  ) : null}
+                </label>
+              ) : null}
+
+              {showPickupAddress ? (
+                <div className="mt-4 rounded-2xl bg-vanilla p-4 shadow-soft border border-[#F4E0E4]">
+                  <p className="text-[13px] font-bold text-chocolate uppercase tracking-wider">📍 Адрес самовывоза</p>
+                  <p className="mt-2 text-[15px] text-truffle">{pickupAddress}</p>
+                </div>
+              ) : null}
+            </div>
+
+            <label className={[labelClass, 'block border-t border-[#F4E0E4] pt-6'].join(' ')}>
+              Комментарий
+              <textarea
+                value={order.comment ?? ''}
+                onChange={(event) => updateOrder({ comment: event.target.value })}
+                rows={3}
+                placeholder="Дополнительные пожелания по заказу"
+                className={fieldBaseClass}
+              />
+            </label>
           </div>
         ) : null}
       </div>
 
       {!loadingBlockedDates ? (
-        <div className="mt-6 rounded-2xl bg-secondary/95 p-4 shadow-card">
-          <p className="font-display text-xl text-text-primary">Итоговая стоимость</p>
-          <div className="mt-3 space-y-2 text-sm text-text-primary">
-            <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
+        <div className="mt-8 rounded-[24px] bg-cream border border-[#F4E0E4] p-5 shadow-soft">
+          <p className="font-display text-[22px] font-bold text-chocolate">Итоговая стоимость</p>
+          <div className="mt-4 space-y-3 text-[15px] text-truffle font-medium">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#F4E0E4] pb-3">
               <span>База (форма и размер)</span>
-              <span>{formatPrice(basePrice)}</span>
+              <span className="text-chocolate font-bold">{formatPrice(basePrice)}</span>
             </div>
-            <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#F4E0E4] pb-3">
               <span>Начинка</span>
-              <span>{formatPrice(fillingPrice)}</span>
+              <span className="text-chocolate font-bold">{formatPrice(fillingPrice)}</span>
             </div>
-            <div className="flex items-center justify-between gap-3 border-b border-dashed border-primary-from/30 pb-2">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#F4E0E4] pb-3">
               <span>Декор</span>
-              <span>{formatPrice(decorPrice)}</span>
+              <span className="text-chocolate font-bold">{formatPrice(decorPrice)}</span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <span>Доставка</span>
-              <span>
+              <span className="text-chocolate font-bold">
                 {isDeliverySelected && isCustomDeliveryPrice ? 'рассчитывается отдельно' : formatPrice(deliveryPrice)}
               </span>
             </div>
           </div>
-          <div className="mt-3 flex items-center justify-between border-t border-primary-from/35 pt-3 text-base">
-            <span>Итого</span>
-            <span className="[background-image:var(--gradient-primary)] bg-clip-text font-display text-2xl font-semibold text-transparent">
+          <div className="mt-4 flex items-center justify-between border-t border-[#F4E0E4] pt-4">
+            <span className="text-[15px] font-bold text-truffle uppercase tracking-wider">Итого</span>
+            <span className="font-display text-[28px] font-bold text-rose leading-none">
               {formatPrice(finalTotalPrice)}
             </span>
           </div>
@@ -563,7 +557,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
       ) : null}
 
       {!loadingBlockedDates && submitError ? (
-        <p className="mt-4 text-sm text-[var(--color-danger)]">{submitError}</p>
+        <p className="mt-6 text-[14px] text-center font-bold text-[#D4596C] bg-[#FFF0F3] py-3 rounded-xl">{submitError}</p>
       ) : null}
     </section>
   );

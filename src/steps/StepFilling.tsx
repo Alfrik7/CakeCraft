@@ -45,19 +45,19 @@ export function StepFilling({ onBack }: StepFillingProps) {
   };
 
   return (
-    <section className="rounded-3xl bg-white/80 p-5 shadow-card backdrop-blur-sm sm:p-6">
+    <section className="px-4 py-6 mb-24">
       <StepHeader title="Выберите начинку" subtitle="Цена пересчитывается автоматически" onBack={onBack} />
 
-      <div className="mt-5">
+      <div className="mt-8">
         <div className="content-fade-in">
           {hasMenuError ? (
-            <p className="mb-3 rounded-2xl border border-primary-from/25 bg-primary-from/10 px-3 py-2 text-xs text-text-primary">
+            <p className="mb-4 rounded-2xl border border-[#F4E0E4] bg-cream p-4 text-[13px] text-truffle shadow-soft">
               Не удалось загрузить начинки из каталога.
             </p>
           ) : null}
 
           {fillingItems.length === 0 ? (
-            <p className="text-center text-sm text-text-secondary">У кондитера пока нет доступных начинок.</p>
+            <p className="text-center text-[15px] text-truffle py-8">У кондитера пока нет доступных начинок.</p>
           ) : null}
 
           {fillingItems.length > 0 ? (
@@ -69,7 +69,7 @@ export function StepFilling({ onBack }: StepFillingProps) {
                   <div
                     key={item.id}
                     className="stagger-item"
-                    style={{ '--stagger-delay': `${index * 50}ms` } as CSSProperties}
+                    style={{ '--stagger-delay': `${index * 60}ms` } as CSSProperties}
                   >
                     <MenuCard
                       item={item}
