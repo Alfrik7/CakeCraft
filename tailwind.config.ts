@@ -31,8 +31,8 @@ export default {
         mono: ['DM Mono', 'monospace', 'Playfair Display', 'serif']
       },
       boxShadow: {
-        soft: '0 4px 24px rgba(61, 44, 44, 0.06)',
-        strong: '0 8px 24px rgba(212, 89, 108, 0.25)',
+        soft: '0 4px 24px rgb(var(--color-text-primary-rgb, 61 44 44) / 0.08)',
+        strong: '0 8px 24px rgb(var(--color-primary-to-rgb, 212 89 108) / 0.25)',
       },
       backgroundImage: {
         'gradient-rose': 'linear-gradient(135deg, #F4A0B0, #D4596C)',

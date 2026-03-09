@@ -97,7 +97,7 @@ function BookingCalendar({ value, minDate, blockedDateSet, onChange }: BookingCa
         <button
           type="button"
           onClick={() => setVisibleMonth((prev) => shiftMonth(prev, -1))}
-          className="tap-scale rounded-full border border-[#F4E0E4] bg-white w-8 h-8 flex items-center justify-center text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
+          className="tap-scale rounded-full border border-blush/35 bg-white w-8 h-8 flex items-center justify-center text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
         >
           ←
         </button>
@@ -105,7 +105,7 @@ function BookingCalendar({ value, minDate, blockedDateSet, onChange }: BookingCa
         <button
           type="button"
           onClick={() => setVisibleMonth((prev) => shiftMonth(prev, 1))}
-          className="tap-scale rounded-full border border-[#F4E0E4] bg-white w-8 h-8 flex items-center justify-center text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
+          className="tap-scale rounded-full border border-blush/35 bg-white w-8 h-8 flex items-center justify-center text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
         >
           →
         </button>
@@ -373,7 +373,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                 className={fieldBaseClass}
               />
               {fieldErrors.client_name ? (
-                <p className="mt-2 text-[12px] text-[#D4596C] font-semibold">{fieldErrors.client_name}</p>
+                <p className="mt-2 text-[12px] text-rose font-semibold">{fieldErrors.client_name}</p>
               ) : null}
             </label>
 
@@ -388,7 +388,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                   className={fieldBaseClass}
                 />
                 {fieldErrors.client_contact ? (
-                  <p className="mt-2 text-[12px] text-[#D4596C] font-semibold">{fieldErrors.client_contact}</p>
+                  <p className="mt-2 text-[12px] text-rose font-semibold">{fieldErrors.client_contact}</p>
                 ) : null}
               </label>
 
@@ -419,7 +419,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                 />
                 <p className="mt-2 text-[12px] text-truffle normal-case tracking-normal font-normal">Минимальная дата заказа: {minOrderDate}</p>
                 {fieldErrors.order_date ? (
-                  <p className="mt-2 text-[12px] text-[#D4596C] font-semibold normal-case tracking-normal">{fieldErrors.order_date}</p>
+                  <p className="mt-2 text-[12px] text-rose font-semibold normal-case tracking-normal">{fieldErrors.order_date}</p>
                 ) : null}
               </label>
 
@@ -439,13 +439,13 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
 
             <div className="content-fade-in">
               {blockedDatesError ? (
-                <p className="text-[12px] text-[#D4596C]">
+                <p className="text-[12px] text-rose">
                   Не удалось загрузить заблокированные даты, проверьте дату вручную.
                 </p>
               ) : null}
             </div>
 
-            <div className="border-t border-[#F4E0E4] pt-6">
+            <div className="border-t border-blush/35 pt-6">
               <p className={labelClass}>Получение заказа</p>
               {isDeliveryEnabled ? (
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -459,7 +459,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                       'tap-scale min-h-[44px] rounded-full px-5 py-2 text-[14px] font-bold transition-all duration-300',
                       order.delivery_type === 'pickup'
                         ? 'btn-gradient text-white shadow-md'
-                        : 'bg-vanilla text-truffle border border-[#F4E0E4] hover:text-chocolate hover:border-rose',
+                        : 'bg-vanilla text-truffle border border-blush/35 hover:text-chocolate hover:border-rose',
                     ].join(' ')}
                     aria-pressed={order.delivery_type === 'pickup'}
                   >
@@ -475,7 +475,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                       'tap-scale min-h-[44px] rounded-full px-5 py-2 text-[14px] font-bold transition-all duration-300',
                       order.delivery_type === 'delivery'
                         ? 'btn-gradient text-white shadow-md'
-                        : 'bg-vanilla text-truffle border border-[#F4E0E4] hover:text-chocolate hover:border-rose',
+                        : 'bg-vanilla text-truffle border border-blush/35 hover:text-chocolate hover:border-rose',
                     ].join(' ')}
                     aria-pressed={order.delivery_type === 'delivery'}
                   >
@@ -497,20 +497,20 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
                     className={fieldBaseClass}
                   />
                   {fieldErrors.address ? (
-                    <p className="mt-2 text-[12px] text-[#D4596C] font-semibold normal-case tracking-normal">{fieldErrors.address}</p>
+                    <p className="mt-2 text-[12px] text-rose font-semibold normal-case tracking-normal">{fieldErrors.address}</p>
                   ) : null}
                 </label>
               ) : null}
 
               {showPickupAddress ? (
-                <div className="mt-4 rounded-2xl bg-vanilla p-4 shadow-soft border border-[#F4E0E4]">
+                <div className="mt-4 rounded-2xl bg-vanilla p-4 shadow-soft border border-blush/35">
                   <p className="text-[13px] font-bold text-chocolate uppercase tracking-wider">📍 Адрес самовывоза</p>
                   <p className="mt-2 text-[15px] text-truffle">{pickupAddress}</p>
                 </div>
               ) : null}
             </div>
 
-            <label className={[labelClass, 'block border-t border-[#F4E0E4] pt-6'].join(' ')}>
+            <label className={[labelClass, 'block border-t border-blush/35 pt-6'].join(' ')}>
               Комментарий
               <textarea
                 value={order.comment ?? ''}
@@ -525,18 +525,18 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
       </div>
 
       {!loadingBlockedDates ? (
-        <div className="mt-8 rounded-[24px] bg-cream border border-[#F4E0E4] p-5 shadow-soft">
+        <div className="mt-8 rounded-[24px] bg-cream border border-blush/35 p-5 shadow-soft">
           <p className="font-display text-[22px] font-bold text-chocolate">Итоговая стоимость</p>
           <div className="mt-4 space-y-3 text-[15px] text-truffle font-medium">
-            <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#F4E0E4] pb-3">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-blush/35 pb-3">
               <span>База (форма и размер)</span>
               <span className="text-chocolate font-bold">{formatPrice(basePrice)}</span>
             </div>
-            <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#F4E0E4] pb-3">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-blush/35 pb-3">
               <span>Начинка</span>
               <span className="text-chocolate font-bold">{formatPrice(fillingPrice)}</span>
             </div>
-            <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#F4E0E4] pb-3">
+            <div className="flex items-center justify-between gap-3 border-b border-dashed border-blush/35 pb-3">
               <span>Декор</span>
               <span className="text-chocolate font-bold">{formatPrice(decorPrice)}</span>
             </div>
@@ -547,7 +547,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
               </span>
             </div>
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-[#F4E0E4] pt-4">
+          <div className="mt-4 flex items-center justify-between border-t border-blush/35 pt-4">
             <span className="text-[15px] font-bold text-truffle uppercase tracking-wider">Итого</span>
             <span className="font-display text-[28px] font-bold text-rose leading-none">
               {formatPrice(finalTotalPrice)}
@@ -557,7 +557,7 @@ export function StepCheckout({ baker, onBack, registerSubmitHandler, onCanSubmit
       ) : null}
 
       {!loadingBlockedDates && submitError ? (
-        <p className="mt-6 text-[14px] text-center font-bold text-[#D4596C] bg-[#FFF0F3] py-3 rounded-xl">{submitError}</p>
+        <p className="mt-6 text-[14px] text-center font-bold text-rose bg-blush/15 py-3 rounded-xl">{submitError}</p>
       ) : null}
     </section>
   );

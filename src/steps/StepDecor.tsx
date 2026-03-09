@@ -162,7 +162,7 @@ export function StepDecor({ onBack }: StepDecorProps) {
       <div className="mt-8">
         <div className="content-fade-in">
           {hasMenuError ? (
-            <p className="mb-4 rounded-2xl border border-[#F4E0E4] bg-cream p-4 text-[13px] text-truffle shadow-soft">
+            <p className="mb-4 rounded-2xl border border-blush/35 bg-cream p-4 text-[13px] text-truffle shadow-soft">
               Не удалось загрузить декор из каталога.
             </p>
           ) : null}
@@ -200,7 +200,7 @@ export function StepDecor({ onBack }: StepDecorProps) {
       </div>
 
       {selectedDecorItems.length > 0 ? (
-        <div className="mt-8 rounded-2xl bg-vanilla border border-[#F4E0E4] p-5 shadow-soft">
+        <div className="mt-8 rounded-2xl bg-vanilla border border-blush/35 p-5 shadow-soft">
           <p className="font-display text-[22px] font-bold text-chocolate">Выбрано</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {selectedDecorItems.map((item) => (
@@ -243,8 +243,8 @@ export function StepDecor({ onBack }: StepDecorProps) {
         <p className="text-[13px] font-bold uppercase tracking-wider text-truffle">Референс-фото</p>
         <label
           className={[
-            'mt-2 flex min-h-[160px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#F4E0E4] bg-vanilla px-4 py-6 text-center transition-all duration-300',
-            uploadingPhoto ? 'cursor-wait opacity-80' : 'hover:border-rose hover:bg-[#FFF0F3] shadow-soft',
+            'mt-2 flex min-h-[160px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-blush/35 bg-vanilla px-4 py-6 text-center transition-all duration-300',
+            uploadingPhoto ? 'cursor-wait opacity-80' : 'hover:border-rose hover:bg-blush/15 shadow-soft',
           ].join(' ')}
         >
           <span className="sr-only">Загрузить фото</span>
@@ -265,10 +265,10 @@ export function StepDecor({ onBack }: StepDecorProps) {
           <span className="mt-1 text-[13px] text-truffle">JPG, PNG или WEBP до 5 MB</span>
         </label>
         {uploadingPhoto ? <p className="mt-2 text-[13px] text-truffle">Загружаем фото...</p> : null}
-        {uploadError ? <p className="mt-2 text-[13px] text-[#D4596C]">{uploadError}</p> : null}
+        {uploadError ? <p className="mt-2 text-[13px] text-rose">{uploadError}</p> : null}
 
         {order.reference_photo_url ? (
-          <div className="mt-4 overflow-hidden rounded-2xl bg-vanilla shadow-soft border border-[#F4E0E4]">
+          <div className="mt-4 overflow-hidden rounded-2xl bg-vanilla shadow-soft border border-blush/35">
             <img
               src={order.reference_photo_url}
               alt="Загруженный референс"
@@ -290,7 +290,7 @@ export function StepDecor({ onBack }: StepDecorProps) {
                   triggerTelegramHaptic('selection');
                   removeReferencePhoto();
                 }}
-                className="tap-scale rounded-full bg-white border border-[#F4E0E4] px-4 py-2 text-[13px] font-bold text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
+                className="tap-scale rounded-full bg-white border border-blush/35 px-4 py-2 text-[13px] font-bold text-truffle transition hover:text-rose hover:border-rose focus-visible:outline-none"
               >
                 Удалить
               </button>

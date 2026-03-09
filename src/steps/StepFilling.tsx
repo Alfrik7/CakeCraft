@@ -51,7 +51,7 @@ export function StepFilling({ onBack }: StepFillingProps) {
       <div className="mt-8">
         <div className="content-fade-in">
           {hasMenuError ? (
-            <p className="mb-4 rounded-2xl border border-[#F4E0E4] bg-cream p-4 text-[13px] text-truffle shadow-soft">
+            <p className="mb-4 rounded-2xl border border-blush/35 bg-cream p-4 text-[13px] text-truffle shadow-soft">
               Не удалось загрузить начинки из каталога.
             </p>
           ) : null}

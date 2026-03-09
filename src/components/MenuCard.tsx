@@ -98,7 +98,7 @@ export function MenuCard({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/35 focus-visible:ring-offset-2',
         selected
           ? 'card-selected'
-          : 'border border-[#F4E0E4] shadow-soft hover:-translate-y-0.5 hover:shadow-lg',
+          : 'border border-blush/35 shadow-soft hover:-translate-y-0.5 hover:shadow-lg',
       ].join(' ')}
     >
       <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden bg-cream">
@@ -128,7 +128,7 @@ export function MenuCard({
             {visibleTags.map((tag) => (
               <span
                 key={`${item.id}-${tag}`}
-                className="rounded-full bg-gradient-to-br from-gold to-[#B3805A] px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm"
+                className="tag-pill"
               >
                 {tag}
               </span>

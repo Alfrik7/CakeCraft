@@ -82,7 +82,7 @@ export interface BakerProfilePatch {
   delivery_price: number;
   theme: Baker['theme'];
   pickup_address: string | null;
-  working_hours: Baker['working_hours'];
+  working_hours?: Baker['working_hours'];
   telegram_chat_id?: number | null;
 }
 

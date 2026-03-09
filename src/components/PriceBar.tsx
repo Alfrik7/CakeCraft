@@ -51,7 +51,8 @@ export function PriceBar({ totalPrice, isLastStep, canProceed, isSubmitting = fa
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 pb-[calc(12px+env(safe-area-inset-bottom))]">
       <div 
-        className="mx-auto flex max-w-[480px] items-center justify-between gap-4 rounded-t-3xl bg-white/80 px-5 py-4 backdrop-blur-xl shadow-[0_-8px_24px_rgba(61,44,44,0.06)] border border-white"
+        className="mx-auto flex max-w-[480px] items-center justify-between gap-4 rounded-t-3xl border border-blush/30 bg-surface/90 px-5 py-4 backdrop-blur-xl"
+        style={{ boxShadow: '0 -8px 24px rgb(var(--color-text-primary-rgb) / 0.08)' }}
       >
         <div className="flex flex-col">
           <p className="text-[12px] font-sans text-truffle">Текущая стоимость</p>

@@ -2,19 +2,9 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
 import { BAKER_THEMES } from '../../lib/theme';
 import { getBakerById, updateBakerProfile, uploadBakerLogo } from '../../lib/api';
-import type { Baker, WorkingHours } from '../../types';
+import type { Baker } from '../../types';
 const ACTIVE_CONTROL_CLASS =
-  'border-transparent bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
-
-const WEEK_DAYS: Array<{ key: string; label: string }> = [
-  { key: 'monday', label: 'Пн' },
-  { key: 'tuesday', label: 'Вт' },
-  { key: 'wednesday', label: 'Ср' },
-  { key: 'thursday', label: 'Чт' },
-  { key: 'friday', label: 'Пт' },
-  { key: 'saturday', label: 'Сб' },
-  { key: 'sunday', label: 'Вс' },
-];
+  'border-0 bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
 
 interface ProfileFormState {
   name: string;
@@ -25,19 +15,7 @@ interface ProfileFormState {
   deliveryPrice: string;
   theme: Baker['theme'];
   pickupAddress: string;
-  workingHours: WorkingHours;
   logoFile: File | null;
-}
-
-function getDefaultWorkingHours(): WorkingHours {
-  return WEEK_DAYS.reduce<WorkingHours>((acc, day, index) => {
-    acc[day.key] = {
-      from: '10:00',
-      to: '20:00',
-      enabled: index < 5,
-    };
-    return acc;
-  }, {});
 }
 
 function getInitialFormState(baker: Baker): ProfileFormState {
@@ -50,7 +28,6 @@ function getInitialFormState(baker: Baker): ProfileFormState {
     deliveryPrice: String(baker.delivery_price),
     theme: baker.theme ?? 'pink',
     pickupAddress: baker.pickup_address ?? '',
-    workingHours: baker.working_hours ?? getDefaultWorkingHours(),
     logoFile: null,
   };
 }
@@ -183,7 +160,6 @@ export function AdminProfilePage() {
         delivery_price: deliveryPrice,
         theme: form.theme,
         pickup_address: trimmedPickupAddress || null,
-        working_hours: form.workingHours,
       });
 
       setBaker(updated);
@@ -219,7 +195,6 @@ export function AdminProfilePage() {
         delivery_price: Number(form.deliveryPrice.replace(',', '.')),
         theme: form.theme,
         pickup_address: form.pickupAddress.trim() || null,
-        working_hours: form.workingHours,
         telegram_chat_id: null,
       });
 
@@ -391,9 +366,18 @@ export function AdminProfilePage() {
                         setForm((prev) => (prev ? { ...prev, theme: themePreset.id } : prev))
                       }
                       className={[
-                        'flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition',
-                        isSelected ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white hover:bg-gray-50',
+                        'flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition duration-200',
+                        isSelected ? 'scale-[1.03] shadow-md' : 'border-gray-200 bg-white hover:bg-gray-50',
                       ].join(' ')}
+                      style={
+                        isSelected
+                          ? {
+                              borderColor: themePreset.colors.primaryTo,
+                              backgroundColor: `${themePreset.colors.backgroundFrom}CC`,
+                              boxShadow: `0 0 0 2px ${themePreset.colors.primaryTo}`,
+                            }
+                          : undefined
+                      }
                       aria-pressed={isSelected}
                     >
                       <span
@@ -433,9 +417,9 @@ export function AdminProfilePage() {
                 onChange={(event) =>
                   setForm((prev) => (prev ? { ...prev, deliveryEnabled: event.target.checked } : prev))
                 }
-                className="sr-only peer"
+                className="sr-only"
               />
-              <div className="w-[44px] h-[24px] bg-gray-200 rounded-full peer peer-checked:after:translate-x-[20px] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[20px] after:w-[20px] after:transition-all peer-checked:bg-rose-500 peer-focus:ring-2 peer-focus:ring-rose-300"></div>
+              <span className="admin-toggle" data-active={form.deliveryEnabled} />
             </div>
             <span className="text-sm font-medium text-gray-700">Включить доставку</span>
           </label>
@@ -488,103 +472,13 @@ export function AdminProfilePage() {
           </label>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-gray-800">Рабочие часы</h2>
-          <div className="mt-3 space-y-2">
-            {WEEK_DAYS.map((day) => {
-              const dayState = form.workingHours[day.key] ?? { from: '10:00', to: '20:00', enabled: false };
-
-              return (
-                <div
-                  key={day.key}
-                  className="grid grid-cols-[52px_1fr_1fr] items-center gap-2 rounded-xl border border-gray-200 px-3 py-2"
-                >
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
-                    <div className="relative inline-flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={Boolean(dayState.enabled)}
-                        onChange={(event) =>
-                          setForm((prev) =>
-                            prev
-                              ? {
-                                  ...prev,
-                                  workingHours: {
-                                    ...prev.workingHours,
-                                    [day.key]: {
-                                      ...dayState,
-                                      enabled: event.target.checked,
-                                    },
-                                  },
-                                }
-                              : prev,
-                          )
-                        }
-                        className="sr-only peer"
-                      />
-                      <div className="w-[44px] h-[24px] bg-gray-200 rounded-full peer peer-checked:after:translate-x-[20px] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[20px] after:w-[20px] after:transition-all peer-checked:bg-rose-500 peer-focus:ring-2 peer-focus:ring-rose-300"></div>
-                    </div>
-                    {day.label}
-                  </label>
-
-                  <input
-                    type="time"
-                    value={dayState.from}
-                    disabled={!dayState.enabled}
-                    onChange={(event) =>
-                      setForm((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              workingHours: {
-                                ...prev.workingHours,
-                                [day.key]: {
-                                  ...dayState,
-                                  from: event.target.value,
-                                },
-                              },
-                            }
-                          : prev,
-                      )
-                    }
-                    className="h-10 rounded-lg border border-gray-200 px-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
-                  />
-
-                  <input
-                    type="time"
-                    value={dayState.to}
-                    disabled={!dayState.enabled}
-                    onChange={(event) =>
-                      setForm((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              workingHours: {
-                                ...prev.workingHours,
-                                [day.key]: {
-                                  ...dayState,
-                                  to: event.target.value,
-                                },
-                              },
-                            }
-                          : prev,
-                      )
-                    }
-                    className="h-10 rounded-lg border border-gray-200 px-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
         {error ? <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p> : null}
         {success ? <p className="rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{success}</p> : null}
 
         <button
           type="submit"
           disabled={isSaving}
-          className={`flex min-h-11 w-full items-center justify-center rounded-xl border px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
+          className={`flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
         >
           {isSaving ? 'Сохраняем...' : 'Сохранить'}
         </button>

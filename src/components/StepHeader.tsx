@@ -16,7 +16,7 @@ export function StepHeader({ title, subtitle, onBack }: StepHeaderProps) {
             triggerTelegramHaptic('selection');
             onBack();
           }}
-          className="tap-scale mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-vanilla text-chocolate shadow-soft border border-[#F4E0E4] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/35"
+          className="tap-scale mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blush/35 bg-vanilla text-chocolate shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/35"
           aria-label="Назад"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden="true">

@@ -82,7 +82,37 @@
   }
 
   .card-selected {
-    @apply ring-2 ring-rose scale-[1.02] shadow-lg bg-[#FFF0F3] border-transparent;
+    @apply ring-2 ring-rose scale-[1.02] shadow-lg border-transparent;
+    background-color: rgb(var(--color-primary-from-rgb) / 0.16);
+  }
+
+  .tag-pill {
+    @apply rounded-full border border-transparent px-2.5 py-1 text-[11px] font-semibold text-white;
+    background-color: #F4A0B0;
+  }
+
+  .tag-pill-active {
+    @apply rounded-full border border-transparent px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm;
+    background-color: #D4596C;
+  }
+
+  .admin-toggle {
+    @apply relative inline-flex h-6 w-11 items-center rounded-full p-0.5 transition;
+    background-color: #E0E0E0;
+  }
+
+  .admin-toggle::after {
+    content: '';
+    @apply h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200;
+    transform: translateX(0);
+  }
+
+  .admin-toggle[data-active='true'] {
+    background-image: linear-gradient(135deg, #F4A0B0 0%, #D4596C 100%);
+  }
+
+  .admin-toggle[data-active='true']::after {
+    transform: translateX(20px);
   }
 }
 
@@ -102,9 +132,9 @@
 }
 
 @keyframes progress-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(212, 89, 108, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(212, 89, 108, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(212, 89, 108, 0); }
+  0% { box-shadow: 0 0 0 0 rgb(var(--color-primary-to-rgb) / 0.4); }
+  70% { box-shadow: 0 0 0 6px rgb(var(--color-primary-to-rgb) / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(var(--color-primary-to-rgb) / 0); }
 }
 
 .progress-active {
@@ -117,7 +147,12 @@
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(90deg, #F4A0B022 25%, #F4A0B044 50%, #F4A0B022 75%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--color-primary-from-rgb) / 0.12) 25%,
+    rgb(var(--color-primary-from-rgb) / 0.24) 50%,
+    rgb(var(--color-primary-from-rgb) / 0.12) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite linear;
 }

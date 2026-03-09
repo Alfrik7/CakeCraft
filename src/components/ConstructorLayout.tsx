@@ -158,7 +158,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
   return (
     <main className="relative min-h-screen overflow-x-clip pb-[calc(132px+env(safe-area-inset-bottom))]">
       <div className="relative mx-auto flex w-full max-w-[480px] flex-col px-3 sm:px-4">
-        <div className="sticky top-0 z-50 -mx-3 border-b border-[#F4E0E4]/60 bg-cream/80 px-3 pt-[max(env(safe-area-inset-top),0.5rem)] backdrop-blur-xl sm:-mx-4 sm:px-4 sm:pt-4">
+        <div className="sticky top-0 z-50 -mx-3 border-b border-blush/35 bg-cream/80 px-3 pt-[max(env(safe-area-inset-top),0.5rem)] backdrop-blur-xl sm:-mx-4 sm:px-4 sm:pt-4">
           <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
         </div>
 
@@ -182,7 +182,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
             </div>
           </div>
           {baker.welcome_message ? (
-            <div className="rounded-2xl bg-vanilla p-4 shadow-soft border border-[#F4E0E4]">
+            <div className="rounded-2xl border border-blush/35 bg-vanilla p-4 shadow-soft">
               <h1 className="text-[14px] text-chocolate leading-relaxed">{baker.welcome_message}</h1>
             </div>
           ) : null}
@@ -205,7 +205,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
             />
           ) : null}
           {step === 5 && isSubmitted ? (
-            <section className="relative overflow-hidden rounded-[24px] bg-vanilla px-6 py-10 text-center shadow-soft border border-[#F4E0E4] mt-8 mb-24">
+            <section className="relative mt-8 mb-24 overflow-hidden rounded-[24px] border border-blush/35 bg-vanilla px-6 py-10 text-center shadow-soft">
               <div className="pointer-events-none absolute inset-0" aria-hidden="true">
                 {Array.from({ length: 24 }).map((_, index) => (
                   <span
@@ -219,10 +219,10 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
                         '--confetti-rotate': `${index % 2 === 0 ? 1 : -1}turn`,
                         '--confetti-color':
                           index % 3 === 0
-                            ? '#F4A0B0'
+                            ? 'rgb(var(--color-primary-from-rgb))'
                             : index % 3 === 1
-                              ? '#C8956C'
-                              : '#D4596C',
+                              ? 'rgb(var(--color-accent-rgb))'
+                              : 'rgb(var(--color-primary-to-rgb))',
                       } as CSSProperties
                     }
                   />
@@ -230,7 +230,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
               </div>
 
               <div className="relative z-10">
-                <p className="success-cake-emoji mx-auto grid h-24 w-24 place-items-center rounded-full bg-cream text-[56px] shadow-soft border border-[#F4E0E4]">
+                <p className="success-cake-emoji mx-auto grid h-24 w-24 place-items-center rounded-full border border-blush/35 bg-cream text-[56px] shadow-soft">
                   🎂
                 </p>
                 <h2 className="mt-6 font-display text-[32px] font-bold bg-gradient-to-br from-blush to-rose bg-clip-text text-transparent leading-tight pb-1">Заказ отправлен!</h2>
@@ -238,7 +238,7 @@ export function ConstructorLayout({ baker }: ConstructorLayoutProps) {
                 <button
                   type="button"
                   onClick={handleRestart}
-                  className="tap-scale mt-8 inline-flex min-h-[44px] items-center justify-center rounded-full border-2 border-[#F4E0E4] bg-white px-6 py-2 text-[14px] font-bold text-chocolate shadow-sm transition-all duration-300 hover:border-rose hover:text-rose active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/40"
+                  className="tap-scale mt-8 inline-flex min-h-[44px] items-center justify-center rounded-full border-2 border-blush/35 bg-white px-6 py-2 text-[14px] font-bold text-chocolate shadow-sm transition-all duration-300 hover:border-rose hover:text-rose active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/40"
                 >
                   Собрать ещё один торт
                 </button>

@@ -19,25 +19,12 @@ const CATEGORY_TABS: Array<{ value: MenuCategory; label: string }> = [
 
 const TAG_OPTIONS: MenuTag[] = ['Хит', 'Новинка', 'Сезонное'];
 const ACTIVE_CONTROL_CLASS =
-  'border-transparent bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
+  'border-0 bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
+const ADD_BUTTON_CLASS = 'border-0 bg-[#C04060] text-white shadow-sm hover:bg-[#A53652]';
 const INACTIVE_CONTROL_CLASS = 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50';
 
-function getTagClass(tag: MenuTag, selected: boolean): string {
-  if (tag === 'Хит') {
-    return selected
-      ? 'border-red-300 bg-gradient-to-r from-pink-500 to-rose-500 text-white'
-      : 'border-red-200 bg-red-50 text-red-700';
-  }
-
-  if (tag === 'Новинка') {
-    return selected
-      ? 'border-green-300 bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-      : 'border-green-200 bg-green-50 text-green-700';
-  }
-
-  return selected
-    ? 'border-orange-300 bg-gradient-to-r from-orange-500 to-amber-500 text-white'
-    : 'border-orange-200 bg-orange-50 text-orange-700';
+function getTagClass(_tag: MenuTag, selected: boolean): string {
+  return selected ? 'tag-pill-active' : 'tag-pill';
 }
 
 function asMenuTag(tag: string): MenuTag | null {
@@ -304,7 +291,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
                     key={tag}
                     type="button"
                     onClick={() => handleTagToggle(tag)}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium transition ${getTagClass(tag, isSelected)}`}
+                    className={`text-xs transition ${getTagClass(tag, isSelected)}`}
                   >
                     {tag}
                   </button>
@@ -327,7 +314,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
             <button
               type="submit"
               disabled={isSaving}
-              className={`rounded-lg border px-3 py-2 text-sm font-medium transition disabled:opacity-50 ${ACTIVE_CONTROL_CLASS}`}
+              className={`min-h-10 rounded-lg px-3 py-2 text-sm font-medium transition disabled:opacity-50 ${ACTIVE_CONTROL_CLASS}`}
             >
               {isSaving ? 'Сохраняем...' : isEdit ? 'Сохранить' : 'Добавить'}
             </button>
@@ -487,7 +474,7 @@ export function AdminMenuPage() {
         <button
           type="button"
           onClick={() => setModalState({ mode: 'create' })}
-          className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${ACTIVE_CONTROL_CLASS}`}
+          className={`min-h-11 rounded-xl px-4 py-2 text-sm font-medium transition ${ADD_BUTTON_CLASS}`}
         >
           Добавить позицию
         </button>
@@ -501,7 +488,7 @@ export function AdminMenuPage() {
               key={tab.value}
               type="button"
               onClick={() => setActiveCategory(tab.value)}
-              className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${
+              className={`min-h-11 rounded-xl px-4 py-2 text-sm font-medium transition ${
                 isActive ? ACTIVE_CONTROL_CLASS : INACTIVE_CONTROL_CLASS
               }`}
             >
@@ -553,15 +540,10 @@ export function AdminMenuPage() {
                         type="button"
                         onClick={() => void handleToggleActive(item)}
                         disabled={isBusy}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full border p-0.5 transition ${
-                          item.is_active ? 'border-rose-300 bg-rose-100' : 'border-gray-300 bg-gray-100'
-                        }`}
+                        className="admin-toggle"
+                        data-active={item.is_active}
                         aria-label={item.is_active ? 'Выключить позицию' : 'Включить позицию'}
-                      >
-                        <span
-                          className={`h-5 w-5 rounded-full bg-white shadow transition ${item.is_active ? 'translate-x-5' : 'translate-x-0'}`}
-                        />
-                      </button>
+                      />
                     </div>
 
                     {item.tags.length > 0 ? (
@@ -576,7 +558,7 @@ export function AdminMenuPage() {
                             return (
                               <span
                                 key={`${item.id}-${tag}`}
-                                className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${getTagClass(normalizedTag, false)}`}
+                                className={getTagClass(normalizedTag, false)}
                               >
                                 {tag}
                               </span>
@@ -590,7 +572,7 @@ export function AdminMenuPage() {
                       <button
                         type="button"
                         onClick={() => setModalState({ mode: 'edit', item })}
-                        className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                        className="min-h-9 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
                       >
                         Редактировать
                       </button>
@@ -598,7 +580,7 @@ export function AdminMenuPage() {
                         type="button"
                         onClick={() => void handleDelete(item)}
                         disabled={isBusy}
-                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-50"
+                        className="min-h-9 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-50"
                       >
                         Удалить
                       </button>

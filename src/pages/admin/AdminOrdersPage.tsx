@@ -20,7 +20,7 @@ const STATUS_TABS: Array<{ value: OrdersTab; label: string }> = [
   { value: 'reminders', label: 'Напоминания' },
 ];
 const ACTIVE_CONTROL_CLASS =
-  'border-transparent bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
+  'border-0 bg-gradient-to-r from-[#F4A0B0] to-[#D4596C] text-white shadow-sm';
 const INACTIVE_CONTROL_CLASS = 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50';
 
 interface EditOrderFormState {
@@ -423,7 +423,7 @@ export function AdminOrdersPage() {
               key={tab.value}
               type="button"
               onClick={() => setActiveStatus(tab.value)}
-              className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
+              className={`min-h-10 rounded-xl px-3 py-2 text-sm font-medium transition ${
                 isActive ? ACTIVE_CONTROL_CLASS : INACTIVE_CONTROL_CLASS
               }`}
             >
@@ -447,7 +447,6 @@ export function AdminOrdersPage() {
         {visibleOrders.map((order) => {
           const isExpanded = Boolean(expandedIds[order.id]);
           const fillingName = order.filling_id ? menuItemById[order.filling_id]?.name : null;
-          const coatingName = order.coating_id ? menuItemById[order.coating_id]?.name : null;
           const decorNames = order.decor_items
             .map((id) => menuItemById[id]?.name)
             .filter((name): name is string => Boolean(name));
@@ -509,15 +508,8 @@ export function AdminOrdersPage() {
                       {order.servings ? `${order.servings} порц.` : 'Не указано'}
                     </p>
                     <p>
-                      <span className="font-medium text-gray-900">Покрытие:</span> {coatingName || 'Не выбрано'}
-                    </p>
-                    <p>
                       <span className="font-medium text-gray-900">Декор:</span>{' '}
                       {decorNames.length ? decorNames.join(', ') : 'Не выбран'}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-900">Надпись на топпере:</span>{' '}
-                      {order.topper_text || 'Нет'}
                     </p>
                     <p>
                       <span className="font-medium text-gray-900">Тип получения:</span>{' '}
@@ -569,7 +561,7 @@ export function AdminOrdersPage() {
                         type="button"
                         disabled={isSaving || activeStatus === 'reminders'}
                         onClick={() => void handleStatusChange(order, transition.next)}
-                        className={`rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
+                        className={`min-h-10 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
                       >
                         {transition.label}
                       </button>
@@ -776,7 +768,7 @@ export function AdminOrdersPage() {
                 type="button"
                 disabled={isEditSaving}
                 onClick={() => void handleEditSave()}
-                className={`rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
+                className={`min-h-10 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${ACTIVE_CONTROL_CLASS}`}
               >
                 {isEditSaving ? 'Сохранение...' : 'Сохранить'}
               </button>

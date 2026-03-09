@@ -13,7 +13,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
     <div className="backdrop-blur-lg bg-cream/80 py-3 px-4 shadow-sm relative z-30">
       <div className="relative max-w-[480px] mx-auto">
         {/* Background track */}
-        <div className="absolute left-[10%] right-[10%] top-3 h-[2px] -translate-y-1/2 bg-[#F4E0E4]" aria-hidden="true" />
+        <div className="absolute left-[10%] right-[10%] top-3 h-[2px] -translate-y-1/2 bg-blush/35" aria-hidden="true" />
         {/* Active track */}
         <div
           className="absolute left-[10%] top-3 h-[2px] -translate-y-1/2 transition-all duration-300 ease-out bg-gradient-to-r from-blush to-rose"
@@ -40,7 +40,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                     'flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 ease-out bg-cream',
                     isActive ? 'border-2 border-rose progress-active' : '',
                     isCompleted ? 'bg-blush border-2 border-blush' : '',
-                    !isActive && !isCompleted ? 'border-2 border-[#F4E0E4]' : '',
+                    !isActive && !isCompleted ? 'border-2 border-blush/35' : '',
                   ].join(' ')}
                   aria-current={isActive ? 'step' : undefined}
                 >
