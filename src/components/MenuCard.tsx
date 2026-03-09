@@ -94,16 +94,16 @@ export function MenuCard({
       aria-pressed={selected}
       aria-label={`${actionLabel}: ${item.name}`}
       className={[
-        'tap-scale group relative overflow-hidden rounded-2xl border border-[rgba(248,164,184,0.2)] bg-white p-0 text-left shadow-card transition-all duration-300 ease-out',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-from/35 focus-visible:ring-offset-2',
+        'tap-scale group relative overflow-hidden rounded-2xl bg-vanilla text-left transition-all duration-300 ease-out flex flex-col',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose/35 focus-visible:ring-offset-2',
         selected
-          ? 'menu-card-selected-spring scale-[1.02] ring-2 ring-primary-to shadow-card-hover [background-image:var(--gradient-primary)]'
-          : 'hover:-translate-y-0.5 hover:shadow-card-hover',
+          ? 'card-selected'
+          : 'border border-[#F4E0E4] shadow-soft hover:-translate-y-0.5 hover:shadow-lg',
       ].join(' ')}
     >
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-primary-from/10">
+      <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden bg-cream">
         {!item.photo_url ? (
-          <div className="grid h-full w-full place-items-center text-xs font-semibold text-text-secondary">Фото недоступно</div>
+          <div className="grid h-full w-full place-items-center text-xs font-semibold text-truffle">Фото недоступно</div>
         ) : (
           <>
             {!imageLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
@@ -124,11 +124,11 @@ export function MenuCard({
         )}
 
         {visibleTags.length > 0 ? (
-          <div className="absolute left-2 top-2 flex flex-wrap gap-1.5">
+          <div className="absolute left-2 top-2 flex flex-wrap gap-1.5 z-10">
             {visibleTags.map((tag) => (
               <span
                 key={`${item.id}-${tag}`}
-                className="rounded-full [background-image:var(--gradient-primary)] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
+                className="rounded-full bg-gradient-to-br from-gold to-[#B3805A] px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm"
               >
                 {tag}
               </span>
@@ -137,8 +137,8 @@ export function MenuCard({
         ) : null}
       </div>
 
-      <div className="flex flex-col p-3">
-        <p className={['text-sm font-bold', selected ? 'text-white' : 'text-text-primary'].join(' ')}>{item.name}</p>
+      <div className="flex flex-col p-3 grow">
+        <p className="text-[15px] font-bold text-chocolate">{item.name}</p>
 
         {item.description ? (
           <div
@@ -147,7 +147,7 @@ export function MenuCard({
           >
             <p
               ref={descriptionRef}
-              className={['text-xs leading-4', selected ? 'text-white/90' : 'text-text-secondary'].join(' ')}
+              className="text-[13px] leading-tight text-truffle"
               style={
                 isDescriptionToggleEnabled && isDescriptionExpanded
                   ? undefined
@@ -167,9 +167,8 @@ export function MenuCard({
         {priceMode !== 'hidden' ? (
           <p
             className={[
-              'mt-auto pt-3 text-right font-display',
-              priceSize === 'compact' ? 'text-[15px]' : 'text-xl',
-              selected ? 'text-white' : 'text-primary-to',
+              'mt-auto pt-2 text-right font-display text-rose',
+              priceSize === 'compact' ? 'text-[15px]' : 'text-[16px]',
             ].join(' ')}
           >
             {formatItemPrice(item, servings, priceMode)}
