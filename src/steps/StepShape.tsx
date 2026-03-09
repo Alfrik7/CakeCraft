@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { MenuCard } from '../components/MenuCard';
 import { StepHeader } from '../components/StepHeader';
 import { useMenuDataContext } from '../context/MenuDataContext';
@@ -38,9 +38,21 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
       }, {}),
     [menuData.decor],
   );
-  const guestsCount = order.servings ?? 4;
-  const estimatedWeightKg = estimateWeightKg(guestsCount);
+  const committedGuestsCount = order.servings ?? 4;
+  const [guestsInputValue, setGuestsInputValue] = useState(() => String(committedGuestsCount));
+  const parsedGuestsInput = Number(guestsInputValue);
+  const previewGuestsCount =
+    guestsInputValue.trim() === ''
+      ? 4
+      : Number.isFinite(parsedGuestsInput)
+        ? parsedGuestsInput
+        : committedGuestsCount;
+  const estimatedWeightKg = estimateWeightKg(previewGuestsCount);
   const weightLabel = String(estimatedWeightKg);
+
+  useEffect(() => {
+    setGuestsInputValue(String(committedGuestsCount));
+  }, [committedGuestsCount]);
 
   const handleGuestsChange = (value: number) => {
     triggerTelegramHaptic('selection');
@@ -56,15 +68,14 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
     }));
   };
 
-  const handleGuestsInputChange = (rawValue: string) => {
-    if (rawValue === '') {
-      return;
-    }
-    const parsed = Number(rawValue);
-    if (!Number.isFinite(parsed)) {
-      return;
-    }
-    handleGuestsChange(parsed);
+  const handleGuestsBlur = () => {
+    const normalizedValue = guestsInputValue.trim();
+    const parsed = Number(normalizedValue);
+    const nextGuests = Number.isFinite(parsed) ? parsed : 4;
+    const clampedGuests = Math.min(300, Math.max(4, Math.round(nextGuests)));
+
+    setGuestsInputValue(String(clampedGuests));
+    handleGuestsChange(clampedGuests);
   };
 
   const fallbackShapeItems = useMemo<MenuItem[]>(
@@ -136,8 +147,11 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
             min={4}
             max={300}
             step={1}
-            value={guestsCount}
-            onChange={(event) => handleGuestsInputChange(event.target.value)}
+            value={guestsInputValue}
+            placeholder="4"
+            onFocus={(event) => event.currentTarget.select()}
+            onChange={(event) => setGuestsInputValue(event.target.value)}
+            onBlur={handleGuestsBlur}
             className="min-h-[48px] w-28 rounded-xl border border-blush/35 bg-cream px-3 text-center font-sans text-[18px] font-bold text-chocolate outline-none shadow-inner"
             aria-label="Количество гостей"
           />
