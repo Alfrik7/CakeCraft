@@ -483,6 +483,10 @@ export function AdminOrdersPage() {
           const isSaving = Boolean(isStatusSaving[order.id]);
           const reminderDays = reminderMetaById[order.id];
           const occasionLabel = formatOccasion(order.occasion);
+          const reminderOccasionLabel = occasionLabel
+            .replace(/\s*—\s*годовщина/gi, '')
+            .replace(/\s+годовщина/gi, '')
+            .trim();
 
           return (
             <article key={order.id} className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
@@ -508,7 +512,7 @@ export function AdminOrdersPage() {
                     </span>
                     {activeStatus === 'reminders' && reminderDays !== undefined ? (
                       <p className="mt-1 inline-flex rounded-full bg-rose-100 px-2 py-1 text-xs font-medium text-rose-700">
-                        {occasionLabel} — годовщина через {reminderDays} дн.
+                        {reminderOccasionLabel} через {reminderDays} дн.
                       </p>
                     ) : null}
                     <p className="mt-1 text-sm font-semibold text-gray-900">{formatPrice(order.total_price)}</p>
@@ -550,7 +554,7 @@ export function AdminOrdersPage() {
                     </p>
                     {activeStatus === 'reminders' && reminderDays !== undefined ? (
                       <p>
-                        <span className="font-medium text-gray-900">Годовщина:</span> {occasionLabel} — через{' '}
+                        <span className="font-medium text-gray-900">Напоминание:</span> {reminderOccasionLabel} через{' '}
                         {reminderDays} дн.
                       </p>
                     ) : null}
