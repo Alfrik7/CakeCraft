@@ -133,11 +133,10 @@ function OccasionCard({ item, index }: { item: MenuItem; index: number }) {
       aria-pressed={isSelected}
     >
       {optimizedPhotoUrl ? (
-        <div className="relative h-16 w-16 overflow-hidden rounded-2xl">
+        <>
           {!imageLoaded ? (
             <div
-              className="skeleton-shimmer"
-              style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
+              className="skeleton-shimmer absolute inset-0"
               aria-hidden="true"
             />
           ) : null}
@@ -146,30 +145,37 @@ function OccasionCard({ item, index }: { item: MenuItem; index: number }) {
             alt={item.name}
             loading="lazy"
             decoding="async"
-            width={64}
-            height={64}
+            width={400}
+            height={400}
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
             className={[
-              'h-full w-full rounded-2xl object-cover transition-transform duration-300',
-              isSelected ? 'scale-110' : 'group-hover:scale-105',
+              'absolute inset-0 h-full w-full object-cover transition-transform duration-300',
+              isSelected ? 'scale-105' : 'group-hover:scale-105',
             ].join(' ')}
           />
-        </div>
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent px-3 pb-3 pt-8">
+            <span className="text-[15px] font-bold text-white drop-shadow-md leading-tight">
+              {item.name}
+            </span>
+          </div>
+        </>
       ) : (
-        <span
-          className={[
-            'relative text-[48px] leading-none transition-transform duration-300',
-            isSelected ? 'scale-110 drop-shadow-md' : 'group-hover:scale-105',
-          ].join(' ')}
-          aria-hidden="true"
-        >
-          🎂
-        </span>
+        <>
+          <span
+            className={[
+              'relative text-[48px] leading-none transition-transform duration-300',
+              isSelected ? 'scale-110 drop-shadow-md' : 'group-hover:scale-105',
+            ].join(' ')}
+            aria-hidden="true"
+          >
+            🎂
+          </span>
+          <span className="relative px-2 text-[15px] font-bold text-chocolate transition-colors leading-tight">
+            {item.name}
+          </span>
+        </>
       )}
-      <span className="relative px-2 text-[15px] font-bold text-chocolate transition-colors leading-tight">
-        {item.name}
-      </span>
     </button>
   );
 }
