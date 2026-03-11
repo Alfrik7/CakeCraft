@@ -46,11 +46,8 @@ export function AdminLoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-rose-50/50 px-4 py-8">
       <section className="w-full max-w-md rounded-2xl border border-rose-100 bg-white p-6 shadow-sm">
         <h1 className="text-xl font-semibold text-gray-900">Вход в админку</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Для MVP используйте секретный slug кондитера (например, <span className="font-medium">demo-baker</span>).
-        </p>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-gray-700">Секретный slug</span>
             <input
@@ -68,7 +65,8 @@ export function AdminLoginPage() {
           <button
             type="submit"
             disabled={submitting || !slug.trim()}
-            className="flex min-h-11 w-full items-center justify-center rounded-xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-200"
+            className="flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ background: 'linear-gradient(135deg, #F8A4B8, #E8677C)' }}
           >
             {submitting ? 'Входим...' : 'Войти'}
           </button>

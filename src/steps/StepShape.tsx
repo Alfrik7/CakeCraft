@@ -54,6 +54,14 @@ export function StepShape({ bakerId, onBack }: StepShapeProps) {
     setGuestsInputValue(String(committedGuestsCount));
   }, [committedGuestsCount]);
 
+  // Set default servings to 4 on mount so the "Next" button is active
+  useEffect(() => {
+    if (order.servings == null) {
+      handleGuestsChange(4);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleGuestsChange = (value: number) => {
     triggerTelegramHaptic('selection');
     const guests = Math.min(300, Math.max(4, Math.round(value)));

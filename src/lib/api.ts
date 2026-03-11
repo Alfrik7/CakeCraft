@@ -174,19 +174,21 @@ export async function getMenuItems(bakerId: string, category: MenuCategory): Pro
 }
 
 export interface ConstructorMenuData {
+  occasion: MenuItem[];
   shape: MenuItem[];
   filling: MenuItem[];
   decor: MenuItem[];
 }
 
 export async function getConstructorMenuData(bakerId: string): Promise<ConstructorMenuData> {
-  const [shape, filling, decor] = await Promise.all([
+  const [occasion, shape, filling, decor] = await Promise.all([
+    getMenuItems(bakerId, 'occasion'),
     getMenuItems(bakerId, 'shape'),
     getMenuItems(bakerId, 'filling'),
     getMenuItems(bakerId, 'decor'),
   ]);
 
-  return { shape, filling, decor };
+  return { occasion, shape, filling, decor };
 }
 
 export async function getAdminMenuItems(bakerId: string, category: MenuCategory): Promise<MenuItem[]> {

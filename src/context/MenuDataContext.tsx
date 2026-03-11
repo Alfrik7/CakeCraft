@@ -8,6 +8,7 @@ interface MenuDataContextValue {
 }
 
 const EMPTY_MENU_DATA: ConstructorMenuData = {
+  occasion: [],
   shape: [],
   filling: [],
   decor: [],

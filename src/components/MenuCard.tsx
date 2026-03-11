@@ -103,12 +103,17 @@ export function MenuCard({
           : 'border border-blush/35 shadow-soft hover:-translate-y-0.5 hover:shadow-lg',
       ].join(' ')}
     >
-      <div className="relative w-full shrink-0 overflow-hidden bg-cream aspect-square rounded-2xl">
+      <div
+        className="relative w-full shrink-0 overflow-hidden bg-cream rounded-2xl"
+        style={{ aspectRatio: '1 / 1' }}
+      >
         {!item.photo_url ? (
           <div className="grid h-full w-full place-items-center text-xs font-semibold text-truffle">Фото недоступно</div>
         ) : (
           <>
-            {!imageLoaded ? <div className="skeleton-shimmer absolute inset-0" aria-hidden="true" /> : null}
+            {!imageLoaded ? (
+              <div className="skeleton-shimmer" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} aria-hidden="true" />
+            ) : null}
             <img
               src={optimizedPhotoUrl}
               alt={item.name}
@@ -118,7 +123,8 @@ export function MenuCard({
               height={400}
               onLoad={() => setImageLoaded(true)}
               onError={() => setImageLoaded(true)}
-              className="w-full h-full object-cover rounded-2xl"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              className="rounded-2xl"
             />
           </>
         )}

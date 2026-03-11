@@ -13,6 +13,7 @@ import { getOptimizedSupabaseImageUrl } from '../../lib/images';
 import type { MenuCategory, MenuItem, MenuTag, PriceType } from '../../types';
 
 const CATEGORY_TABS: Array<{ value: MenuCategory; label: string }> = [
+  { value: 'occasion', label: 'Поводы' },
   { value: 'shape', label: 'Формы' },
   { value: 'filling', label: 'Начинки' },
   { value: 'decor', label: 'Декор' },
@@ -98,7 +99,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
   const [values, setValues] = useState<MenuItemFormValues>(() => getInitialFormValues(state?.item));
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isShapeCategory = category === 'shape';
+  const isNoPriceCategory = category === 'shape' || category === 'occasion';
 
   useEffect(() => {
     setValues(getInitialFormValues(state?.item));
@@ -123,14 +124,14 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
     setError(null);
 
     const trimmedName = values.name.trim();
-    const parsedPrice = isShapeCategory ? 0 : Number(values.price.replace(',', '.'));
+    const parsedPrice = isNoPriceCategory ? 0 : Number(values.price.replace(',', '.'));
 
     if (!trimmedName) {
       setError('Введите название позиции.');
       return;
     }
 
-    if (!isShapeCategory && (!Number.isFinite(parsedPrice) || parsedPrice < 0)) {
+    if (!isNoPriceCategory && (!Number.isFinite(parsedPrice) || parsedPrice < 0)) {
       setError('Укажите корректную цену.');
       return;
     }
@@ -149,7 +150,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
       name: trimmedName,
       description: values.description.trim() ? values.description.trim() : null,
       price: parsedPrice,
-      price_type: isShapeCategory ? 'fixed' : values.priceType,
+      price_type: isNoPriceCategory ? 'fixed' : values.priceType,
       tags: values.tags,
       photoFile: values.photoFile,
     };
@@ -248,7 +249,7 @@ function MenuItemModal({ category, state, nextSortOrder, bakerId, onClose, onSav
             />
           </label>
 
-          {!isShapeCategory ? (
+          {!isNoPriceCategory ? (
             <div className="grid grid-cols-2 gap-3">
               <label className="block text-sm">
                 <span className="mb-1 block font-medium text-gray-700">Цена</span>
@@ -351,7 +352,7 @@ function MenuItemPhoto({ src, alt }: { src: string; alt: string }) {
 
 export function AdminMenuPage() {
   const { session } = useAuthContext();
-  const [activeCategory, setActiveCategory] = useState<MenuCategory>('shape');
+  const [activeCategory, setActiveCategory] = useState<MenuCategory>('occasion');
   const [items, setItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -535,7 +536,7 @@ export function AdminMenuPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="truncate text-sm font-semibold text-gray-900">{item.name}</p>
-                        {activeCategory !== 'shape' ? (
+                        {activeCategory !== 'shape' && activeCategory !== 'occasion' ? (
                           <p className="mt-0.5 text-sm text-gray-600">{formatPrice(item.price, item.price_type)}</p>
                         ) : null}
                       </div>

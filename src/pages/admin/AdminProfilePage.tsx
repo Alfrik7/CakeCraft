@@ -43,7 +43,7 @@ export function AdminProfilePage() {
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
   const constructorUrl = useMemo(
-    () => (session ? `https://app.cakecraft.ru/${session.bakerSlug}` : ''),
+    () => (session ? `https://cake-craft.ru/${session.bakerSlug}` : ''),
     [session],
   );
   const telegramBotUsername = useMemo(() => {

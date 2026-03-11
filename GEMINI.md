@@ -12,9 +12,9 @@ CakeCraft is a Telegram Mini App / web application — an interactive cake const
 ### Current Tech Stack
 - **Frontend:** React 18 + Vite + TypeScript + Tailwind CSS
 - **Backend:** Supabase (PostgreSQL + Storage)
-- **Hosting:** Vercel
-- **Live URL:** https://cake-craft-beta.vercel.app/demo-baker
-- **Admin:** https://cake-craft-beta.vercel.app/admin
+- **Hosting:** reg.ru
+- **Live URL:** https://cake-craft.ru/demo-baker
+- **Admin:** https://cake-craft.ru/admin
 
 ### Project Structure
 ```

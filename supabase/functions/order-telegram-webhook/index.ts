@@ -79,7 +79,7 @@ const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
   : null;
 
 const TELEGRAM_API_BASE = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN ?? ''}`;
-const ADMIN_PANEL_URL = 'https://cake-craft-beta.vercel.app/admin';
+const ADMIN_PANEL_URL = 'https://cake-craft.ru/admin';
 const SERVINGS_TO_WEIGHT_KG: Record<number, number> = {
   4: 0.4,
   6: 0.6,

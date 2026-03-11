@@ -170,13 +170,6 @@ const OCCASION_LABELS: Record<string, string> = {
   other: 'Без повода',
 };
 
-const OCCASION_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'birthday', label: 'День рождения' },
-  { value: 'wedding', label: 'Свадьба' },
-  { value: 'kids_party', label: 'Детский праздник' },
-  { value: 'corporate', label: 'Корпоратив' },
-  { value: 'other', label: 'Без повода' },
-];
 
 function formatOccasion(occasion: string | null): string {
   if (!occasion) {
@@ -665,18 +658,13 @@ export function AdminOrdersPage() {
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <label>
                 <span className="mb-1 block text-gray-600">Повод</span>
-                <select
+                <input
+                  type="text"
                   value={editForm.occasion}
                   onChange={(event) => setEditForm((prev) => (prev ? { ...prev, occasion: event.target.value } : prev))}
+                  placeholder="Не указан"
                   className="w-full rounded-lg border border-gray-200 px-3 py-2"
-                >
-                  <option value="">Не указан</option>
-                  {OCCASION_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                />
               </label>
 
               <label>

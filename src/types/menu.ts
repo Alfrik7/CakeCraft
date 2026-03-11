@@ -1,4 +1,4 @@
-export type MenuCategory = 'shape' | 'filling' | 'decor';
+export type MenuCategory = 'occasion' | 'shape' | 'filling' | 'decor';
 
 export type PriceType = 'fixed' | 'per_kg';
 
